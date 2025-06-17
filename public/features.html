@@ -1,1 +1,787 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medsnap - Features</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8f9fa;
+        }
+        .feature-card {
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px -10px rgba(0, 0, 0, 0.1);
+        }
+        .feature-icon {
+            transition: all 0.3s ease;
+        }
+        .feature-card:hover .feature-icon {
+            transform: scale(1.1);
+        }
+        .source-item {
+            transition: all 0.3s ease;
+        }
+        .source-item:hover {
+            transform: translateX(5px);
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 py-12">
+    <div class="container mx-auto px-4">
+        <div class="max-w-5xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden">
+            <div class="p-8 md:p-12">
+                <h1 class="text-3xl md:text-4xl font-bold text-blue-600 mb-2">Features</h1>
+                <p class="text-gray-600 mb-8">Entdecke alle Funktionen von Medsnap - Deine Gesundheits-Seite für Gen Z</p>
+                
+                <!-- Hauptfeatures -->
+                <div class="grid md:grid-cols-2 gap-8 mb-12">
+                    <!-- Symptom-Checker -->
+                    <div class="feature-card bg-white border border-blue-100 rounded-xl shadow-sm p-6 cursor-pointer" onclick="showSymptomChecker()">
+                        <div class="flex items-center mb-4">
+                            <div class="bg-blue-100 rounded-full p-3 mr-4">
+                                <svg class="w-8 h-8 text-blue-600 feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                                </svg>
+                            </div>
+                            <h2 class="text-2xl font-semibold text-gray-800">Symptom-Checker</h2>
+                        </div>
+                        <p class="text-gray-600 mb-4">Finde schnell und einfach heraus, was hinter deinen Symptomen stecken könnte. Unser KI-gestützter Symptom-Checker hilft dir, deine Gesundheit besser zu verstehen.</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-blue-600 font-medium">Jetzt ausprobieren</span>
+                            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    
+                    <!-- Weitere Quellen -->
+                    <div class="feature-card bg-white border border-blue-100 rounded-xl shadow-sm p-6 cursor-pointer" onclick="showSources()">
+                        <div class="flex items-center mb-4">
+                            <div class="bg-blue-100 rounded-full p-3 mr-4">
+                                <svg class="w-8 h-8 text-blue-600 feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                                </svg>
+                            </div>
+                            <h2 class="text-2xl font-semibold text-gray-800">Weitere Quellen</h2>
+                        </div>
+                        <p class="text-gray-600 mb-4">Zugriff auf vertrauenswürdige medizinische Informationen und Ressourcen. Wir haben die besten Fachquellen für dich zusammengestellt.</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-blue-600 font-medium">Quellen entdecken</span>
+                            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Symptom-Checker Details (versteckt) -->
+                <div id="symptom-checker-details" class="hidden mb-12 bg-blue-50 rounded-xl p-6 border border-blue-100">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-semibold text-blue-700">Symptom-Checker</h2>
+                        <button onclick="hideDetails()" class="text-gray-500 hover:text-gray-700">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                    
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <h3 class="text-lg font-medium text-gray-800 mb-3">So funktioniert's:</h3>
+                            <ol class="space-y-3 text-gray-600">
+                                <li class="flex items-start">
+                                    <span class="bg-blue-200 text-blue-800 rounded-full w-6 h-6 flex items-center justify-center mr-2 flex-shrink-0">1</span>
+                                    <span>Wähle deine Symptome aus der umfangreichen Liste</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="bg-blue-200 text-blue-800 rounded-full w-6 h-6 flex items-center justify-center mr-2 flex-shrink-0">2</span>
+                                    <span>Beantworte einige Fragen zu deinem Gesundheitszustand</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="bg-blue-200 text-blue-800 rounded-full w-6 h-6 flex items-center justify-center mr-2 flex-shrink-0">3</span>
+                                    <span>Erhalte mögliche Erklärungen für deine Symptome</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="bg-blue-200 text-blue-800 rounded-full w-6 h-6 flex items-center justify-center mr-2 flex-shrink-0">4</span>
+                                    <span>Bekomme Empfehlungen für die nächsten Schritte</span>
+                                </li>
+                            </ol>
+                            
+                            <div class="mt-6">
+                                <a href="#" class="inline-block px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition">
+                                    Symptom-Checker starten
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white rounded-lg p-5 border border-blue-100">
+                            <h3 class="text-lg font-medium text-gray-800 mb-3">Vorteile:</h3>
+                            <ul class="space-y-3">
+                                <li class="flex items-center">
+                                    <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                    </svg>
+                                    <span class="text-gray-600">Speziell für Gen Z entwickelt</span>
+                                </li>
+                                <li class="flex items-center">
+                                    <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                    </svg>
+                                    <span class="text-gray-600">Einfache und verständliche Sprache</span>
+                                </li>
+                                <li class="flex items-center">
+                                    <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                    </svg>
+                                    <span class="text-gray-600">Basierend auf aktuellen medizinischen Erkenntnissen</span>
+                                </li>
+                                <li class="flex items-center">
+                                    <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                    </svg>
+                                    <span class="text-gray-600">Jederzeit und überall verfügbar</span>
+                                </li>
+                                <li class="flex items-center">
+                                    <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                    </svg>
+                                    <span class="text-gray-600">Datenschutz hat höchste Priorität</span>
+                                </li>
+                            </ul>
+                            
+                            <div class="mt-4 bg-yellow-50 border border-yellow-100 rounded-lg p-3">
+                                <p class="text-sm text-yellow-800">
+                                    <strong>Hinweis:</strong> Der Symptom-Checker ersetzt nicht den Besuch bei einem Arzt. Bei ernsthaften Beschwerden suche bitte immer medizinischen Rat.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Weitere Quellen Details (versteckt) -->
+                <div id="sources-details" class="hidden mb-12 bg-blue-50 rounded-xl p-6 border border-blue-100">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-semibold text-blue-700">Weitere Quellen</h2>
+                        <button onclick="hideDetails()" class="text-gray-500 hover:text-gray-700">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                    
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <h3 class="text-lg font-medium text-gray-800 mb-4">Vertrauenswürdige Fachquellen</h3>
+                            
+                            <ul class="space-y-3">
+                                <li class="source-item bg-white p-4 rounded-lg border border-blue-100 flex items-center">
+                                    <div class="bg-blue-100 rounded-full p-2 mr-3">
+                                        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <a href="https://www.gesundheitsinformation.de/" target="_blank" class="font-medium text-gray-800 hover:text-blue-600">Gesundheitsinformation.de</a>
+                                        <p class="text-sm text-gray-600">Unabhängige, wissenschaftlich geprüfte Gesundheitsinformationen</p>
+                                    </div>
+                                </li>
+                                
+                                <li class="source-item bg-white p-4 rounded-lg border border-blue-100 flex items-center">
+                                    <div class="bg-blue-100 rounded-full p-2 mr-3">
+                                        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <a href="https://www.rki.de/" target="_blank" class="font-medium text-gray-800 hover:text-blue-600">Robert Koch-Institut</a>
+                                        <p class="text-sm text-gray-600">Aktuelle Informationen zu Infektionskrankheiten und Prävention</p>
+                                    </div>
+                                </li>
+                                
+                                <li class="source-item bg-white p-4 rounded-lg border border-blue-100 flex items-center">
+                                    <div class="bg-blue-100 rounded-full p-2 mr-3">
+                                        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <a href="https://www.bzga.de/" target="_blank" class="font-medium text-gray-800 hover:text-blue-600">Bundeszentrale für gesundheitliche Aufklärung</a>
+                                        <p class="text-sm text-gray-600">Informationen zur Gesundheitsförderung und Prävention</p>
+                                    </div>
+                                </li>
+                                
+                                <li class="source-item bg-white p-4 rounded-lg border border-blue-100 flex items-center">
+                                    <div class="bg-blue-100 rounded-full p-2 mr-3">
+                                        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <a href="https://www.who.int/de" target="_blank" class="font-medium text-gray-800 hover:text-blue-600">Weltgesundheitsorganisation (WHO)</a>
+                                        <p class="text-sm text-gray-600">Globale Gesundheitsthemen und aktuelle Entwicklungen</p>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            <h3 class="text-lg font-medium text-gray-800 mb-4">Medizinische Apps & Tools</h3>
+                            
+                            <div class="bg-white rounded-lg p-5 border border-blue-100 mb-6">
+                                <h4 class="font-medium text-gray-800 mb-2">Empfohlene Apps</h4>
+                                <ul class="space-y-2">
+                                    <li class="flex items-center">
+                                        <svg class="w-4 h-4 text-blue-500 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                                        </svg>
+                                        <span class="text-gray-600">Ada - Dein Gesundheitsguide</span>
+                                    </li>
+                                    <li class="flex items-center">
+                                        <svg class="w-4 h-4 text-blue-500 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                                        </svg>
+                                        <span class="text-gray-600">MyTherapy Medikamenten-Erinnerung</span>
+                                    </li>
+                                    <li class="flex items-center">
+                                        <svg class="w-4 h-4 text-blue-500 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                                        </svg>
+                                        <span class="text-gray-600">TK-App der Techniker Krankenkasse</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            
+                            <div class="bg-white rounded-lg p-5 border border-blue-100">
+                                <h4 class="font-medium text-gray-800 mb-2">Podcasts zum Thema Gesundheit</h4>
+                                <ul class="space-y-2">
+                                    <li class="flex items-center">
+                                        <svg class="w-4 h-4 text-blue-500 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                                        </svg>
+                                        <span class="text-gray-600">Glans & Gloria - Dein Medizinpodcast</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Weitere Features -->
+                <h2 class="text-2xl font-semibold text-gray-800 mb-6">Weitere Features</h2>
+                <div class="grid md:grid-cols-3 gap-6">
+                    <!-- Green Flags -->
+                    <div class="feature-card bg-white border border-blue-100 rounded-xl shadow-sm p-5 cursor-pointer" onclick="showGreenFlags()">
+                        <div class="bg-green-100 rounded-full p-3 w-12 h-12 flex items-center justify-center mb-4">
+                            <svg class="w-6 h-6 text-green-600 feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-medium text-gray-800 mb-2">Green Flags</h3>
+                        <p class="text-gray-600 text-sm">Finde heraus, welche Zeichen gut sind und auf eine positive Entwicklung hindeuten.</p>
+                        <div class="mt-3 flex items-center text-green-600 font-medium">
+                            <span>Mehr erfahren</span>
+                            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    
+                    <!-- Red Flags -->
+                    <div class="feature-card bg-white border border-blue-100 rounded-xl shadow-sm p-5 cursor-pointer" onclick="showRedFlags()">
+                        <div class="bg-red-100 rounded-full p-3 w-12 h-12 flex items-center justify-center mb-4">
+                            <svg class="w-6 h-6 text-red-600 feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-medium text-gray-800 mb-2">Red Flags</h3>
+                        <p class="text-gray-600 text-sm">Finde heraus, auf was du achten solltest und wann du unbedingt einen Arzt aufsuchen solltest.</p>
+                        <div class="mt-3 flex items-center text-red-600 font-medium">
+                            <span>Mehr erfahren</span>
+                            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    
+                    <!-- Lebenszeitrechner -->
+                    <div class="feature-card bg-white border border-blue-100 rounded-xl shadow-sm p-5 cursor-pointer" onclick="showLifeCalculator()">
+                        <div class="bg-purple-100 rounded-full p-3 w-12 h-12 flex items-center justify-center mb-4">
+                            <svg class="w-6 h-6 text-purple-600 feature-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-medium text-gray-800 mb-2">Wie lange habe ich noch?</h3>
+                        <p class="text-gray-600 text-sm">Probiere unseren Lebenszeitrechner aus und erfahre, wie du deine Lebenserwartung verbessern kannst.</p>
+                        <div class="mt-3 flex items-center text-purple-600 font-medium">
+                            <span>Jetzt ausprobieren</span>
+                            <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Green Flags Details (versteckt) -->
+                <div id="green-flags-details" class="hidden mt-8 mb-12 bg-green-50 rounded-xl p-6 border border-green-100">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-semibold text-green-700">Green Flags - Positive Anzeichen</h2>
+                        <button onclick="hideAllDetails()" class="text-gray-500 hover:text-gray-700">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                    
+                    <p class="text-gray-700 mb-6">Green Flags sind positive Anzeichen, die darauf hindeuten, dass deine Gesundheit auf dem richtigen Weg ist oder dass bestimmte Symptome harmlos sein könnten.</p>
+                    
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="bg-white rounded-lg p-5 border border-green-100">
+                            <h3 class="text-lg font-medium text-green-700 mb-4">Allgemeine Green Flags</h3>
+                            <ul class="space-y-3">
+                                <li class="flex items-start">
+                                    <svg class="w-5 h-5 text-green-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                    </svg>
+                                    <span class="text-gray-700">Symptome verbessern sich innerhalb weniger Tage</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <svg class="w-5 h-5 text-green-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                    </svg>
+                                    <span class="text-gray-700">Keine Beeinträchtigung des Alltags durch die Symptome</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <svg class="w-5 h-5 text-green-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                    </svg>
+                                    <span class="text-gray-700">Guter Appetit und normale Flüssigkeitsaufnahme</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <svg class="w-5 h-5 text-green-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                    </svg>
+                                    <span class="text-gray-700">Normaler Schlaf und Erholung</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <svg class="w-5 h-5 text-green-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                    </svg>
+                                    <span class="text-gray-700">Keine Begleitsymptome wie Fieber oder starke Schmerzen</span>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <div class="bg-white rounded-lg p-5 border border-green-100">
+                            <h3 class="text-lg font-medium text-green-700 mb-4">Spezifische Green Flags</h3>
+                            <ul class="space-y-3">
+                                <li class="flex items-start">
+                                    <svg class="w-5 h-5 text-green-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                    </svg>
+                                    <div>
+                                        <span class="text-gray-700 font-medium">Bei Kopfschmerzen:</span>
+                                        <p class="text-gray-600 text-sm">Linderung durch Ruhe oder einfache Schmerzmittel</p>
+                                    </div>
+                                </li>
+                                <li class="flex items-start">
+                                    <svg class="w-5 h-5 text-green-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                    </svg>
+                                    <div>
+                                        <span class="text-gray-700 font-medium">Bei Erkältung:</span>
+                                        <p class="text-gray-600 text-sm">Symptome bessern sich nach 3-4 Tagen</p>
+                                    </div>
+                                </li>
+                                <li class="flex items-start">
+                                    <svg class="w-5 h-5 text-green-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                    </svg>
+                                    <div>
+                                        <span class="text-gray-700 font-medium">Bei Hautausschlag:</span>
+                                        <p class="text-gray-600 text-sm">Keine Ausbreitung, kein Juckreiz, verblasst nach einigen Tagen</p>
+                                    </div>
+                                </li>
+                                <li class="flex items-start">
+                                    <svg class="w-5 h-5 text-green-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                    </svg>
+                                    <div>
+                                        <span class="text-gray-700 font-medium">Bei Magen-Darm-Beschwerden:</span>
+                                        <p class="text-gray-600 text-sm">Besserung innerhalb von 24-48 Stunden</p>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Red Flags Details (versteckt) -->
+                <div id="red-flags-details" class="hidden mt-8 mb-12 bg-red-50 rounded-xl p-6 border border-red-100">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-semibold text-red-700">Red Flags - Warnzeichen</h2>
+                        <button onclick="hideAllDetails()" class="text-gray-500 hover:text-gray-700">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                    
+                    <p class="text-gray-700 mb-6">Red Flags sind Warnzeichen, die auf ernsthafte gesundheitliche Probleme hindeuten können und eine sofortige ärztliche Beurteilung erfordern.</p>
+                    
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="bg-white rounded-lg p-5 border border-red-100">
+                            <h3 class="text-lg font-medium text-red-700 mb-4">Allgemeine Red Flags</h3>
+                            <ul class="space-y-3">
+                                <li class="flex items-start">
+                                    <svg class="w-5 h-5 text-red-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                                    </svg>
+                                    <span class="text-gray-700">Plötzliche, starke Schmerzen</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <svg class="w-5 h-5 text-red-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                                    </svg>
+                                    <span class="text-gray-700">Hohes Fieber (über 39°C) oder Fieber, das länger als 3 Tage anhält</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <svg class="w-5 h-5 text-red-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                                    </svg>
+                                    <span class="text-gray-700">Atemnot oder Schwierigkeiten beim Atmen</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <svg class="w-5 h-5 text-red-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                                    </svg>
+                                    <span class="text-gray-700">Plötzliche Sehstörungen oder Sprachprobleme</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <svg class="w-5 h-5 text-red-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                                    </svg>
+                                    <span class="text-gray-700">Bewusstseinsstörungen oder starke Verwirrtheit</span>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <div class="bg-white rounded-lg p-5 border border-red-100">
+                            <h3 class="text-lg font-medium text-red-700 mb-4">Spezifische Red Flags</h3>
+                            <ul class="space-y-3">
+                                <li class="flex items-start">
+                                    <svg class="w-5 h-5 text-red-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                                    </svg>
+                                    <div>
+                                        <span class="text-gray-700 font-medium">Bei Kopfschmerzen:</span>
+                                        <p class="text-gray-600 text-sm">Plötzlich auftretend, extrem stark ("schlimmster Kopfschmerz meines Lebens")</p>
+                                    </div>
+                                </li>
+                                <li class="flex items-start">
+                                    <svg class="w-5 h-5 text-red-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                                    </svg>
+                                    <div>
+                                        <span class="text-gray-700 font-medium">Bei Brustschmerzen:</span>
+                                        <p class="text-gray-600 text-sm">Drückend, ausstrahlend in Arm/Kiefer, mit Atemnot oder Übelkeit</p>
+                                    </div>
+                                </li>
+                                <li class="flex items-start">
+                                    <svg class="w-5 h-5 text-red-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                                    </svg>
+                                    <div>
+                                        <span class="text-gray-700 font-medium">Bei Bauchschmerzen:</span>
+                                        <p class="text-gray-600 text-sm">Anhaltend stark, mit Fieber, Erbrechen oder blutigen Durchfällen</p>
+                                    </div>
+                                </li>
+                                <li class="flex items-start">
+                                    <svg class="w-5 h-5 text-red-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                                    </svg>
+                                    <div>
+                                        <span class="text-gray-700 font-medium">Bei Hautausschlag:</span>
+                                        <p class="text-gray-600 text-sm">Mit Fieber und/oder nicht wegdrückbaren roten Flecken</p>
+                                    </div>
+                                </li>
+                            </ul>
+                            
+                            <div class="mt-4 bg-red-50 border border-red-200 rounded-lg p-3">
+                                <p class="text-sm text-red-800 font-medium">
+                                    Bei diesen Symptomen sofort ärztliche Hilfe suchen oder den Notruf (112) wählen!
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Lebenszeitrechner Details (versteckt) -->
+                <div id="life-calculator-details" class="hidden mt-8 mb-12 bg-purple-50 rounded-xl p-6 border border-purple-100">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-semibold text-purple-700">Lebenszeitrechner</h2>
+                        <button onclick="hideAllDetails()" class="text-gray-500 hover:text-gray-700">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                    
+                    <p class="text-gray-700 mb-6">Unser Lebenszeitrechner gibt dir eine grobe Schätzung deiner statistischen Lebenserwartung basierend auf verschiedenen Faktoren. Bitte beachte, dass dies nur ein Richtwert ist und viele individuelle Faktoren deine tatsächliche Lebenserwartung beeinflussen.</p>
+                    
+                    <div class="bg-white rounded-lg p-6 border border-purple-100 mb-6">
+                        <h3 class="text-lg font-medium text-purple-700 mb-4">Berechne deine Lebenserwartung</h3>
+                        
+                        <form class="space-y-4">
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-gray-700 mb-2">Alter</label>
+                                    <input type="number" id="age" min="1" max="120" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-300" placeholder="Jahre">
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-gray-700 mb-2">Geschlecht</label>
+                                    <select id="gender" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-300">
+                                        <option value="">Bitte wählen</option>
+                                        <option value="male">Männlich</option>
+                                        <option value="female">Weiblich</option>
+                                        <option value="other">Divers</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-gray-700 mb-2">Rauchst du?</label>
+                                <div class="flex space-x-4">
+                                    <label class="flex items-center">
+                                        <input type="radio" name="smoking" value="no" class="mr-2">
+                                        <span>Nein</span>
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="radio" name="smoking" value="occasionally" class="mr-2">
+                                        <span>Gelegentlich</span>
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="radio" name="smoking" value="regularly" class="mr-2">
+                                        <span>Regelmäßig</span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-gray-700 mb-2">Wie oft treibst du Sport?</label>
+                                <select id="exercise" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-300">
+                                    <option value="">Bitte wählen</option>
+                                    <option value="never">Nie</option>
+                                    <option value="rarely">Selten (1x pro Woche)</option>
+                                    <option value="sometimes">Manchmal (2-3x pro Woche)</option>
+                                    <option value="regularly">Regelmäßig (4+ pro Woche)</option>
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-gray-700 mb-2">Wie würdest du deine Ernährung beschreiben?</label>
+                                <select id="diet" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-300">
+                                    <option value="">Bitte wählen</option>
+                                    <option value="unhealthy">Ungesund (viel Fast Food, wenig Obst/Gemüse)</option>
+                                    <option value="average">Durchschnittlich</option>
+                                    <option value="healthy">Gesund (ausgewogen, viel Obst/Gemüse)</option>
+                                    <option value="very_healthy">Sehr gesund (vollwertig, bio, etc.)</option>
+                                </select>
+                            </div>
+                            
+                            <button type="button" onclick="calculateLifeExpectancy()" class="w-full px-6 py-3 bg-purple-600 text-white font-medium rounded-lg hover:bg-purple-700 transition">
+                                Berechnen
+                            </button>
+                        </form>
+                    </div>
+                    
+                    <div id="result" class="hidden bg-white rounded-lg p-6 border border-purple-100">
+                        <h3 class="text-lg font-medium text-purple-700 mb-4">Dein Ergebnis</h3>
+                        <div class="flex items-center justify-center mb-6">
+                            <div class="text-center">
+                                <div class="text-5xl font-bold text-purple-600 mb-2" id="years-result">85</div>
+                                <div class="text-gray-600">Jahre</div>
+                            </div>
+                        </div>
+                        
+                        <p class="text-gray-700 mb-4">Basierend auf deinen Angaben liegt deine statistische Lebenserwartung bei etwa <span id="result-text" class="font-medium">85 Jahren</span>. Das ist <span id="comparison-text">über dem Durchschnitt</span> für deine Altersgruppe.</p>
+                        
+                        <h4 class="font-medium text-gray-800 mb-2">Tipps zur Verbesserung deiner Lebenserwartung:</h4>
+                        <ul class="space-y-2 text-gray-700">
+                            <li class="flex items-start">
+                                <svg class="w-5 h-5 text-purple-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                                <span>Regelmäßige körperliche Aktivität (mind. 150 Minuten pro Woche)</span>
+                            </li>
+                            <li class="flex items-start">
+                                <svg class="w-5 h-5 text-purple-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                                <span>Ausgewogene Ernährung mit viel Obst und Gemüse</span>
+                            </li>
+                            <li class="flex items-start">
+                                <svg class="w-5 h-5 text-purple-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                                <span>Verzicht auf Rauchen und übermäßigen Alkoholkonsum</span>
+                            </li>
+                            <li class="flex items-start">
+                                <svg class="w-5 h-5 text-purple-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                                <span>Ausreichend Schlaf (7-8 Stunden pro Nacht)</span>
+                            </li>
+                            <li class="flex items-start">
+                                <svg class="w-5 h-5 text-purple-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                                <span>Stressmanagement und soziale Kontakte pflegen</span>
+                            </li>
+                        </ul>
+                        
+                        <div class="mt-6 text-sm text-gray-500">
+                            <p>Hinweis: Diese Berechnung dient nur zur Unterhaltung und basiert auf statistischen Durchschnittswerten. Individuelle genetische Faktoren, Umwelteinflüsse und medizinische Vorgeschichte können die tatsächliche Lebenserwartung stark beeinflussen.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-10 text-center">
+                    <a href="#" class="inline-flex items-center text-blue-600 hover:text-blue-800 transition">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M9.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L7.414 9H15a1 1 0 110 2H7.414l2.293 2.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                        </svg>
+                        Zurück zur Startseite
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
 
+    <script>
+        function showSymptomChecker() {
+            document.getElementById('symptom-checker-details').classList.remove('hidden');
+            document.getElementById('sources-details').classList.add('hidden');
+            hideAllFlagDetails();
+            window.scrollTo({
+                top: document.getElementById('symptom-checker-details').offsetTop - 20,
+                behavior: 'smooth'
+            });
+        }
+        
+        function showSources() {
+            document.getElementById('sources-details').classList.remove('hidden');
+            document.getElementById('symptom-checker-details').classList.add('hidden');
+            hideAllFlagDetails();
+            window.scrollTo({
+                top: document.getElementById('sources-details').offsetTop - 20,
+                behavior: 'smooth'
+            });
+        }
+        
+        function hideDetails() {
+            document.getElementById('symptom-checker-details').classList.add('hidden');
+            document.getElementById('sources-details').classList.add('hidden');
+        }
+        
+        function showGreenFlags() {
+            document.getElementById('green-flags-details').classList.remove('hidden');
+            document.getElementById('red-flags-details').classList.add('hidden');
+            document.getElementById('life-calculator-details').classList.add('hidden');
+            hideDetails();
+            window.scrollTo({
+                top: document.getElementById('green-flags-details').offsetTop - 20,
+                behavior: 'smooth'
+            });
+        }
+        
+        function showRedFlags() {
+            document.getElementById('red-flags-details').classList.remove('hidden');
+            document.getElementById('green-flags-details').classList.add('hidden');
+            document.getElementById('life-calculator-details').classList.add('hidden');
+            hideDetails();
+            window.scrollTo({
+                top: document.getElementById('red-flags-details').offsetTop - 20,
+                behavior: 'smooth'
+            });
+        }
+        
+        function showLifeCalculator() {
+            document.getElementById('life-calculator-details').classList.remove('hidden');
+            document.getElementById('green-flags-details').classList.add('hidden');
+            document.getElementById('red-flags-details').classList.add('hidden');
+            hideDetails();
+            window.scrollTo({
+                top: document.getElementById('life-calculator-details').offsetTop - 20,
+                behavior: 'smooth'
+            });
+        }
+        
+        function hideAllFlagDetails() {
+            document.getElementById('green-flags-details').classList.add('hidden');
+            document.getElementById('red-flags-details').classList.add('hidden');
+            document.getElementById('life-calculator-details').classList.add('hidden');
+        }
+        
+        function hideAllDetails() {
+            hideDetails();
+            hideAllFlagDetails();
+        }
+        
+        function calculateLifeExpectancy() {
+            // Einfache Demo-Berechnung (nicht medizinisch fundiert)
+            const age = parseInt(document.getElementById('age').value) || 25;
+            const gender = document.getElementById('gender').value;
+            const smoking = document.querySelector('input[name="smoking"]:checked')?.value || 'no';
+            const exercise = document.getElementById('exercise').value;
+            const diet = document.getElementById('diet').value;
+            
+            // Basis-Lebenserwartung
+            let baseExpectancy = gender === 'female' ? 83 : 78;
+            
+            // Anpassungen basierend auf Lebensstil
+            let adjustment = 0;
+            
+            // Rauchen
+            if (smoking === 'occasionally') adjustment -= 3;
+            if (smoking === 'regularly') adjustment -= 10;
+            
+            // Sport
+            if (exercise === 'never') adjustment -= 3;
+            if (exercise === 'rarely') adjustment -= 1;
+            if (exercise === 'sometimes') adjustment += 2;
+            if (exercise === 'regularly') adjustment += 4;
+            
+            // Ernährung
+            if (diet === 'unhealthy') adjustment -= 5;
+            if (diet === 'average') adjustment += 0;
+            if (diet === 'healthy') adjustment += 3;
+            if (diet === 'very_healthy') adjustment += 5;
+            
+            const finalExpectancy = baseExpectancy + adjustment;
+            
+            // Ergebnis anzeigen
+            document.getElementById('years-result').textContent = finalExpectancy;
+            document.getElementById('result-text').textContent = finalExpectancy + ' Jahren';
+            
+            const avgExpectancy = gender === 'female' ? 83 : 78;
+            if (finalExpectancy > avgExpectancy) {
+                document.getElementById('comparison-text').textContent = 'über dem Durchschnitt';
+            } else if (finalExpectancy < avgExpectancy) {
+                document.getElementById('comparison-text').textContent = 'unter dem Durchschnitt';
+            } else {
+                document.getElementById('comparison-text').textContent = 'im Durchschnitt';
+            }
+            
+            document.getElementById('result').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
