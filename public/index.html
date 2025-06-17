@@ -2,60 +2,282 @@
 <html lang="de">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>medsnap - Deine Gesundheitsseite</title>
-  <link href="output.css" rel="stylesheet" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>medsnap</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://kit.fontawesome.com/a2e0e6ad79.js" crossorigin="anonymous"></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background-color: #ffffff;
+      color: #1f1f1f;
+    }
+    header {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      background: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      z-index: 1000;
+    }
+    header .logo {
+      font-weight: 700;
+      color: #5b2df8;
+      font-size: 1.2rem;
+    }
+    header nav {
+      display: flex;
+      align-items: center;
+    }
+    header nav a {
+      margin-left: 1.5rem;
+      color: #1f1f1f;
+      text-decoration: none;
+      font-weight: 500;
+    }
+    .start-button {
+      background-color: #5b2df8;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 999px;
+      font-weight: 600;
+      margin-left: 1.5rem;
+    }
+    .burger {
+      display: none;
+      flex-direction: column;
+      cursor: pointer;
+    }
+    .burger div {
+      width: 25px;
+      height: 3px;
+      background-color: #1f1f1f;
+      margin: 4px 0;
+      transition: 0.4s;
+    }
+    .mobile-menu {
+      display: none;
+      flex-direction: column;
+      position: absolute;
+      top: 70px;
+      right: 20px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      padding: 1rem;
+      z-index: 999;
+    }
+    .mobile-menu a {
+      color: #1f1f1f;
+      text-decoration: none;
+      margin: 0.5rem 0;
+      font-weight: 500;
+    }
+    .hero {
+      padding-top: 6rem;
+      background: linear-gradient(to right, #a0c4ff, #cdb4db);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding-bottom: 4rem;
+    }
+    .hero h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+    }
+    .hero h1 span {
+      color: #5b2df8;
+    }
+    .hero p {
+      max-width: 500px;
+      margin: 1rem auto;
+    }
+    .hero .buttons {
+      margin-top: 2rem;
+    }
+    .hero button, .hero a {
+      margin: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      border-radius: 30px;
+      font-weight: 600;
+      border: 2px solid #5b2df8;
+      background: white;
+      color: #5b2df8;
+      cursor: pointer;
+    }
+    .hero button.primary {
+      background: #5b2df8;
+      color: white;
+    }
+    .features {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 2rem;
+      padding: 4rem 2rem;
+      background: #ffffff;
+    }
+    .feature {
+      background: #f9f9f9;
+      border-radius: 20px;
+      padding: 2rem;
+      width: 280px;
+      text-align: center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .feature:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+    .feature i {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      color: #5b2df8;
+    }
+    footer {
+      background: #0d0d1f;
+      color: white;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      padding: 3rem 2rem;
+    }
+    footer div {
+      flex: 1 1 200px;
+      margin: 1rem 0;
+    }
+    footer .social i {
+      margin-right: 1rem;
+      font-size: 1.2rem;
+      cursor: pointer;
+    }
+    footer a {
+      color: white;
+      text-decoration: none;
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+    footer .bottom {
+      width: 100%;
+      text-align: center;
+      margin-top: 2rem;
+      border-top: 1px solid #444;
+      padding-top: 1rem;
+      font-size: 0.875rem;
+    }
+    @media (max-width: 768px) {
+      header nav {
+        display: none;
+      }
+      .burger {
+        display: flex;
+      }
+      .features {
+        flex-direction: column;
+        align-items: center;
+      }
+      .hero h1 {
+        font-size: 2rem;
+      }
+    }
+  </style>
 </head>
-<body class="bg-gray-50 text-gray-800 font-sans">
-
-  <!-- Navigation -->
-  <nav class="bg-white shadow-md">
-    <div class="container mx-auto px-6 py-4 flex justify-between items-center">
-      <a href="#" class="text-xl font-bold text-blue-600">medsnap</a>
-      <ul class="flex space-x-6">
-        <li><a href="index.html" class="hover:text-blue-600">Home</a></li>
-        <li><a href="about.html" class="hover:text-blue-600">Mehr erfahren</a></li>
-        <li><a href="contact.html" class="hover:text-blue-600">Kontakt</a></li>
-      </ul>
+<body>
+  <header>
+    <div class="logo">medsnap</div>
+    <nav>
+      <a href="#">Mehr erfahren</a>
+      <a href="#">Kontakt</a>
+      <button class="start-button">Starten</button>
+    </nav>
+    <div class="burger" onclick="toggleMenu()">
+      <div></div>
+      <div></div>
+      <div></div>
     </div>
-  </nav>
-
-  <!-- Hero Header -->
-  <header class="container mx-auto px-6 py-20 text-center">
-    <h1 class="text-4xl md:text-5xl font-extrabold mb-4">Willkommen bei medsnap</h1>
-    <p class="text-lg md:text-xl text-gray-600 max-w-xl mx-auto">
-      Deine smarte Gesundheitsplattform – einfach, schnell und sicher.
-    </p>
-    <a href="features.html" class="mt-8 bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 inline-block">
-      LET'S GO!
-    </button>
+    <div class="mobile-menu" id="mobileMenu">
+      <a href="#" onclick="toggleMenu()">Mehr erfahren</a>
+      <a href="#" onclick="toggleMenu()">Kontakt</a>
+      <a href="#" onclick="toggleMenu()">Starten</a>
+    </div>
   </header>
 
-  <!-- Features Section -->
-  <section class="bg-white py-16">
-    <div class="container mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-10 text-center">
-      <div>
-        <div class="text-blue-600 text-5xl mb-4">🩺</div>
-        <h2 class="text-xl font-semibold mb-2">Medizinische Expertise</h2>
-        <p class="text-gray-600">Zuverlässige Infos und Tools für deine Gesundheit.</p>
-      </div>
-      <div>
-        <div class="text-green-600 text-5xl mb-4">⚡</div>
-        <h2 class="text-xl font-semibold mb-2">Schnelle Ergebnisse</h2>
-        <p class="text-gray-600">Erhalte Antworten in Echtzeit, wann immer du sie brauchst.</p>
-      </div>
-      <div>
-        <div class="text-purple-600 text-5xl mb-4">🔒</div>
-        <h2 class="text-xl font-semibold mb-2">Datenschutz</h2>
-        <p class="text-gray-600">Deine Daten sind bei uns sicher und vertraulich.</p>
-      </div>
+  <section class="hero">
+    <h1>Deine Gesundheit, <span>einfach digital</span></h1>
+    <p>medsnap macht Gesundheitsmanagement einfach, schnell und sicher. Erhalte personalisierte Gesundheitsempfehlungen und behalte den Überblick.</p>
+    <div class="buttons">
+      <button class="primary">LET'S GO!</button>
+      <a href="#">Mehr erfahren</a>
     </div>
   </section>
 
-  <!-- Footer -->
-  <footer class="bg-gray-100 py-6 mt-20 text-center text-gray-600">
-    &copy; 2025 medsnap - Alle Rechte vorbehalten
+  <section class="features">
+    <div class="feature">
+      <i class="fas fa-stethoscope"></i>
+      <h3>Medizinische Expertise</h3>
+      <p>Zuverlässige Infos und Tools für deine Gesundheit, von Experten geprüft.</p>
+      <a href="#">Mehr erfahren →</a>
+    </div>
+    <div class="feature">
+      <i class="fas fa-bolt"></i>
+      <h3>Schnelle Ergebnisse</h3>
+      <p>Antworten in Echtzeit, keine Wartezeiten, keine Komplikationen.</p>
+      <a href="#">Mehr erfahren →</a>
+    </div>
+    <div class="feature">
+      <i class="fas fa-lock"></i>
+      <h3>Datenschutz</h3>
+      <p>Deine Daten sind bei uns sicher und vertraulich.</p>
+      <a href="#">Mehr erfahren →</a>
+    </div>
+  </section>
+
+  <section class="hero" style="background:#5b2df8; color:white">
+    <h2>Bereit, deine Gesundheit in die Hand zu nehmen?</h2>
+    <p>Entdecke alle Features von medsnap und starte noch heute deine Gesundheitsreise.</p>
+    <button class="primary">LET'S GO!</button>
+  </section>
+
+  <footer>
+    <div>
+      <h3>medsnap</h3>
+      <p>Deine smarte Gesundheitsplattform – einfach, schnell und sicher für die Generation Z.</p>
+      <div class="social">
+        <i class="fab fa-twitter"></i>
+        <i class="fab fa-instagram"></i>
+        <i class="fab fa-linkedin"></i>
+      </div>
+    </div>
+    <div>
+      <h4>Links</h4>
+      <a href="#">Mehr erfahren</a>
+      <a href="#">Features</a>
+      <a href="#">Kontakt</a>
+    </div>
+    <div>
+      <h4>Rechtliches</h4>
+      <a href="#">Datenschutz</a>
+      <a href="#">Impressum</a>
+      <a href="#">AGB</a>
+    </div>
+    <div class="bottom">
+      © 2025 medsnap – Alle Rechte vorbehalten · Designed with ❤️ für deine Gesundheit
+    </div>
   </footer>
 
+  <script>
+    function toggleMenu() {
+      const menu = document.getElementById('mobileMenu');
+      menu.style.display = (menu.style.display === 'flex') ? 'none' : 'flex';
+    }
+  </script>
 </body>
 </html>
+
