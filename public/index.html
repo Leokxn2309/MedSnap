@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>medsnap</title>
+  <title>Glans & Gloria – Podcast</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <script src="https://kit.fontawesome.com/a2e0e6ad79.js" crossorigin="anonymous"></script>
   <style>
@@ -27,8 +27,8 @@
     }
     header .logo {
       font-weight: 700;
-      color: #5b2df8;
-      font-size: 1.2rem;
+      color: orange;
+      font-size: 1.5rem;
     }
     header nav {
       display: flex;
@@ -39,15 +39,6 @@
       color: #1f1f1f;
       text-decoration: none;
       font-weight: 500;
-    }
-    .start-button {
-      background-color: #5b2df8;
-      color: white;
-      border: none;
-      padding: 0.5rem 1rem;
-      border-radius: 999px;
-      font-weight: 600;
-      margin-left: 1.5rem;
     }
     .burger {
       display: none;
@@ -81,7 +72,7 @@
     }
     .hero {
       padding-top: 6rem;
-      background: linear-gradient(to right, #a0c4ff, #cdb4db);
+      background: linear-gradient(to right, #fff, #fcefe3);
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -91,55 +82,34 @@
     .hero h1 {
       font-size: 2.5rem;
       font-weight: 700;
-    }
-    .hero h1 span {
-      color: #5b2df8;
+      color: orange;
     }
     .hero p {
       max-width: 500px;
       margin: 1rem auto;
     }
-    .hero .buttons {
-      margin-top: 2rem;
-    }
-    .hero button, .hero a {
-      margin: 0.5rem;
-      padding: 0.75rem 1.5rem;
-      border-radius: 30px;
-      font-weight: 600;
-      border: 2px solid #5b2df8;
-      background: white;
-      color: #5b2df8;
-      cursor: pointer;
-    }
-    .hero button.primary {
-      background: #5b2df8;
-      color: white;
-    }
-    .features {
+    .episodes {
       display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 2rem;
+      flex-direction: column;
+      align-items: center;
       padding: 4rem 2rem;
-      background: #ffffff;
     }
-    .feature {
+    .episode {
+      max-width: 600px;
+      width: 100%;
+      margin-bottom: 2rem;
       background: #f9f9f9;
-      border-radius: 20px;
-      padding: 2rem;
-      width: 280px;
-      text-align: center;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      border-radius: 10px;
+      padding: 1rem;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
     }
-    .feature:hover {
-      transform: translateY(-10px);
-      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    .episode h3 {
+      margin-top: 0;
     }
-    .feature i {
-      font-size: 2rem;
-      margin-bottom: 1rem;
-      color: #5b2df8;
+    iframe {
+      width: 100%;
+      border: none;
+      border-radius: 10px;
     }
     footer {
       background: #0d0d1f;
@@ -179,86 +149,58 @@
       .burger {
         display: flex;
       }
-      .features {
-        flex-direction: column;
-        align-items: center;
-      }
-      .hero h1 {
-        font-size: 2rem;
-      }
     }
   </style>
 </head>
 <body>
   <header>
-    <div class="logo">medsnap</div>
+    <div class="logo">Glans & Gloria</div>
     <nav>
-      <a href="about.html">Mehr erfahren</a>
+      <a href="#episodes">Folgen</a>
+      <a href="features.html">Tools</a>
       <a href="contact.html">Kontakt</a>
-      <a href="features.html" class="start-button">Starten</a>
     </nav>
     <div class="burger" onclick="toggleMenu()">
-      <div></div>
-      <div></div>
-      <div></div>
+      <div></div><div></div><div></div>
     </div>
     <div class="mobile-menu" id="mobileMenu">
-      <a href="about.html" onclick="toggleMenu()">Mehr erfahren</a>
+      <a href="#episodes" onclick="toggleMenu()">Folgen</a>
+      <a href="features.html" onclick="toggleMenu()">Tools</a>
       <a href="contact.html" onclick="toggleMenu()">Kontakt</a>
-      <a href="features.html" onclick="toggleMenu()">Starten</a>
     </div>
   </header>
 
   <section class="hero">
-    <h1>Deine Gesundheit, <span>einfach digital</span></h1>
-    <p>medsnap macht Gesundheitsmanagement einfach, schnell und sicher. Erhalte personalisierte Gesundheitsempfehlungen und behalte den Überblick.</p>
-    <div class="buttons">
-      <a href="features.html" class="primary">LET'S GO!</a>
-      <a href="about.html">Mehr erfahren</a>
-    </div>
+    <h1>Glans & Gloria – Der Podcast</h1>
+    <p>Medizin. Gesellschaft. Gespräche mit Haltung. Hier hörst du spannende Themen mit Tiefgang – ehrlich, klar, überraschend.</p>
   </section>
 
-  <section class="features">
-    <div class="feature">
-      <i class="fas fa-stethoscope"></i>
-      <h3>Medizinische Expertise</h3>
-      <p>Zuverlässige Infos und Tools für deine Gesundheit, von Experten geprüft.</p>
-      <a href="about.html">Mehr erfahren →</a>
+  <section id="episodes" class="episodes">
+    <div class="episode">
+      <h3>🧠 Migräne – Teil 2: Neue Therapien, Versorgung & Psyche</h3>
+      <iframe src="https://open.spotify.com/embed/episode/XYZ123" height="152" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
     </div>
-    <div class="feature">
-      <i class="fas fa-bolt"></i>
-      <h3>Schnelle Ergebnisse</h3>
-      <p>Antworten in Echtzeit, keine Wartezeiten, keine Komplikationen.</p>
-      <a href="about.html">Mehr erfahren →</a>
+    <div class="episode">
+      <h3>🧠 Migräne – Teil 1: Symptome, Trigger & Behandlung</h3>
+      <iframe src="https://open.spotify.com/embed/episode/ABC456" height="152" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
     </div>
-    <div class="feature">
-      <i class="fas fa-lock"></i>
-      <h3>Datenschutz</h3>
-      <p>Deine Daten sind bei uns sicher und vertraulich.</p>
-      <a href="#">Mehr erfahren →</a>
-    </div>
-  </section>
-
-  <section class="hero" style="background:#5b2df8; color:white">
-    <h2>Bereit, deine Gesundheit in die Hand zu nehmen?</h2>
-    <p>Entdecke alle Features von medsnap und starte noch heute deine Gesundheitsreise.</p>
-    <a href="features.html" class="primary">LET'S GO!</a>
+    <!-- Weitere Folgen können hier ergänzt werden -->
   </section>
 
   <footer>
     <div>
-      <h3>medsnap</h3>
-      <p>Deine smarte Gesundheitsplattform – einfach, schnell und sicher für die Generation Z.</p>
+      <h3>Glans & Gloria</h3>
+      <p>Der Podcast über Medizin, Mensch und Meinung – produziert von Medizinstudierenden mit Haltung.</p>
       <div class="social">
         <a href="https://x.com/GlansUndGloria" class="fab fa-twitter"></a>
         <a href="https://www.instagram.com/glansundgloria/" class="fab fa-instagram"></a>
-        <a href="https://www.facebook.com/profile.php?id=61577044903511" class="fab fa-linkedin"></a>
+        <a href="https://www.facebook.com/profile.php?id=61577044903511" class="fab fa-facebook"></a>
       </div>
     </div>
     <div>
-      <h4>Links</h4>
-      <a href="about.html">Mehr erfahren</a>
-      <a href="features.html">Features</a>
+      <h4>Navigation</h4>
+      <a href="#episodes">Folgen</a>
+      <a href="features.html">Symptomchecker</a>
       <a href="contact.html">Kontakt</a>
     </div>
     <div>
@@ -268,7 +210,7 @@
       <a href="#">AGB</a>
     </div>
     <div class="bottom">
-      © 2025 medsnap – Alle Rechte vorbehalten · Designed with ❤️ für deine Gesundheit
+      © 2025 Glans & Gloria – Alle Rechte vorbehalten · Powered by MedSnap
     </div>
   </footer>
 
@@ -280,4 +222,3 @@
   </script>
 </body>
 </html>
-
