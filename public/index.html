@@ -1,233 +1,426 @@
-<!DOCTYPE html>
-<html lang="de">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Glans & Gloria – Dein Medizinpodcast</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <script src="https://kit.fontawesome.com/a2e0e6ad79.js" crossorigin="anonymous"></script>
+<!doctype html>
+<html lang="de" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Glans&amp;Gloria - Dein Medizinpodcast</title>
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&amp;family=Inter:wght@400;500&amp;display=swap" rel="stylesheet">
   <style>
     body {
-      margin: 0;
+      box-sizing: border-box;
+    }
+    
+    * {
       font-family: 'Inter', sans-serif;
-      background-color: #ffffff;
-      color: #1f1f1f;
     }
-    header {
-      position: fixed;
-      top: 0;
-      width: 100%;
-      background: white;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1rem 2rem;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-      z-index: 1000;
+    
+    h1, h2, h3, h4, h5, h6 {
+      font-family: 'Poppins', sans-serif;
     }
-    header .logo {
-      font-weight: 700;
-      color: orange;
-      font-size: 1.5rem;
+    
+    .gradient-bg {
+      background: linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%);
     }
-    header nav {
-      display: flex;
-      align-items: center;
+    
+    .tab-button {
+      position: relative;
+      transition: all 0.3s ease;
     }
-    header nav a {
-      margin-left: 1.5rem;
-      color: #1f1f1f;
-      text-decoration: none;
-      font-weight: 500;
-      transition: color 0.3s;
-    }
-    header nav a:hover {
-      color: orange;
-    }
-    .burger {
-      display: none;
-      flex-direction: column;
-      cursor: pointer;
-    }
-    .burger div {
-      width: 25px;
-      height: 3px;
-      background-color: #1f1f1f;
-      margin: 4px 0;
-      transition: 0.4s;
-    }
-    .mobile-menu {
-      display: none;
-      flex-direction: column;
+    
+    .tab-button.active::after {
+      content: '';
       position: absolute;
-      top: 70px;
-      right: 20px;
-      background: white;
-      border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      padding: 1rem;
-      z-index: 999;
+      bottom: -2px;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: #ff6b35;
     }
-    .mobile-menu a {
-      color: #1f1f1f;
-      text-decoration: none;
-      margin: 0.5rem 0;
-      font-weight: 500;
+    
+    .episode-card {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
-    .hero {
-      padding-top: 6rem;
-      background: linear-gradient(to right, #fff, #fcefe3);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      padding-bottom: 4rem;
+    
+    .episode-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 24px rgba(255, 107, 53, 0.15);
     }
-    .hero h1 {
-      font-size: 2.5rem;
-      font-weight: 700;
-      color: orange;
+    
+    .pulse-animation {
+      animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
     }
-    .hero p {
-      max-width: 500px;
-      margin: 1rem auto;
-      font-size: 1.1rem;
-    }
-    .episodes {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 4rem 2rem;
-    }
-    .episode {
-      max-width: 600px;
-      width: 100%;
-      margin-bottom: 2rem;
-      background: #f9f9f9;
-      border-radius: 12px;
-      padding: 1.5rem;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-      transition: transform 0.3s ease;
-    }
-    .episode:hover {
-      transform: scale(1.02);
-    }
-    .episode h3 {
-      margin-top: 0;
-    }
-    iframe {
-      width: 100%;
-      border: none;
-      border-radius: 10px;
-    }
-    footer {
-      background: #0d0d1f;
-      color: white;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      padding: 3rem 2rem;
-    }
-    footer div {
-      flex: 1 1 200px;
-      margin: 1rem 0;
-    }
-    footer .social a {
-      margin-right: 1rem;
-      font-size: 1.5rem;
-      color: white;
-    }
-    footer a {
-      color: white;
-      text-decoration: none;
-      display: block;
-      margin-bottom: 0.5rem;
-    }
-    footer .bottom {
-      width: 100%;
-      text-align: center;
-      margin-top: 2rem;
-      border-top: 1px solid #444;
-      padding-top: 1rem;
-      font-size: 0.875rem;
-    }
-    @media (max-width: 768px) {
-      header nav {
-        display: none;
+    
+    @keyframes pulse {
+      0%, 100% {
+        opacity: 1;
       }
-      .burger {
-        display: flex;
+      50% {
+        opacity: 0.7;
       }
     }
   </style>
-</head>
-<body>
-  <header>
-    <div class="logo">Glans & Gloria</div>
-    <nav>
-      <a href="#episodes">Folgen</a>
-      <a href="features.html">Tools</a>
-      <a href="contact.html">Kontakt</a>
-    </nav>
-    <div class="burger" onclick="toggleMenu()">
-      <div></div><div></div><div></div>
-    </div>
-    <div class="mobile-menu" id="mobileMenu">
-      <a href="#episodes" onclick="toggleMenu()">Folgen</a>
-      <a href="features.html" onclick="toggleMenu()">Tools</a>
-      <a href="contact.html" onclick="toggleMenu()">Kontakt</a>
-    </div>
-  </header>
-
-  <section class="hero">
-    <h1>Glans & Gloria – Dein Medizinpodcast</h1>
-    <p>Wir sind Leo und Nils – zwei Medizinstudenten, die in Glans & Gloria spannende Einblicke in Medizin, Gesundheit und Wissenschaft geben. Von Medizinstudium, OP-Saal und Notaufnahme bis zu Facharztweg, Klinikalltag und aktuellen Forschungsthemen – mit Expert:innen-Interviews, ehrlichen Anekdoten und verständlicher Medizin. Auch Mythen, Prävention und Alltagsmedizin kommen nicht zu kurz.</p>
-  </section>
-
-  <section id="episodes" class="episodes">
-    <div class="episode">
-      <h3>🧠 Tattoos, Haarausfall & Hautpflege - was deine Haut über deine Gesundheit verrät!</h3>
-      <iframe src="https://open.spotify.com/embed/episode/3grcSOZp62vL88TzVHZE7D?si=b6a97aaae9a74a6d" height="152" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
-    </div>
-    <div class="episode">
-      <h3>🧠 COPD, Rauchen und der Irrtum Kamille: Was deine Lunge wirklich braucht!</h3>
-      <iframe src="https://open.spotify.com/embed/episode/7zwvl8ACFr6dJJsD6katXo?si=hDIfD_4eQRKEpcxf-uc0DA" height="152" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
-    </div>
-    <!-- Weitere Folgen können hier ergänzt werden -->
-  </section>
-
-  <footer>
-    <div>
-      <h3>Glans & Gloria</h3>
-      <p>Der Podcast über Medizin, Mensch und Meinung – produziert von Medizinstudierenden mit zu viel Zeit!</p>
-      <div class="social">
-        <a href="https://x.com/GlansUndGloria" class="fab fa-twitter"></a>
-        <a href="https://www.instagram.com/glansundgloria/" class="fab fa-instagram"></a>
-        <a href="https://www.facebook.com/profile.php?id=61577044903511" class="fab fa-facebook"></a>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="h-full">
+  <div id="app" class="w-full h-full overflow-auto bg-white"><!-- Header -->
+   <header class="w-full bg-white shadow-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-6 py-4">
+     <div class="flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+       <div class="w-12 h-12 gradient-bg rounded-full flex items-center justify-center"><span class="text-2xl">🎙️</span>
+       </div>
+       <div>
+        <h1 id="podcast-title" class="text-2xl font-bold text-gray-900">Glans&amp;Gloria</h1>
+        <p id="podcast-subtitle" class="text-sm text-gray-600">Dein Medizinpodcast von Leo und Nils</p>
+       </div>
       </div>
+      <nav class="hidden md:flex space-x-8"><button class="tab-button active text-gray-900 font-medium pb-2" data-tab="episodes">Folgen</button> <button class="tab-button text-gray-600 hover:text-gray-900 font-medium pb-2" data-tab="about">Über uns</button> <button class="tab-button text-gray-600 hover:text-gray-900 font-medium pb-2" data-tab="contact">Kontakt</button>
+      </nav><button id="mobile-menu-btn" class="md:hidden text-gray-900">
+       <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+       </svg></button>
+     </div><!-- Mobile Menu -->
+     <nav id="mobile-menu" class="hidden md:hidden mt-4 pb-4 space-y-2"><button class="tab-button active block w-full text-left px-4 py-2 text-gray-900 font-medium" data-tab="episodes">Folgen</button> <button class="tab-button block w-full text-left px-4 py-2 text-gray-600 hover:text-gray-900 font-medium" data-tab="about">Über uns</button> <button class="tab-button block w-full text-left px-4 py-2 text-gray-600 hover:text-gray-900 font-medium" data-tab="contact">Kontakt</button>
+     </nav>
     </div>
-    <div>
-      <h4>Navigation</h4>
-      <a href="#episodes">Folgen</a>
-      <a href="features.html">Symptomchecker</a>
-      <a href="contact.html">Kontakt</a>
+   </header><!-- Hero Section -->
+   <section class="w-full gradient-bg text-white py-20 px-6">
+    <div class="max-w-4xl mx-auto text-center">
+     <h2 id="hero-headline" class="text-5xl md:text-6xl font-bold mb-6">Medizin verständlich erklärt</h2>
+     <p id="hero-description" class="text-xl md:text-2xl mb-8 opacity-95">Komplexe medizinische Themen einfach und unterhaltsam präsentiert von Leo und Nils</p><button id="cta-button" class="bg-white text-orange-600 px-8 py-4 rounded-full font-semibold text-lg hover:bg-gray-100 transition-all transform hover:scale-105 shadow-lg"> Jetzt reinhören 🎧 </button>
     </div>
-    <div>
-      <h4>Rechtliches</h4>
-      <a href="#">Datenschutz</a>
-      <a href="#">Impressum</a>
-      <a href="#">AGB</a>
+   </section><!-- Main Content -->
+   <main class="w-full max-w-7xl mx-auto px-6 py-12"><!-- Episodes Tab -->
+    <div id="episodes-content" class="tab-content">
+     <div class="flex items-center justify-between mb-8">
+      <h3 class="text-3xl font-bold text-gray-900">Aktuelle Folgen</h3>
+      <div class="flex items-center space-x-2 text-orange-600"><span class="w-3 h-3 bg-orange-600 rounded-full pulse-animation"></span> <span class="font-medium">Neue Folge jeden Montag</span>
+      </div>
+     </div>
+     <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6"><!-- Episode 1 -->
+      <div class="episode-card bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100">
+       <div class="gradient-bg h-32 flex items-center justify-center"><span class="text-6xl">🫀</span>
+       </div>
+       <div class="p-6">
+        <div class="text-sm text-orange-600 font-semibold mb-2">
+         FOLGE 12 • NEU
+        </div>
+        <h4 class="text-xl font-bold text-gray-900 mb-3">Das Herz-Kreislauf-System</h4>
+        <p class="text-gray-600 mb-4">Eine Reise durch unser wichtigstes Transportsystem und wie es uns am Leben hält.</p>
+        <div class="flex items-center justify-between"><span class="text-sm text-gray-500">45 Min</span> <button class="text-orange-600 hover:text-orange-700 font-medium">Anhören →</button>
+        </div>
+       </div>
+      </div><!-- Episode 2 -->
+      <div class="episode-card bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100">
+       <div class="gradient-bg h-32 flex items-center justify-center"><span class="text-6xl">🧠</span>
+       </div>
+       <div class="p-6">
+        <div class="text-sm text-gray-500 font-semibold mb-2">
+         FOLGE 11
+        </div>
+        <h4 class="text-xl font-bold text-gray-900 mb-3">Neurologie für Einsteiger</h4>
+        <p class="text-gray-600 mb-4">Wie funktioniert unser Gehirn und was passiert bei neurologischen Erkrankungen?</p>
+        <div class="flex items-center justify-between"><span class="text-sm text-gray-500">52 Min</span> <button class="text-orange-600 hover:text-orange-700 font-medium">Anhören →</button>
+        </div>
+       </div>
+      </div><!-- Episode 3 -->
+      <div class="episode-card bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100">
+       <div class="gradient-bg h-32 flex items-center justify-center"><span class="text-6xl">💊</span>
+       </div>
+       <div class="p-6">
+        <div class="text-sm text-gray-500 font-semibold mb-2">
+         FOLGE 10
+        </div>
+        <h4 class="text-xl font-bold text-gray-900 mb-3">Antibiotika richtig verstehen</h4>
+        <p class="text-gray-600 mb-4">Wann sind sie sinnvoll und warum ist Resistenz ein Problem?</p>
+        <div class="flex items-center justify-between"><span class="text-sm text-gray-500">38 Min</span> <button class="text-orange-600 hover:text-orange-700 font-medium">Anhören →</button>
+        </div>
+       </div>
+      </div>
+     </div>
+     <div class="text-center mt-12"><button class="border-2 border-orange-600 text-orange-600 px-8 py-3 rounded-full font-semibold hover:bg-orange-600 hover:text-white transition-all"> Alle Folgen anzeigen </button>
+     </div>
+    </div><!-- About Tab -->
+    <div id="about-content" class="tab-content hidden">
+     <h3 id="about-title" class="text-3xl font-bold text-gray-900 mb-8">Über uns</h3>
+     <div class="grid md:grid-cols-2 gap-12 mb-12">
+      <div class="bg-gradient-to-br from-orange-50 to-white rounded-2xl p-8 border border-orange-100">
+       <div class="w-20 h-20 gradient-bg rounded-full flex items-center justify-center mb-6 mx-auto"><span class="text-4xl">👨‍⚕️</span>
+       </div>
+       <h4 class="text-2xl font-bold text-gray-900 mb-4 text-center">Leo</h4>
+       <p id="about-text" class="text-gray-700 leading-relaxed">Facharzt für Innere Medizin mit Leidenschaft für verständliche Wissensvermittlung. Leo bringt komplexe medizinische Zusammenhänge auf den Punkt und sorgt für die wissenschaftliche Fundierung unserer Inhalte.</p>
+      </div>
+      <div class="bg-gradient-to-br from-orange-50 to-white rounded-2xl p-8 border border-orange-100">
+       <div class="w-20 h-20 gradient-bg rounded-full flex items-center justify-center mb-6 mx-auto"><span class="text-4xl">👨‍⚕️</span>
+       </div>
+       <h4 class="text-2xl font-bold text-gray-900 mb-4 text-center">Nils</h4>
+       <p class="text-gray-700 leading-relaxed">Assistenzarzt mit Begeisterung für Medizinkommunikation. Nils stellt die Fragen, die sich viele stellen, und sorgt dafür, dass niemand auf der Strecke bleibt. Gemeinsam machen wir Medizin zugänglich.</p>
+      </div>
+     </div>
+     <div class="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
+      <h4 class="text-2xl font-bold text-gray-900 mb-4">Unsere Mission</h4>
+      <p class="text-gray-700 leading-relaxed mb-4">Bei Glans&amp;Gloria glauben wir, dass medizinisches Wissen für alle zugänglich sein sollte. Wir nehmen komplexe Themen auseinander, erklären sie verständlich und mit einer Prise Humor – ohne dabei die wissenschaftliche Genauigkeit zu verlieren.</p>
+      <p class="text-gray-700 leading-relaxed">Ob Anatomie, Krankheitsbilder oder aktuelle medizinische Entwicklungen – wir bringen Licht ins Dunkel und helfen dir, deinen Körper besser zu verstehen.</p>
+     </div>
+    </div><!-- Contact Tab -->
+    <div id="contact-content" class="tab-content hidden">
+     <h3 id="contact-title" class="text-3xl font-bold text-gray-900 mb-8">Kontakt</h3>
+     <div class="grid md:grid-cols-2 gap-8">
+      <div class="bg-gradient-to-br from-orange-50 to-white rounded-2xl p-8 border border-orange-100">
+       <h4 class="text-2xl font-bold text-gray-900 mb-6">Schreib uns!</h4>
+       <p class="text-gray-700 mb-6">Hast du Fragen, Themenwünsche oder Feedback? Wir freuen uns von dir zu hören!</p>
+       <div class="space-y-4">
+        <div class="flex items-center space-x-3">
+         <div class="w-12 h-12 gradient-bg rounded-full flex items-center justify-center flex-shrink-0"><span class="text-xl">📧</span>
+         </div>
+         <div>
+          <div class="text-sm text-gray-600">
+           E-Mail
+          </div><a id="contact-email" href="mailto:kontakt@glansundgloria.de" class="text-orange-600 hover:text-orange-700 font-medium">kontakt@glansundgloria.de</a>
+         </div>
+        </div>
+        <div class="flex items-center space-x-3">
+         <div class="w-12 h-12 gradient-bg rounded-full flex items-center justify-center flex-shrink-0"><span class="text-xl">🎵</span>
+         </div>
+         <div>
+          <div class="text-sm text-gray-600">
+           Social Media
+          </div>
+          <div class="text-gray-900 font-medium">
+           @glansundgloria
+          </div>
+         </div>
+        </div>
+       </div>
+      </div>
+      <div class="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
+       <h4 class="text-xl font-bold text-gray-900 mb-6">Höre uns auf deiner Lieblingsplattform</h4>
+       <div class="space-y-3"><a href="#" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-3 p-4 rounded-lg border border-gray-200 hover:border-orange-600 hover:bg-orange-50 transition-all"> <span class="text-2xl">🎧</span> <span class="font-medium text-gray-900">Spotify</span> </a> <a href="#" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-3 p-4 rounded-lg border border-gray-200 hover:border-orange-600 hover:bg-orange-50 transition-all"> <span class="text-2xl">🎙️</span> <span class="font-medium text-gray-900">Apple Podcasts</span> </a> <a href="#" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-3 p-4 rounded-lg border border-gray-200 hover:border-orange-600 hover:bg-orange-50 transition-all"> <span class="text-2xl">📻</span> <span class="font-medium text-gray-900">Google Podcasts</span> </a> <a href="#" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-3 p-4 rounded-lg border border-gray-200 hover:border-orange-600 hover:bg-orange-50 transition-all"> <span class="text-2xl">🔊</span> <span class="font-medium text-gray-900">RSS Feed</span> </a>
+       </div>
+      </div>
+     </div>
     </div>
-    <div class="bottom">
-      © 2025 Glans & Gloria – Alle Rechte vorbehalten · 
+   </main><!-- Footer -->
+   <footer class="w-full bg-gray-900 text-white py-8 px-6 mt-20">
+    <div class="max-w-7xl mx-auto text-center">
+     <p id="footer-text" class="text-gray-400">© 2024 Glans&amp;Gloria - Dein Medizinpodcast von Leo und Nils</p>
+     <p class="text-gray-500 text-sm mt-2">Alle medizinischen Informationen dienen der allgemeinen Bildung und ersetzen keine ärztliche Beratung.</p>
     </div>
-  </footer>
-
+   </footer>
+  </div>
   <script>
-    function toggleMenu() {
-      const menu = document.getElementById('mobileMenu');
-      menu.style.display = (menu.style.display === 'flex') ? 'none' : 'flex';
+    const defaultConfig = {
+      background_color: '#ffffff',
+      surface_color: '#fff7ed',
+      text_color: '#111827',
+      primary_action_color: '#ff6b35',
+      secondary_action_color: '#ff8c42',
+      font_family: 'Inter',
+      font_size: 16,
+      podcast_title: 'Glans&Gloria',
+      podcast_subtitle: 'Dein Medizinpodcast von Leo und Nils',
+      hero_headline: 'Medizin verständlich erklärt',
+      hero_description: 'Komplexe medizinische Themen einfach und unterhaltsam präsentiert von Leo und Nils',
+      cta_button: 'Jetzt reinhören 🎧',
+      about_title: 'Über uns',
+      about_text: 'Facharzt für Innere Medizin mit Leidenschaft für verständliche Wissensvermittlung. Leo bringt komplexe medizinische Zusammenhänge auf den Punkt und sorgt für die wissenschaftliche Fundierung unserer Inhalte.',
+      contact_title: 'Kontakt',
+      contact_email: 'kontakt@glansundgloria.de',
+      footer_text: '© 2024 Glans&Gloria - Dein Medizinpodcast von Leo und Nils'
+    };
+
+    async function onConfigChange(config) {
+      const app = document.getElementById('app');
+      const baseFontStack = 'Inter, sans-serif';
+      const headingFontStack = 'Poppins, sans-serif';
+      const customFont = config.font_family || defaultConfig.font_family;
+      const baseSize = config.font_size || defaultConfig.font_size;
+      
+      // Apply colors
+      app.style.backgroundColor = config.background_color || defaultConfig.background_color;
+      
+      const gradientElements = document.querySelectorAll('.gradient-bg');
+      gradientElements.forEach(el => {
+        const primaryColor = config.primary_action_color || defaultConfig.primary_action_color;
+        const secondaryColor = config.secondary_action_color || defaultConfig.secondary_action_color;
+        el.style.background = `linear-gradient(135deg, ${primaryColor} 0%, ${secondaryColor} 100%)`;
+      });
+      
+      const textElements = document.querySelectorAll('p, span, a, button, div');
+      textElements.forEach(el => {
+        if (!el.classList.contains('text-white') && !el.classList.contains('text-gray-400') && !el.classList.contains('text-gray-500') && !el.classList.contains('text-gray-600')) {
+          el.style.color = config.text_color || defaultConfig.text_color;
+        }
+      });
+      
+      const surfaceElements = document.querySelectorAll('.bg-gradient-to-br');
+      surfaceElements.forEach(el => {
+        const surfaceColor = config.surface_color || defaultConfig.surface_color;
+        el.style.background = `linear-gradient(to bottom right, ${surfaceColor}, ${config.background_color || defaultConfig.background_color})`;
+      });
+      
+      // Apply fonts
+      document.body.style.fontFamily = `${customFont}, ${baseFontStack}`;
+      const headings = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
+      headings.forEach(h => {
+        h.style.fontFamily = `${customFont}, ${headingFontStack}`;
+      });
+      
+      // Apply font sizes
+      document.getElementById('podcast-title').style.fontSize = `${baseSize * 1.5}px`;
+      document.getElementById('podcast-subtitle').style.fontSize = `${baseSize * 0.875}px`;
+      document.getElementById('hero-headline').style.fontSize = `${baseSize * 3.75}px`;
+      document.getElementById('hero-description').style.fontSize = `${baseSize * 1.5}px`;
+      document.getElementById('cta-button').style.fontSize = `${baseSize * 1.125}px`;
+      
+      const contentHeadings = document.querySelectorAll('main h3');
+      contentHeadings.forEach(h => h.style.fontSize = `${baseSize * 1.875}px`);
+      
+      const cardHeadings = document.querySelectorAll('.episode-card h4, main h4');
+      cardHeadings.forEach(h => h.style.fontSize = `${baseSize * 1.25}px`);
+      
+      const bodyText = document.querySelectorAll('main p');
+      bodyText.forEach(p => p.style.fontSize = `${baseSize}px`);
+      
+      // Update text content
+      document.getElementById('podcast-title').textContent = config.podcast_title || defaultConfig.podcast_title;
+      document.getElementById('podcast-subtitle').textContent = config.podcast_subtitle || defaultConfig.podcast_subtitle;
+      document.getElementById('hero-headline').textContent = config.hero_headline || defaultConfig.hero_headline;
+      document.getElementById('hero-description').textContent = config.hero_description || defaultConfig.hero_description;
+      document.getElementById('cta-button').textContent = config.cta_button || defaultConfig.cta_button;
+      document.getElementById('about-title').textContent = config.about_title || defaultConfig.about_title;
+      document.getElementById('about-text').textContent = config.about_text || defaultConfig.about_text;
+      document.getElementById('contact-title').textContent = config.contact_title || defaultConfig.contact_title;
+      document.getElementById('contact-email').textContent = config.contact_email || defaultConfig.contact_email;
+      document.getElementById('contact-email').href = `mailto:${config.contact_email || defaultConfig.contact_email}`;
+      document.getElementById('footer-text').textContent = config.footer_text || defaultConfig.footer_text;
+    }
+
+    function mapToCapabilities(config) {
+      return {
+        recolorables: [
+          {
+            get: () => config.background_color || defaultConfig.background_color,
+            set: (value) => {
+              config.background_color = value;
+              window.elementSdk.setConfig({ background_color: value });
+            }
+          },
+          {
+            get: () => config.surface_color || defaultConfig.surface_color,
+            set: (value) => {
+              config.surface_color = value;
+              window.elementSdk.setConfig({ surface_color: value });
+            }
+          },
+          {
+            get: () => config.text_color || defaultConfig.text_color,
+            set: (value) => {
+              config.text_color = value;
+              window.elementSdk.setConfig({ text_color: value });
+            }
+          },
+          {
+            get: () => config.primary_action_color || defaultConfig.primary_action_color,
+            set: (value) => {
+              config.primary_action_color = value;
+              window.elementSdk.setConfig({ primary_action_color: value });
+            }
+          },
+          {
+            get: () => config.secondary_action_color || defaultConfig.secondary_action_color,
+            set: (value) => {
+              config.secondary_action_color = value;
+              window.elementSdk.setConfig({ secondary_action_color: value });
+            }
+          }
+        ],
+        borderables: [],
+        fontEditable: {
+          get: () => config.font_family || defaultConfig.font_family,
+          set: (value) => {
+            config.font_family = value;
+            window.elementSdk.setConfig({ font_family: value });
+          }
+        },
+        fontSizeable: {
+          get: () => config.font_size || defaultConfig.font_size,
+          set: (value) => {
+            config.font_size = value;
+            window.elementSdk.setConfig({ font_size: value });
+          }
+        }
+      };
+    }
+
+    function mapToEditPanelValues(config) {
+      return new Map([
+        ['podcast_title', config.podcast_title || defaultConfig.podcast_title],
+        ['podcast_subtitle', config.podcast_subtitle || defaultConfig.podcast_subtitle],
+        ['hero_headline', config.hero_headline || defaultConfig.hero_headline],
+        ['hero_description', config.hero_description || defaultConfig.hero_description],
+        ['cta_button', config.cta_button || defaultConfig.cta_button],
+        ['about_title', config.about_title || defaultConfig.about_title],
+        ['about_text', config.about_text || defaultConfig.about_text],
+        ['contact_title', config.contact_title || defaultConfig.contact_title],
+        ['contact_email', config.contact_email || defaultConfig.contact_email],
+        ['footer_text', config.footer_text || defaultConfig.footer_text]
+      ]);
+    }
+
+    // Tab functionality
+    function switchTab(tabName) {
+      document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.add('hidden');
+      });
+      
+      document.querySelectorAll('.tab-button').forEach(btn => {
+        btn.classList.remove('active');
+        btn.classList.remove('text-gray-900');
+        btn.classList.add('text-gray-600');
+      });
+      
+      document.getElementById(`${tabName}-content`).classList.remove('hidden');
+      
+      document.querySelectorAll(`[data-tab="${tabName}"]`).forEach(btn => {
+        btn.classList.add('active');
+        btn.classList.add('text-gray-900');
+        btn.classList.remove('text-gray-600');
+      });
+    }
+
+    document.querySelectorAll('.tab-button').forEach(button => {
+      button.addEventListener('click', () => {
+        const tab = button.getAttribute('data-tab');
+        switchTab(tab);
+        
+        const mobileMenu = document.getElementById('mobile-menu');
+        if (window.innerWidth < 768) {
+          mobileMenu.classList.add('hidden');
+        }
+      });
+    });
+
+    document.getElementById('mobile-menu-btn').addEventListener('click', () => {
+      const mobileMenu = document.getElementById('mobile-menu');
+      mobileMenu.classList.toggle('hidden');
+    });
+
+    document.getElementById('cta-button').addEventListener('click', () => {
+      switchTab('episodes');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange,
+        mapToCapabilities,
+        mapToEditPanelValues
+      });
     }
   </script>
-</body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9af01040c62fb173',t:'MTc2NTkwNzg1MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
