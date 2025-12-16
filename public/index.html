@@ -98,6 +98,32 @@
       <h3 class="text-3xl font-bold text-gray-900">Aktuelle Folgen</h3>
       <div class="flex items-center space-x-2 text-orange-600"><span class="w-3 h-3 bg-orange-600 rounded-full pulse-animation"></span> <span class="font-medium">Neue Folge jeden Montag</span>
       </div>
+     </div><!-- Spotify Embed Section -->
+     <div class="bg-gradient-to-br from-orange-50 to-white rounded-2xl p-8 border-2 border-orange-200 mb-12">
+      <div class="flex items-center justify-between mb-6">
+       <h4 class="text-2xl font-bold text-gray-900">🎧 Neueste Folge</h4><span class="text-sm text-orange-600 font-semibold bg-orange-100 px-3 py-1 rounded-full">NEU</span>
+      </div>
+      <div id="spotify-embed-container" class="bg-white rounded-xl p-6 border border-gray-200">
+       <div class="text-center py-8">
+        <div class="text-6xl mb-4">
+         🎙️
+        </div>
+        <p class="text-gray-600 mb-4">Hier kannst du deine neueste Spotify-Folge einbetten</p>
+        <div class="bg-gray-50 rounded-lg p-4 text-left max-w-2xl mx-auto">
+         <p class="text-sm text-gray-700 mb-2 font-semibold">So funktioniert's:</p>
+         <ol class="text-sm text-gray-600 space-y-1 list-decimal list-inside">
+          <li>Gehe zu deiner Folge auf Spotify</li>
+          <li>Klicke auf die drei Punkte (•••)</li>
+          <li>Wähle "Teilen" → "Folge einbetten"</li>
+          <li>Kopiere den iframe-Code</li>
+          <li>Füge ihn hier in den Code ein (ersetze den Platzhalter-Inhalt)</li>
+         </ol>
+         <div class="mt-4 p-3 bg-orange-50 rounded border border-orange-200">
+          <p class="text-xs text-gray-700 font-mono">&lt;iframe style="border-radius:12px" src="https://open.spotify.com/embed/episode/DEINE-EPISODE-ID" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"&gt;&lt;/iframe&gt;</p>
+         </div>
+        </div>
+       </div><iframe data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/show/3tMk5ovVfliIog57jYsu4Z?utm_source=generator&theme=0" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe><!-- Hier den Spotify iframe einfügen - Beispiel: --> <!-- <iframe style="border-radius:12px" src="https://open.spotify.com/embed/episode/DEINE-EPISODE-ID" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe> -->
+      </div>
      </div>
      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6"><!-- Episode 1 -->
       <div class="episode-card bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100">
@@ -422,5 +448,5 @@
       });
     }
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9af01040c62fb173',t:'MTc2NTkwNzg1MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9af017e651e6b173',t:'MTc2NTkwODE2My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
