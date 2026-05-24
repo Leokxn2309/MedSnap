@@ -161,6 +161,12 @@ nav{position:sticky;top:0;z-index:200;background:rgba(255,255,255,0.96);backdrop
 .ep-btn svg{width:13px;height:13px;fill:currentColor;flex-shrink:0;}
 .no-results{text-align:center;padding:3rem 2rem;color:var(--muted);font-size:15px;}
 
+/* ── MEHR ANZEIGEN ── */
+.show-more-wrap{text-align:center;margin-top:1.2rem;}
+.btn-show-more{background:#fff;border:2px solid #e0e0e0;color:var(--text);padding:12px 32px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;display:inline-flex;align-items:center;gap:8px;}
+.btn-show-more:hover{border-color:var(--orange);color:var(--orange);}
+.btn-show-more svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2.5;transition:transform .2s;}
+
 /* ── SHARE BUTTON ── */
 .ep-share{position:relative;display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;background:var(--gray);color:var(--muted);border:1px solid #ddd;transition:all .15s;font-family:'DM Sans',sans-serif;}
 .ep-share:hover{border-color:var(--orange);color:var(--orange);}
@@ -329,6 +335,7 @@ footer a:hover{color:var(--orange);}
     <div class="nav-logo">GLANS <span>&</span> GLORIA</div>
     <div class="nav-links">
       <a href="#folgen">Alle Folgen</a>
+      <a href="#gaeste">Gäste</a>
       <a href="#ueber-uns">Über uns</a>
       <a href="#kontakt">Kontakt</a>
     </div>
@@ -447,6 +454,12 @@ footer a:hover{color:var(--orange);}
     <div class="search-count" id="searchCount"></div>
 
     <div class="episodes-list" id="episodes-list"><!-- filled by JS --></div>
+    <div class="show-more-wrap" id="show-more-wrap" style="display:none;">
+      <button class="btn-show-more" id="showMoreBtn">
+        <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+        Mehr Folgen anzeigen
+      </button>
+    </div>
   </div>
 </section>
 
@@ -886,11 +899,40 @@ function renderLatest(){
     </div>`;
 }
 
-// ── Render Episodes (with optional search filter) ──
+// ── Render Episodes (with search + pagination) ──
 let allEpisodes = [];
+const EP_PAGE_SIZE = 5;
+let epVisible = EP_PAGE_SIZE;
 
-function renderEpisodes(filter=''){
+function epCardHtml(ep){
+  const platforms = [];
+  if(ep.spotify&&ep.spotify!='#') platforms.push(`<a href="${ep.spotify}" target="_blank" class="ep-btn ep-btn-spotify"><svg viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.586 14.424a.622.622 0 01-.857.207c-2.348-1.435-5.304-1.76-8.785-.964a.622.622 0 11-.277-1.215c3.809-.87 7.076-.496 9.712 1.115a.623.623 0 01.207.857zm1.223-2.72a.778.778 0 01-1.072.257c-2.687-1.652-6.785-2.131-9.965-1.166a.778.778 0 01-.97-.518.779.779 0 01.519-.971c3.632-1.102 8.147-.568 11.234 1.326a.777.777 0 01.254 1.072zm.105-2.835C14.692 8.95 9.375 8.775 6.297 9.71a.935.935 0 11-.543-1.79c3.533-1.072 9.404-.865 13.115 1.338a.936.936 0 01-.954 1.611z"/></svg>Spotify</a>`);
+  if(ep.apple) platforms.push(`<a href="${ep.apple}" target="_blank" class="ep-btn ep-btn-apple">🎙 Apple</a>`);
+  if(ep.youtube) platforms.push(`<a href="${ep.youtube}" target="_blank" class="ep-btn ep-btn-youtube"><svg viewBox="0 0 24 24"><path d="M21.593 7.203a2.506 2.506 0 00-1.762-1.766C18.265 5.007 12 5 12 5s-6.264-.007-7.831.404a2.56 2.56 0 00-1.766 1.778C2.036 8.746 2 10.266 2 12.001c0 1.734.036 3.255.406 4.797a2.5 2.5 0 001.765 1.765C5.739 19.003 12 19 12 19s6.265.003 7.831-.437a2.5 2.5 0 001.762-1.765C21.961 15.258 22 13.739 22 12.004c0-1.735-.036-3.255-.407-4.801zM9.996 15.005l.005-6 5.207 3.005-5.212 2.995z"/></svg>YouTube</a>`);
+  const shareUrl  = ep.spotify && ep.spotify !== '#' ? ep.spotify : window.location.href;
+  const shareText = `🎙️ Glans & Gloria – Folge ${ep.num}: „${ep.title}" ${shareUrl}`;
+  return `<div class="ep-card">
+    <div class="ep-num">${String(ep.num).padStart(2,'0')}</div>
+    <div class="ep-body">
+      <div class="ep-meta">${fmtDate(ep.date)}${ep.duration?' · '+ep.duration:''}</div>
+      <div class="ep-title">${ep.title}</div>
+      ${ep.guest?`<div class="ep-guest">${ep.guest}</div>`:''}
+      ${ep.desc?`<div class="ep-desc">${ep.desc}</div>`:''}
+      <div class="ep-platforms">
+        ${platforms.join('')}
+        <button class="ep-share" onclick="shareEp(${JSON.stringify(ep.title)},${JSON.stringify(shareUrl)},${JSON.stringify(shareText)})">
+          <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+          Teilen
+        </button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderEpisodes(filter='', resetPagination=true){
   allEpisodes = LS.get('gg_episodes',defaultEpisodes).sort((a,b)=>b.num-a.num);
+  if(resetPagination) epVisible = EP_PAGE_SIZE;
+
   const q = filter.trim().toLowerCase();
   const filtered = q
     ? allEpisodes.filter(ep =>
@@ -909,38 +951,32 @@ function renderEpisodes(filter=''){
   }
 
   const list = document.getElementById('episodes-list');
+  const moreWrap = document.getElementById('show-more-wrap');
+  const moreBtn  = document.getElementById('showMoreBtn');
+
   if(filtered.length===0){
     list.innerHTML = `<div class="no-results">Keine Folgen gefunden für „${filter}"</div>`;
+    moreWrap.style.display = 'none';
     return;
   }
 
-  list.innerHTML = filtered.map(ep=>{
-    const platforms = [];
-    if(ep.spotify&&ep.spotify!='#') platforms.push(`<a href="${ep.spotify}" target="_blank" class="ep-btn ep-btn-spotify"><svg viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.586 14.424a.622.622 0 01-.857.207c-2.348-1.435-5.304-1.76-8.785-.964a.622.622 0 11-.277-1.215c3.809-.87 7.076-.496 9.712 1.115a.623.623 0 01.207.857zm1.223-2.72a.778.778 0 01-1.072.257c-2.687-1.652-6.785-2.131-9.965-1.166a.778.778 0 01-.97-.518.779.779 0 01.519-.971c3.632-1.102 8.147-.568 11.234 1.326a.777.777 0 01.254 1.072zm.105-2.835C14.692 8.95 9.375 8.775 6.297 9.71a.935.935 0 11-.543-1.79c3.533-1.072 9.404-.865 13.115 1.338a.936.936 0 01-.954 1.611z"/></svg>Spotify</a>`);
-    if(ep.apple) platforms.push(`<a href="${ep.apple}" target="_blank" class="ep-btn ep-btn-apple">🎙 Apple</a>`);
-    if(ep.youtube) platforms.push(`<a href="${ep.youtube}" target="_blank" class="ep-btn ep-btn-youtube"><svg viewBox="0 0 24 24"><path d="M21.593 7.203a2.506 2.506 0 00-1.762-1.766C18.265 5.007 12 5 12 5s-6.264-.007-7.831.404a2.56 2.56 0 00-1.766 1.778C2.036 8.746 2 10.266 2 12.001c0 1.734.036 3.255.406 4.797a2.5 2.5 0 001.765 1.765C5.739 19.003 12 19 12 19s6.265.003 7.831-.437a2.5 2.5 0 001.762-1.765C21.961 15.258 22 13.739 22 12.004c0-1.735-.036-3.255-.407-4.801zM9.996 15.005l.005-6 5.207 3.005-5.212 2.995z"/></svg>YouTube</a>`);
+  // Bei aktiver Suche: alle anzeigen, kein Button
+  const toShow = q ? filtered : filtered.slice(0, epVisible);
+  list.innerHTML = toShow.map(epCardHtml).join('');
 
-    const shareUrl  = ep.spotify && ep.spotify !== '#' ? ep.spotify : window.location.href;
-    const shareText = `🎙️ Glans & Gloria – Folge ${ep.num}: „${ep.title}" ${shareUrl}`;
-
-    return `<div class="ep-card">
-      <div class="ep-num">${String(ep.num).padStart(2,'0')}</div>
-      <div class="ep-body">
-        <div class="ep-meta">${fmtDate(ep.date)}${ep.duration?' · '+ep.duration:''}</div>
-        <div class="ep-title">${ep.title}</div>
-        ${ep.guest?`<div class="ep-guest">${ep.guest}</div>`:''}
-        ${ep.desc?`<div class="ep-desc">${ep.desc}</div>`:''}
-        <div class="ep-platforms">
-          ${platforms.join('')}
-          <button class="ep-share" onclick="shareEp(${JSON.stringify(ep.title)},${JSON.stringify(shareUrl)},${JSON.stringify(shareText)})">
-            <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-            Teilen
-          </button>
-        </div>
-      </div>
-    </div>`;
-  }).join('');
+  const remaining = filtered.length - toShow.length;
+  if(!q && remaining > 0){
+    moreWrap.style.display = 'block';
+    moreBtn.innerHTML = `<svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg> ${remaining} weitere Folge${remaining===1?'':'n'} anzeigen`;
+  } else {
+    moreWrap.style.display = 'none';
+  }
 }
+
+document.getElementById('showMoreBtn').addEventListener('click', ()=>{
+  epVisible += EP_PAGE_SIZE;
+  renderEpisodes(document.getElementById('episodeSearch').value, false);
+});
 
 // ── Render Gallery ──
 function renderGallery(){
