@@ -1,447 +1,1421 @@
-<!doctype html>
-<html lang="de" class="h-full">
- <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Glans&amp;Gloria - Dein Medizinpodcast</title>
-  <script src="/_sdk/element_sdk.js"></script>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&amp;family=Inter:wght@400;500&amp;display=swap" rel="stylesheet">
-  <style>
-    body {
-      box-sizing: border-box;
-    }
-    
-    * {
-      font-family: 'Inter', sans-serif;
-    }
-    
-    h1, h2, h3, h4, h5, h6 {
-      font-family: 'Poppins', sans-serif;
-    }
-    
-    .gradient-bg {
-      background: linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%);
-    }
-    
-    .tab-button {
-      position: relative;
-      transition: all 0.3s ease;
-    }
-    
-    .tab-button.active::after {
-      content: '';
-      position: absolute;
-      bottom: -2px;
-      left: 0;
-      right: 0;
-      height: 3px;
-      background: #ff6b35;
-    }
-    
-    .episode-card {
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    
-    .episode-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 12px 24px rgba(255, 107, 53, 0.15);
-    }
-    
-    .pulse-animation {
-      animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-    }
-    
-    @keyframes pulse {
-      0%, 100% {
-        opacity: 1;
-      }
-      50% {
-        opacity: 0.7;
-      }
-    }
-  </style>
-  <style>@view-transition { navigation: auto; }</style>
-  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
- </head>
- <body class="h-full">
-  <div id="app" class="w-full h-full overflow-auto bg-white"><!-- Header -->
-   <header class="w-full bg-white shadow-md sticky top-0 z-50">
-    <div class="max-w-7xl mx-auto px-6 py-4">
-     <div class="flex items-center justify-between">
-      <div class="flex items-center space-x-3">
-       <div class="w-12 h-12 gradient-bg rounded-full flex items-center justify-center"><span class="text-2xl">🎙️</span>
-       </div>
-       <div>
-        <h1 id="podcast-title" class="text-2xl font-bold text-gray-900">Glans&amp;Gloria</h1>
-        <p id="podcast-subtitle" class="text-sm text-gray-600">Dein Medizinpodcast von Leo und Nils</p>
-       </div>
-      </div>
-      <nav class="hidden md:flex space-x-8"><button class="tab-button active text-gray-900 font-medium pb-2" data-tab="episodes">Folgen</button> <button class="tab-button text-gray-600 hover:text-gray-900 font-medium pb-2" data-tab="about">Über uns</button> <button class="tab-button text-gray-600 hover:text-gray-900 font-medium pb-2" data-tab="contact">Kontakt</button>
-      </nav><button id="mobile-menu-btn" class="md:hidden text-gray-900">
-       <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-       </svg></button>
-     </div><!-- Mobile Menu -->
-     <nav id="mobile-menu" class="hidden md:hidden mt-4 pb-4 space-y-2"><button class="tab-button active block w-full text-left px-4 py-2 text-gray-900 font-medium" data-tab="episodes">Folgen</button> <button class="tab-button block w-full text-left px-4 py-2 text-gray-600 hover:text-gray-900 font-medium" data-tab="about">Über uns</button> <button class="tab-button block w-full text-left px-4 py-2 text-gray-600 hover:text-gray-900 font-medium" data-tab="contact">Kontakt</button>
-     </nav>
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Glans & Gloria – Dein Medizinpodcast</title>
+
+<!-- SEO & Social Sharing -->
+<meta name="description" content="Glans & Gloria – der unabhängige Medizinpodcast von Nils Labitzke und Leonard Kühn. Verständlich, wissenschaftlich fundiert und authentisch. Jetzt auf Spotify, Apple Podcasts und YouTube hören.">
+<meta name="robots" content="index, follow">
+
+<!-- Open Graph (Facebook, WhatsApp, LinkedIn) -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Glans & Gloria – Dein Medizinpodcast">
+<meta property="og:description" content="Medizinstudierende Nils und Leo sprechen mit Ärzt:innen, Wissenschaftler:innen und Expert:innen. Verständlich, wissenschaftlich fundiert und authentisch.">
+<meta property="og:image" content="CoverGlansneu.jpg">
+<meta property="og:locale" content="de_DE">
+
+<!-- Twitter / X Cards -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Glans & Gloria – Dein Medizinpodcast">
+<meta name="twitter:description" content="Medizinstudierende Nils und Leo sprechen mit Ärzt:innen, Wissenschaftler:innen und Expert:innen. Verständlich, wissenschaftlich fundiert und authentisch.">
+<meta name="twitter:image" content="CoverGlansneu.jpg">
+
+<!-- Podcast Structured Data -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "PodcastSeries",
+  "name": "Glans & Gloria",
+  "description": "Der unabhängige Medizinpodcast von Nils Labitzke und Leonard Kühn.",
+  "url": "https://glansundgloria.de",
+  "inLanguage": "de",
+  "author": [
+    {"@type": "Person", "name": "Nils Labitzke"},
+    {"@type": "Person", "name": "Leonard Kühn"}
+  ]
+}
+</script>
+
+<!-- Sitemap für Suchmaschinen -->
+<link rel="sitemap" type="application/xml" href="/sitemap.xml">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --orange:#ffa547;
+  --orange-dark:#e08830;
+  --orange-light:#fff4e6;
+  --black:#141414;
+  --white:#FFFFFF;
+  --gray:#F5F4F0;
+  --text:#1A1A1A;
+  --muted:#6B6B6B;
+  --radius:12px;
+}
+html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;background:var(--white);color:var(--text);overflow-x:hidden;}
+a{text-decoration:none;color:inherit;}
+img{display:block;}
+
+/* ── NAV ── */
+nav{position:sticky;top:0;z-index:200;background:rgba(255,255,255,0.96);backdrop-filter:blur(10px);border-bottom:1px solid #eee;}
+.nav-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:64px;padding:0 2rem;}
+.nav-logo{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;}
+.nav-logo span{color:var(--orange);}
+.nav-links{display:flex;gap:2rem;font-size:14px;font-weight:500;color:var(--muted);}
+.nav-links a:hover{color:var(--orange);}
+.nav-platform-icons{display:flex;align-items:center;gap:12px;}
+.nav-platform-icons a{color:var(--muted);font-size:20px;transition:color .2s;}
+.nav-platform-icons a:hover{color:var(--orange);}
+.nav-cta{background:var(--orange);color:#fff;padding:8px 18px;border-radius:8px;font-size:13px;font-weight:700;transition:background .2s;}
+.nav-cta:hover{background:var(--orange-dark);}
+
+/* ── HERO ── */
+.hero{background:var(--orange);min-height:92vh;display:flex;align-items:stretch;overflow:hidden;position:relative;}
+.hero-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;align-items:end;width:100%;padding:0 2rem;}
+.hero-text{padding:5rem 0 4rem;z-index:2;}
+.hero-byline{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(0,0,0,0.55);margin-bottom:1rem;}
+.hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(72px,9vw,120px);line-height:0.9;letter-spacing:2px;color:var(--black);margin-bottom:1.4rem;}
+.hero-sub{font-size:18px;font-weight:500;color:var(--black);line-height:1.5;max-width:440px;margin-bottom:2rem;}
+.hero-desc{font-size:14px;color:rgba(0,0,0,0.65);line-height:1.7;max-width:420px;margin-bottom:2.5rem;}
+.hero-btns{display:flex;gap:12px;flex-wrap:wrap;}
+.btn-black{background:var(--black);color:#fff;padding:14px 28px;border-radius:8px;font-weight:700;font-size:14px;transition:background .2s;display:inline-flex;align-items:center;gap:8px;}
+.btn-black:hover{background:#333;}
+.btn-outline{border:2px solid var(--black);color:var(--black);padding:14px 28px;border-radius:8px;font-weight:700;font-size:14px;transition:all .2s;}
+.btn-outline:hover{background:rgba(0,0,0,0.08);}
+.hero-photo{display:flex;align-items:flex-end;justify-content:center;position:relative;}
+.hero-photo img{max-height:88vh;width:auto;object-fit:contain;object-position:bottom;}
+.hero-arrow{position:absolute;bottom:2.5rem;left:0;display:flex;flex-direction:column;align-items:center;gap:6px;color:rgba(0,0,0,0.5);font-size:12px;font-weight:600;letter-spacing:1px;text-transform:uppercase;}
+.hero-arrow svg{animation:bounce 1.5s infinite;}
+@keyframes bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(6px);}}
+
+/* ── PLATFORM BAR ── */
+.platform-bar{background:var(--black);padding:1.2rem 2rem;}
+.platform-bar-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap;}
+.platform-label{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.35);}
+.platform-link{display:flex;align-items:center;gap:7px;color:rgba(255,255,255,0.6);font-size:13px;font-weight:500;transition:color .2s;padding:6px 12px;border-radius:6px;border:1px solid rgba(255,255,255,0.12);}
+.platform-link:hover{color:#fff;border-color:var(--orange);}
+.platform-link svg{width:16px;height:16px;fill:currentColor;flex-shrink:0;}
+
+/* ── STATS ── */
+.stats{background:var(--white);padding:4rem 2rem;border-bottom:1px solid #eee;}
+.stats-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:2rem;}
+.stat-item{text-align:center;}
+.stat-num{font-family:'Bebas Neue',sans-serif;font-size:clamp(52px,7vw,80px);color:var(--black);line-height:1;}
+.stat-label{font-size:14px;color:var(--muted);font-style:italic;margin-top:4px;}
+
+/* ── LATEST EPISODE ── */
+.latest{background:var(--white);padding:5rem 2rem;}
+.latest-inner{max-width:1100px;margin:0 auto;}
+.section-tag{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--orange);margin-bottom:8px;}
+.section-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(36px,5vw,56px);letter-spacing:1px;color:var(--black);margin-bottom:2rem;}
+.latest-card{background:var(--black);border-radius:20px;padding:2.5rem;display:grid;grid-template-columns:1fr auto;gap:2rem;align-items:center;}
+.latest-ep-tag{display:inline-block;background:var(--orange);color:#fff;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:4px 12px;border-radius:4px;margin-bottom:1rem;}
+.latest-title{font-size:clamp(20px,2.5vw,28px);font-weight:700;color:#fff;line-height:1.3;margin-bottom:0.8rem;}
+.latest-desc{font-size:14px;color:rgba(255,255,255,0.6);line-height:1.7;max-width:500px;margin-bottom:1.5rem;}
+.latest-btns{display:flex;gap:10px;flex-wrap:wrap;}
+.btn-orange{background:var(--orange);color:#fff;padding:12px 22px;border-radius:8px;font-weight:700;font-size:13px;transition:background .2s;display:inline-flex;align-items:center;gap:7px;}
+.btn-orange:hover{background:var(--orange-dark);}
+.btn-white-outline{border:1.5px solid rgba(255,255,255,0.3);color:#fff;padding:12px 22px;border-radius:8px;font-weight:600;font-size:13px;transition:border-color .2s;display:inline-flex;align-items:center;gap:7px;}
+.btn-white-outline:hover{border-color:#fff;}
+.latest-thumb{border-radius:12px;overflow:hidden;width:260px;aspect-ratio:16/9;background:#222;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+.latest-thumb img{width:100%;height:100%;object-fit:cover;}
+.latest-thumb-placeholder{color:rgba(255,255,255,0.2);font-size:40px;}
+
+/* ── EPISODES ── */
+.episodes{padding:5rem 2rem;background:var(--gray);}
+.episodes-inner{max-width:1100px;margin:0 auto;}
+
+/* ── SEARCH BAR ── */
+.search-wrap{position:relative;margin-bottom:1.5rem;}
+.search-input{width:100%;padding:13px 16px 13px 44px;border:2px solid #e0e0e0;border-radius:10px;font-size:15px;font-family:'DM Sans',sans-serif;color:var(--text);background:#fff;outline:none;transition:border-color .2s;}
+.search-input:focus{border-color:var(--orange);}
+.search-input::placeholder{color:#aaa;}
+.search-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:18px;height:18px;stroke:var(--muted);stroke-width:2;fill:none;pointer-events:none;}
+.search-clear{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--muted);font-size:18px;line-height:1;padding:4px;display:none;}
+.search-clear.visible{display:block;}
+.search-count{font-size:13px;color:var(--muted);margin-bottom:1rem;min-height:20px;}
+
+.episodes-list{display:flex;flex-direction:column;gap:0;border:1px solid #ddd;border-radius:var(--radius);overflow:hidden;background:#fff;}
+.ep-card{padding:1.4rem 1.6rem;display:grid;grid-template-columns:56px 1fr;gap:1.2rem;align-items:start;border-bottom:1px solid #f0f0f0;transition:background .15s;}
+.ep-card:last-child{border-bottom:none;}
+.ep-card:hover{background:var(--orange-light);}
+.ep-num{font-family:'Bebas Neue',sans-serif;font-size:30px;color:var(--orange);line-height:1;padding-top:2px;}
+.ep-body{display:flex;flex-direction:column;gap:4px;}
+.ep-meta{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;}
+.ep-title{font-size:15px;font-weight:600;color:var(--black);line-height:1.35;}
+.ep-guest{font-size:13px;color:var(--orange);font-weight:500;}
+.ep-desc{font-size:13px;color:var(--muted);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.ep-platforms{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;}
+.ep-btn{display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:6px;font-size:12px;font-weight:600;transition:all .15s;}
+.ep-btn-spotify{background:#1DB954;color:#fff;}
+.ep-btn-spotify:hover{background:#17a349;}
+.ep-btn-apple{background:#9c27b0;color:#fff;}
+.ep-btn-apple:hover{background:#7b1fa2;}
+.ep-btn-youtube{background:#FF0000;color:#fff;}
+.ep-btn-youtube:hover{background:#cc0000;}
+.ep-btn svg{width:13px;height:13px;fill:currentColor;flex-shrink:0;}
+.no-results{text-align:center;padding:3rem 2rem;color:var(--muted);font-size:15px;}
+
+/* ── SHARE BUTTON ── */
+.ep-share{position:relative;display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;background:var(--gray);color:var(--muted);border:1px solid #ddd;transition:all .15s;font-family:'DM Sans',sans-serif;}
+.ep-share:hover{border-color:var(--orange);color:var(--orange);}
+.ep-share svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;}
+.share-toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);background:var(--black);color:#fff;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:600;z-index:9999;opacity:0;pointer-events:none;transition:opacity .2s;}
+.share-toast.show{opacity:1;}
+
+/* ── SPOTIFY EMBED ── */
+.latest-card{background:var(--black);border-radius:20px;padding:2.5rem;display:flex;flex-direction:column;gap:1.8rem;}
+.latest-card-top{display:grid;grid-template-columns:1fr auto;gap:2rem;align-items:start;}
+.latest-embed{border-radius:12px;overflow:hidden;width:100%;}
+.latest-embed iframe{display:block;border-radius:12px;}
+
+/* ── DONATE ── */
+.donate{background:var(--orange);padding:5rem 2rem;}
+.donate-inner{max-width:900px;margin:0 auto;text-align:center;}
+.donate h2{font-family:'Bebas Neue',sans-serif;font-size:clamp(36px,5vw,60px);color:var(--black);letter-spacing:1px;margin-bottom:1rem;}
+.donate p{font-size:16px;color:rgba(0,0,0,0.65);line-height:1.7;max-width:600px;margin:0 auto 2rem;font-weight:400;}
+.donate-small{font-size:13px;color:rgba(0,0,0,0.5);margin-top:1rem;font-weight:400;}
+.btn-donate{background:var(--black);color:#fff;padding:16px 36px;border-radius:10px;font-weight:700;font-size:16px;display:inline-flex;align-items:center;gap:10px;transition:background .2s;}
+.btn-donate:hover{background:#333;}
+.donate-icon{font-size:24px;}
+
+/* ── GALLERY ── */
+.gallery{padding:5rem 2rem;background:var(--white);}
+.gallery-inner{max-width:1100px;margin:0 auto;}
+.gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:4px;margin-top:2rem;border-radius:var(--radius);overflow:hidden;}
+.gallery-item{aspect-ratio:1;overflow:hidden;position:relative;background:#f0f0f0;cursor:pointer;}
+.gallery-item img{width:100%;height:100%;object-fit:cover;transition:transform .3s;}
+.gallery-item:hover img{transform:scale(1.06);}
+.gallery-item-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:var(--gray);color:var(--muted);}
+.gallery-add{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:var(--orange-light);border:2px dashed var(--orange);border-radius:4px;cursor:pointer;color:var(--orange);font-size:12px;font-weight:600;transition:background .2s;}
+.gallery-add:hover{background:#ffe4c8;}
+.gallery-add svg{width:28px;height:28px;stroke:var(--orange);stroke-width:2;fill:none;}
+
+/* ── HOSTS ── */
+.hosts{background:var(--black);padding:5rem 2rem;}
+.hosts-inner{max-width:1100px;margin:0 auto;}
+.hosts .section-title{color:#fff;}
+.hosts-grid{display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin-top:2.5rem;}
+.host-card{background:#1E1E1E;border-radius:20px;overflow:hidden;}
+.host-photo{width:100%;aspect-ratio:4/3;background:var(--orange);overflow:hidden;}
+.host-photo img{width:100%;height:100%;object-fit:cover;object-position:top;}
+.host-photo-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:var(--orange);color:rgba(255,255,255,0.4);font-size:48px;}
+.host-info{padding:1.5rem;}
+.host-name{font-size:20px;font-weight:700;color:#fff;margin-bottom:4px;}
+.host-role{font-size:12px;color:var(--orange);font-weight:600;text-transform:uppercase;letter-spacing:1px;margin-bottom:0.8rem;}
+.host-bio{font-size:14px;color:rgba(255,255,255,0.6);line-height:1.7;}
+
+/* ── CONTACT ── */
+.contact{padding:5rem 2rem;background:var(--gray);}
+.contact-inner{max-width:800px;margin:0 auto;}
+.contact-wrap{background:var(--black);border-radius:20px;padding:3.5rem;display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:start;}
+.contact-left h2{font-family:'Bebas Neue',sans-serif;font-size:48px;color:#fff;line-height:1;margin-bottom:1rem;}
+.contact-left p{color:rgba(255,255,255,0.6);font-size:14px;line-height:1.7;margin-bottom:1.5rem;}
+.contact-info{display:flex;flex-direction:column;gap:12px;}
+.contact-row{display:flex;align-items:center;gap:10px;color:rgba(255,255,255,0.7);font-size:14px;}
+.contact-row svg{width:18px;height:18px;stroke:var(--orange);stroke-width:2;fill:none;flex-shrink:0;}
+.contact-row a{color:rgba(255,255,255,0.7);transition:color .2s;}
+.contact-row a:hover{color:var(--orange);}
+.contact-form{display:flex;flex-direction:column;gap:12px;}
+.contact-form input,.contact-form textarea{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:12px 14px;font-size:14px;color:#fff;font-family:'DM Sans',sans-serif;outline:none;transition:border-color .2s;width:100%;}
+.contact-form input::placeholder,.contact-form textarea::placeholder{color:rgba(255,255,255,0.35);}
+.contact-form input:focus,.contact-form textarea:focus{border-color:var(--orange);}
+.contact-form textarea{resize:vertical;min-height:110px;}
+.contact-form button{background:var(--orange);color:#fff;border:none;padding:13px;border-radius:8px;font-weight:700;font-size:14px;cursor:pointer;transition:background .2s;font-family:'DM Sans',sans-serif;}
+.contact-form button:hover{background:var(--orange-dark);}
+
+/* ── LEGAL PAGES ── */
+.legal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:500;display:none;align-items:center;justify-content:center;padding:1rem;}
+.legal-overlay.open{display:flex;}
+.legal-box{background:#fff;border-radius:16px;max-width:720px;width:100%;max-height:88vh;overflow-y:auto;padding:3rem;position:relative;box-shadow:0 24px 80px rgba(0,0,0,0.3);}
+.legal-box h2{font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:1px;margin-bottom:1.5rem;}
+.legal-box h3{font-size:15px;font-weight:700;margin:1.5rem 0 0.4rem;}
+.legal-box p,.legal-box li{font-size:14px;line-height:1.8;color:#444;}
+.legal-box ul{padding-left:1.2rem;margin-bottom:0.8rem;}
+.legal-box a{color:var(--orange);}
+.legal-close{position:absolute;top:1.2rem;right:1.2rem;background:none;border:none;font-size:22px;cursor:pointer;color:#888;line-height:1;padding:4px 8px;}
+.legal-close:hover{color:#333;}
+
+/* ── FOOTER ── */
+footer{background:var(--black);color:rgba(255,255,255,0.4);padding:2.5rem 2rem;text-align:center;border-top:1px solid #222;}
+.footer-logo{font-family:'Bebas Neue',sans-serif;font-size:26px;color:#fff;letter-spacing:2px;margin-bottom:6px;}
+.footer-logo span{color:var(--orange);}
+footer p{font-size:13px;line-height:1.9;}
+footer a{color:rgba(255,255,255,0.4);transition:color .2s;}
+footer a:hover{color:var(--orange);}
+
+/* ── ADMIN BUTTON ── */
+.admin-toggle{position:fixed;bottom:28px;right:28px;background:var(--black);color:#fff;border:none;border-radius:50px;padding:14px 20px;display:none;align-items:center;gap:8px;cursor:pointer;box-shadow:0 6px 24px rgba(0,0,0,0.35);z-index:300;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;transition:background .2s;}
+.admin-toggle:hover{background:#333;}
+.admin-toggle svg{width:18px;height:18px;stroke:#fff;stroke-width:2.5;fill:none;}
+
+/* ── PIN DIALOG ── */
+.pin-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.65);z-index:600;display:none;align-items:center;justify-content:center;}
+.pin-overlay.open{display:flex;}
+.pin-box{background:#fff;border-radius:20px;padding:2.5rem 2rem;width:320px;text-align:center;box-shadow:0 24px 80px rgba(0,0,0,0.3);}
+.pin-box h3{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:1px;margin-bottom:6px;}
+.pin-box p{font-size:13px;color:var(--muted);margin-bottom:1.5rem;}
+.pin-input{width:100%;text-align:center;font-size:28px;letter-spacing:10px;border:2px solid #ddd;border-radius:10px;padding:12px;font-family:'DM Sans',sans-serif;outline:none;transition:border-color .2s;}
+.pin-input:focus{border-color:var(--orange);}
+.pin-submit{width:100%;margin-top:12px;background:var(--orange);color:#fff;border:none;border-radius:10px;padding:13px;font-weight:700;font-size:14px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .2s;}
+.pin-submit:hover{background:var(--orange-dark);}
+.pin-error{color:#e74c3c;font-size:13px;margin-top:10px;display:none;}
+
+/* ── ADMIN PANEL ── */
+.admin-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:400;display:none;align-items:flex-end;justify-content:flex-end;}
+.admin-overlay.open{display:flex;}
+.admin-panel{background:#fff;border-radius:20px 0 0 0;padding:2rem;width:460px;max-height:90vh;overflow-y:auto;box-shadow:-20px 0 60px rgba(0,0,0,0.2);position:relative;}
+.admin-panel h3{font-size:16px;font-weight:700;margin-bottom:1.5rem;display:flex;align-items:center;gap:8px;}
+.admin-panel h3 svg{width:20px;height:20px;stroke:var(--orange);stroke-width:2;fill:none;}
+.admin-tabs{display:flex;gap:6px;margin-bottom:1.5rem;flex-wrap:wrap;}
+.admin-tab{padding:7px 14px;border-radius:6px;border:1px solid #ddd;font-size:12px;font-weight:600;cursor:pointer;background:#fff;color:var(--muted);transition:all .2s;font-family:'DM Sans',sans-serif;}
+.admin-tab.active{background:var(--orange);color:#fff;border-color:var(--orange);}
+.admin-section{display:none;}
+.admin-section.active{display:block;}
+.admin-form{display:flex;flex-direction:column;gap:10px;}
+.admin-label{font-size:12px;color:var(--muted);font-weight:600;display:block;margin-bottom:3px;}
+.admin-input{width:100%;border:1px solid #ddd;border-radius:8px;padding:9px 12px;font-size:13px;font-family:'DM Sans',sans-serif;outline:none;color:var(--text);}
+.admin-input:focus{border-color:var(--orange);}
+.admin-textarea{resize:none;height:72px;}
+.admin-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.admin-submit{background:var(--orange);color:#fff;border:none;border-radius:8px;padding:11px;font-weight:700;font-size:13px;cursor:pointer;width:100%;margin-top:4px;transition:background .2s;font-family:'DM Sans',sans-serif;}
+.admin-submit:hover{background:var(--orange-dark);}
+.admin-success{background:#e9f8f0;color:#1a7a4a;border-radius:8px;padding:10px 14px;font-size:13px;font-weight:600;text-align:center;display:none;margin-top:8px;}
+.admin-close{position:absolute;top:1.5rem;right:1.5rem;background:none;border:none;cursor:pointer;color:var(--muted);}
+.admin-close svg{width:22px;height:22px;stroke:currentColor;stroke-width:2;fill:none;}
+.gallery-upload-area{border:2px dashed #ddd;border-radius:10px;padding:2rem;text-align:center;cursor:pointer;transition:border-color .2s;margin-bottom:10px;}
+.gallery-upload-area:hover{border-color:var(--orange);}
+.gallery-upload-area p{font-size:13px;color:var(--muted);}
+.gallery-upload-area input{display:none;}
+.gallery-preview{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px;}
+.gallery-preview-item{aspect-ratio:1;border-radius:6px;overflow:hidden;background:#f0f0f0;}
+.gallery-preview-item img{width:100%;height:100%;object-fit:cover;}
+
+/* ── IMPORT/EXPORT ── */
+.data-actions{display:flex;gap:8px;margin-top:8px;}
+.btn-data{flex:1;padding:9px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;border:none;}
+.btn-export{background:var(--black);color:#fff;}
+.btn-export:hover{background:#333;}
+.btn-import{background:var(--gray);color:var(--text);border:1px solid #ddd;}
+.btn-import:hover{border-color:var(--orange);}
+.admin-divider{border:none;border-top:1px solid #eee;margin:12px 0;}
+.admin-hint{font-size:12px;color:var(--muted);line-height:1.5;}
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  .nav-links{display:none;}
+  .hero-inner{grid-template-columns:1fr;}
+  .hero-photo{display:none;}
+  .hero-text{padding:3rem 0 3rem;}
+  .stats-inner{grid-template-columns:1fr 1fr;}
+  .latest-card{grid-template-columns:1fr;}
+  .latest-thumb{width:100%;aspect-ratio:16/9;}
+  .hosts-grid{grid-template-columns:1fr;}
+  .contact-wrap{grid-template-columns:1fr;padding:2rem;}
+  .admin-panel{width:100%;border-radius:20px 20px 0 0;}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <div class="nav-logo">GLANS <span>&</span> GLORIA</div>
+    <div class="nav-links">
+      <a href="#folgen">Alle Folgen</a>
+      <a href="#ueber-uns">Über uns</a>
+      <a href="#kontakt">Kontakt</a>
     </div>
-   </header><!-- Hero Section -->
-   <section class="w-full gradient-bg text-white py-20 px-6">
-    <div class="max-w-4xl mx-auto text-center">
-     <h2 id="hero-headline" class="text-5xl md:text-6xl font-bold mb-6">Medizin verständlich erklärt</h2>
-     <p id="hero-description" class="text-xl md:text-2xl mb-8 opacity-95">Komplexe medizinische Themen einfach und unterhaltsam präsentiert von Leo und Nils</p><button id="cta-button" class="bg-white text-orange-600 px-8 py-4 rounded-full font-semibold text-lg hover:bg-gray-100 transition-all transform hover:scale-105 shadow-lg"> Jetzt reinhören 🎧 </button>
+    <div style="display:flex;align-items:center;gap:16px;">
+      <div class="nav-platform-icons">
+        <a href="https://open.spotify.com" target="_blank" title="Spotify">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.586 14.424a.622.622 0 01-.857.207c-2.348-1.435-5.304-1.76-8.785-.964a.622.622 0 11-.277-1.215c3.809-.87 7.076-.496 9.712 1.115a.623.623 0 01.207.857zm1.223-2.72a.778.778 0 01-1.072.257c-2.687-1.652-6.785-2.131-9.965-1.166a.778.778 0 01-.97-.518.779.779 0 01.519-.971c3.632-1.102 8.147-.568 11.234 1.326a.777.777 0 01.254 1.072zm.105-2.835C14.692 8.95 9.375 8.775 6.297 9.71a.935.935 0 11-.543-1.79c3.533-1.072 9.404-.865 13.115 1.338a.936.936 0 01-.954 1.611z"/></svg>
+        </a>
+        <a href="#" target="_blank" title="Apple Podcasts">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 3.6a6.4 6.4 0 110 12.8A6.4 6.4 0 0112 5.6zm0 2.4a4 4 0 100 8 4 4 0 000-8zm0 1.6a2.4 2.4 0 110 4.8 2.4 2.4 0 010-4.8zm-.6 7.6h1.2v1.6H11.4V17.2z"/></svg>
+        </a>
+        <a href="https://youtube.com/@glansundgloria" target="_blank" title="YouTube">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M21.593 7.203a2.506 2.506 0 00-1.762-1.766C18.265 5.007 12 5 12 5s-6.264-.007-7.831.404a2.56 2.56 0 00-1.766 1.778C2.036 8.746 2 10.266 2 12.001c0 1.734.036 3.255.406 4.797a2.5 2.5 0 001.765 1.765C5.739 19.003 12 19 12 19s6.265.003 7.831-.437a2.5 2.5 0 001.762-1.765C21.961 15.258 22 13.739 22 12.004c0-1.735-.036-3.255-.407-4.801zM9.996 15.005l.005-6 5.207 3.005-5.212 2.995z"/></svg>
+        </a>
+        <a href="https://linkedin.com/company/glansundgloria" target="_blank" title="LinkedIn">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>
+        </a>
+      </div>
+      <a href="https://open.spotify.com" target="_blank" class="nav-cta">Jetzt hören!</a>
     </div>
-   </section><!-- Main Content -->
-   <main class="w-full max-w-7xl mx-auto px-6 py-12"><!-- Episodes Tab -->
-    <div id="episodes-content" class="tab-content">
-     <div class="flex items-center justify-between mb-8">
-      <h3 class="text-3xl font-bold text-gray-900">Aktuelle Folgen</h3>
-      <div class="flex items-center space-x-2 text-orange-600"><span class="w-3 h-3 bg-orange-600 rounded-full pulse-animation"></span> <span class="font-medium">Neue Folge jeden Montag</span>
-      </div>
-     </div><!-- Spotify Embed Section -->
-     <div class="bg-gradient-to-br from-orange-50 to-white rounded-2xl p-8 border-2 border-orange-200 mb-12">
-      <div class="flex items-center justify-between mb-6">
-       <h4 class="text-2xl font-bold text-gray-900">🎧 Neueste Folge</h4><span class="text-sm text-orange-600 font-semibold bg-orange-100 px-3 py-1 rounded-full">NEU</span>
-      </div>
-      <div id="spotify-embed-container" class="bg-white rounded-xl p-6 border border-gray-200"><iframe data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/show/3tMk5ovVfliIog57jYsu4Z?utm_source=generator&amp;theme=0" width="100%" height="352" frameborder="0" allowfullscreen allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
-      </div>
-     </div>
-     <h4 class="text-2xl font-bold text-gray-900 mb-6">⭐ Top 4 Highlight-Folgen</h4>
-     <div class="grid md:grid-cols-2 gap-6"><!-- Highlight 1 -->
-      <div class="episode-card bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100">
-       <div class="gradient-bg h-32 flex items-center justify-center"><span class="text-6xl">🧠</span>
-       </div>
-       <div class="p-6">
-        <div class="text-sm text-orange-600 font-semibold mb-2">
-         HIGHLIGHT #1
-        </div>
-        <h4 class="text-xl font-bold text-gray-900 mb-3">Was macht eigentlich ein Neurochirurg?</h4>
-        <p class="text-gray-600 mb-4">Im Gespräch mit Prof. Peter Vajkoczy über Operationen am Gehirn und die Faszination Neurochirurgie.</p>
-        <div class="flex items-center justify-between"><span class="text-sm text-gray-500">58 Min</span> <button class="text-orange-600 hover:text-orange-700 font-medium">Anhören →</button>
-        </div>
-       </div>
-      </div><!-- Highlight 2 -->
-      <div class="episode-card bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100">
-       <div class="gradient-bg h-32 flex items-center justify-center"><span class="text-6xl">📚</span>
-       </div>
-       <div class="p-6">
-        <div class="text-sm text-orange-600 font-semibold mb-2">
-         HIGHLIGHT #2
-        </div>
-        <h4 class="text-xl font-bold text-gray-900 mb-3">Anatomie im Medizinstudium</h4>
-        <p class="text-gray-600 mb-4">Prof. Markus Kipp erklärt, wie man den menschlichen Körper wirklich versteht und warum Anatomie so wichtig ist.</p>
-        <div class="flex items-center justify-between"><span class="text-sm text-gray-500">52 Min</span> <button class="text-orange-600 hover:text-orange-700 font-medium">Anhören →</button>
-        </div>
-       </div>
-      </div><!-- Highlight 3 -->
-      <div class="episode-card bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100">
-       <div class="gradient-bg h-32 flex items-center justify-center"><span class="text-6xl">🚑</span>
-       </div>
-       <div class="p-6">
-        <div class="text-sm text-orange-600 font-semibold mb-2">
-         HIGHLIGHT #3
-        </div>
-        <h4 class="text-xl font-bold text-gray-900 mb-3">24 Stunden in der Notaufnahme</h4>
-        <p class="text-gray-600 mb-4">Ein Blick hinter die Kulissen: Wie läuft eine Schicht in der Notaufnahme wirklich ab?</p>
-        <div class="flex items-center justify-between"><span class="text-sm text-gray-500">47 Min</span> <button class="text-orange-600 hover:text-orange-700 font-medium">Anhören →</button>
-        </div>
-       </div>
-      </div><!-- Highlight 4 -->
-      <div class="episode-card bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100">
-       <div class="gradient-bg h-32 flex items-center justify-center"><span class="text-6xl">💉</span>
-       </div>
-       <div class="p-6">
-        <div class="text-sm text-orange-600 font-semibold mb-2">
-         HIGHLIGHT #4
-        </div>
-        <h4 class="text-xl font-bold text-gray-900 mb-3">Impfungen: Mythen vs. Fakten</h4>
-        <p class="text-gray-600 mb-4">Wir räumen mit den häufigsten Missverständnissen auf und erklären, wie Impfungen wirklich funktionieren.</p>
-        <div class="flex items-center justify-between"><span class="text-sm text-gray-500">43 Min</span> <button class="text-orange-600 hover:text-orange-700 font-medium">Anhören →</button>
-        </div>
-       </div>
-      </div>
-     </div>
-     <div class="text-center mt-12"><button class="border-2 border-orange-600 text-orange-600 px-8 py-3 rounded-full font-semibold hover:bg-orange-600 hover:text-white transition-all"> Alle Folgen anzeigen </button>
-     </div>
-    </div><!-- About Tab -->
-    <div id="about-content" class="tab-content hidden">
-     <h3 id="about-title" class="text-3xl font-bold text-gray-900 mb-8">Über uns</h3>
-     <div class="grid md:grid-cols-2 gap-12 mb-12">
-      <div class="bg-gradient-to-br from-orange-50 to-white rounded-2xl p-8 border border-orange-100">
-       <div class="w-20 h-20 gradient-bg rounded-full flex items-center justify-center mb-6 mx-auto"><span class="text-4xl">👨‍⚕️</span>
-       </div>
-       <h4 class="text-2xl font-bold text-gray-900 mb-4 text-center">Leo</h4>
-       <p id="about-text" class="text-gray-700 leading-relaxed">Facharzt für Innere Medizin mit Leidenschaft für verständliche Wissensvermittlung. Leo bringt komplexe medizinische Zusammenhänge auf den Punkt und sorgt für die wissenschaftliche Fundierung unserer Inhalte.</p>
-      </div>
-      <div class="bg-gradient-to-br from-orange-50 to-white rounded-2xl p-8 border border-orange-100">
-       <div class="w-20 h-20 gradient-bg rounded-full flex items-center justify-center mb-6 mx-auto"><span class="text-4xl">👨‍⚕️</span>
-       </div>
-       <h4 class="text-2xl font-bold text-gray-900 mb-4 text-center">Nils</h4>
-       <p class="text-gray-700 leading-relaxed">Assistenzarzt mit Begeisterung für Medizinkommunikation. Nils stellt die Fragen, die sich viele stellen, und sorgt dafür, dass niemand auf der Strecke bleibt. Gemeinsam machen wir Medizin zugänglich.</p>
-      </div>
-     </div>
-     <div class="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
-      <h4 class="text-2xl font-bold text-gray-900 mb-4">Unsere Mission</h4>
-      <p class="text-gray-700 leading-relaxed mb-4">Bei Glans&amp;Gloria glauben wir, dass medizinisches Wissen für alle zugänglich sein sollte. Wir nehmen komplexe Themen auseinander, erklären sie verständlich und mit einer Prise Humor – ohne dabei die wissenschaftliche Genauigkeit zu verlieren.</p>
-      <p class="text-gray-700 leading-relaxed">Ob Anatomie, Krankheitsbilder oder aktuelle medizinische Entwicklungen – wir bringen Licht ins Dunkel und helfen dir, deinen Körper besser zu verstehen.</p>
-     </div>
-    </div><!-- Contact Tab -->
-    <div id="contact-content" class="tab-content hidden">
-     <h3 id="contact-title" class="text-3xl font-bold text-gray-900 mb-8">Kontakt</h3>
-     <div class="grid md:grid-cols-2 gap-8">
-      <div class="bg-gradient-to-br from-orange-50 to-white rounded-2xl p-8 border border-orange-100">
-       <h4 class="text-2xl font-bold text-gray-900 mb-6">Schreib uns!</h4>
-       <p class="text-gray-700 mb-6">Hast du Fragen, Themenwünsche oder Feedback? Wir freuen uns von dir zu hören!</p>
-       <div class="space-y-4">
-        <div class="flex items-center space-x-3">
-         <div class="w-12 h-12 gradient-bg rounded-full flex items-center justify-center flex-shrink-0"><span class="text-xl">📧</span>
-         </div>
-         <div>
-          <div class="text-sm text-gray-600">
-           E-Mail
-          </div><a id="contact-email" href="mailto:kontakt@glansundgloria.de" class="text-orange-600 hover:text-orange-700 font-medium">kontakt@glansundgloria.de</a>
-         </div>
-        </div>
-        <div class="flex items-center space-x-3">
-         <div class="w-12 h-12 gradient-bg rounded-full flex items-center justify-center flex-shrink-0"><span class="text-xl">🎵</span>
-         </div>
-         <div>
-          <div class="text-sm text-gray-600">
-           Social Media
-          </div>
-          <div class="text-gray-900 font-medium">
-           @glansundgloria
-          </div>
-         </div>
-        </div>
-       </div>
-      </div>
-      <div class="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
-       <h4 class="text-xl font-bold text-gray-900 mb-6">Höre uns auf deiner Lieblingsplattform</h4>
-       <div class="space-y-3"><a href="#" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-3 p-4 rounded-lg border border-gray-200 hover:border-orange-600 hover:bg-orange-50 transition-all"> <span class="text-2xl">🎧</span> <span class="font-medium text-gray-900">Spotify</span> </a> <a href="#" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-3 p-4 rounded-lg border border-gray-200 hover:border-orange-600 hover:bg-orange-50 transition-all"> <span class="text-2xl">🎙️</span> <span class="font-medium text-gray-900">Apple Podcasts</span> </a> <a href="#" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-3 p-4 rounded-lg border border-gray-200 hover:border-orange-600 hover:bg-orange-50 transition-all"> <span class="text-2xl">📻</span> <span class="font-medium text-gray-900">Google Podcasts</span> </a> <a href="#" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-3 p-4 rounded-lg border border-gray-200 hover:border-orange-600 hover:bg-orange-50 transition-all"> <span class="text-2xl">🔊</span> <span class="font-medium text-gray-900">RSS Feed</span> </a>
-       </div>
-      </div>
-     </div>
-    </div>
-   </main><!-- Footer -->
-   <footer class="w-full bg-gray-900 text-white py-8 px-6 mt-20">
-    <div class="max-w-7xl mx-auto text-center">
-     <p id="footer-text" class="text-gray-400">© 2024 Glans&amp;Gloria - Dein Medizinpodcast von Leo und Nils</p>
-     <p class="text-gray-500 text-sm mt-2">Alle medizinischen Informationen dienen der allgemeinen Bildung und ersetzen keine ärztliche Beratung.</p>
-    </div>
-   </footer>
   </div>
-  <script>
-    const defaultConfig = {
-      background_color: '#ffffff',
-      surface_color: '#fff7ed',
-      text_color: '#111827',
-      primary_action_color: '#ff6b35',
-      secondary_action_color: '#ff8c42',
-      font_family: 'Inter',
-      font_size: 16,
-      podcast_title: 'Glans&Gloria',
-      podcast_subtitle: 'Dein Medizinpodcast von Leo und Nils',
-      hero_headline: 'Medizin verständlich erklärt',
-      hero_description: 'Komplexe medizinische Themen einfach und unterhaltsam präsentiert von Leo und Nils',
-      cta_button: 'Jetzt reinhören 🎧',
-      about_title: 'Über uns',
-      about_text: 'Facharzt für Innere Medizin mit Leidenschaft für verständliche Wissensvermittlung. Leo bringt komplexe medizinische Zusammenhänge auf den Punkt und sorgt für die wissenschaftliche Fundierung unserer Inhalte.',
-      contact_title: 'Kontakt',
-      contact_email: 'kontakt@glansundgloria.de',
-      footer_text: '© 2024 Glans&Gloria - Dein Medizinpodcast von Leo und Nils'
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-text">
+      <div class="hero-byline">Moderiert von Nils Labitzke &amp; Leonard Kühn</div>
+      <h1>GLANS<br><span style="color:var(--black)">&amp;</span><br>GLORIA</h1>
+      <div class="hero-sub">Der unabhängige Medizinpodcast mit Einblicken aus Klinik, Forschung und Studium</div>
+      <div class="hero-desc">Medizinstudierende Nils und Leo sprechen mit Ärzt:innen, Wissenschaftler:innen und Expert:innen. Verständlich, wissenschaftlich fundiert und authentisch.</div>
+      <div class="hero-btns">
+        <a href="#latest" class="btn-black">
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><polygon points="5,3 19,12 5,21" fill="white"/></svg>
+          Neuste Folge
+        </a>
+        <a href="#folgen" class="btn-outline">Alle Folgen</a>
+      </div>
+    </div>
+    <div class="hero-photo">
+      <img src="CoverGlansneu.jpg" alt="Nils und Leo – Glans &amp; Gloria" style="max-height:86vh;">
+    </div>
+  </div>
+</section>
+
+<!-- PLATFORM BAR -->
+<div class="platform-bar">
+  <div class="platform-bar-inner">
+    <span class="platform-label">Überall zu hören</span>
+    <a href="https://open.spotify.com" target="_blank" class="platform-link">
+      <svg viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.586 14.424a.622.622 0 01-.857.207c-2.348-1.435-5.304-1.76-8.785-.964a.622.622 0 11-.277-1.215c3.809-.87 7.076-.496 9.712 1.115a.623.623 0 01.207.857zm1.223-2.72a.778.778 0 01-1.072.257c-2.687-1.652-6.785-2.131-9.965-1.166a.778.778 0 01-.97-.518.779.779 0 01.519-.971c3.632-1.102 8.147-.568 11.234 1.326a.777.777 0 01.254 1.072zm.105-2.835C14.692 8.95 9.375 8.775 6.297 9.71a.935.935 0 11-.543-1.79c3.533-1.072 9.404-.865 13.115 1.338a.936.936 0 01-.954 1.611z"/></svg>
+      Spotify
+    </a>
+    <a href="#" class="platform-link">
+      <svg viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 3.6a6.4 6.4 0 110 12.8A6.4 6.4 0 0112 5.6z"/></svg>
+      Apple Podcasts
+    </a>
+    <a href="https://youtube.com/@glansundgloria" target="_blank" class="platform-link">
+      <svg viewBox="0 0 24 24"><path d="M21.593 7.203a2.506 2.506 0 00-1.762-1.766C18.265 5.007 12 5 12 5s-6.264-.007-7.831.404a2.56 2.56 0 00-1.766 1.778C2.036 8.746 2 10.266 2 12.001c0 1.734.036 3.255.406 4.797a2.5 2.5 0 001.765 1.765C5.739 19.003 12 19 12 19s6.265.003 7.831-.437a2.5 2.5 0 001.762-1.765C21.961 15.258 22 13.739 22 12.004c0-1.735-.036-3.255-.407-4.801zM9.996 15.005l.005-6 5.207 3.005-5.212 2.995z"/></svg>
+      YouTube
+    </a>
+    <a href="https://instagram.com/glansundgloria" target="_blank" class="platform-link">
+      <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+      Instagram
+    </a>
+    <a href="https://tiktok.com/@glansundgloria" target="_blank" class="platform-link">
+      <svg viewBox="0 0 24 24"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.78 1.52V6.76a4.85 4.85 0 01-1.01-.07z"/></svg>
+      TikTok
+    </a>
+    <a href="https://linkedin.com/company/glansundgloria" target="_blank" class="platform-link">
+      <svg viewBox="0 0 24 24"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>
+      LinkedIn
+    </a>
+  </div>
+</div>
+
+<!-- STATS -->
+<section class="stats">
+  <div class="stats-inner">
+    <div class="stat-item">
+      <div class="stat-num">500+</div>
+      <div class="stat-label">monatliche Hörer:innen</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">60+</div>
+      <div class="stat-label">Podcast-Episoden</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">40+</div>
+      <div class="stat-label">Expert:innen aus Klinik &amp; Forschung</div>
+    </div>
+  </div>
+</section>
+
+<!-- LATEST EPISODE -->
+<section class="latest" id="latest">
+  <div class="latest-inner">
+    <div class="section-tag">Jetzt neu</div>
+    <div class="section-title">Neuste Folge</div>
+    <div id="latest-episode-card"><!-- filled by JS --></div>
+  </div>
+</section>
+
+<!-- ALL EPISODES -->
+<section class="episodes" id="folgen">
+  <div class="episodes-inner">
+    <div class="section-tag">Alle Episoden</div>
+    <div class="section-title">Das Archiv</div>
+
+    <!-- SEARCH BAR -->
+    <div class="search-wrap">
+      <svg class="search-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" class="search-input" id="episodeSearch" placeholder="Folge, Gast oder Thema suchen…" autocomplete="off">
+      <button class="search-clear" id="searchClear" title="Suche löschen">✕</button>
+    </div>
+    <div class="search-count" id="searchCount"></div>
+
+    <div class="episodes-list" id="episodes-list"><!-- filled by JS --></div>
+  </div>
+</section>
+
+<!-- DONATE -->
+<section class="donate" id="spenden">
+  <div class="donate-inner">
+    <h2>Unterstütze uns gerne mit einer Spende ❤️</h2>
+    <p>Glans &amp; Gloria ist ein unabhängiger Medizinpodcast. Mit deiner Spende hilfst du uns, evidenzbasierte Inhalte zu produzieren, spannende Expert:innen einzuladen und den Podcast kontinuierlich weiterzuentwickeln.<br><br>Jeder Beitrag – egal wie klein – hilft uns, Medizin verständlich und ehrlich zu vermitteln.</p>
+    <a href="https://paypal.com" target="_blank" class="btn-donate">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M20.9 6.6C21.6 9.2 20.5 11.6 18.8 13c-1.6 1.3-3.9 1.8-6.3 1.8H10.9L9.6 21H5.8l.4-2.5M7.3 3h7.5c2.7 0 4.7 1.3 5.1 3.6"/><path d="M3 3h7.8c2.4 0 4.2 1 4.8 3.1.8 2.9-.4 5.5-2.3 6.8-1.3.9-3 1.3-5 1.3H6.4L4.8 21H1"/></svg>
+      Mit PayPal spenden
+    </a>
+    <div class="donate-small">Vielen Dank für eure Unterstützung! ❤️</div>
+  </div>
+</section>
+
+<!-- GUEST GALLERY -->
+<section class="gallery" id="gaeste">
+  <div class="gallery-inner">
+    <div class="section-tag">Bisherige Gäste</div>
+    <div class="section-title">Wir bedanken uns bei...</div>
+    <div class="gallery-grid" id="gallery-grid"><!-- filled by JS --></div>
+  </div>
+</section>
+
+<!-- HOSTS -->
+<section class="hosts" id="ueber-uns">
+  <div class="hosts-inner">
+    <div class="section-tag" style="color:rgba(244,123,31,0.85)">Über uns</div>
+    <div class="section-title">Unsere Hosts</div>
+    <div class="hosts-grid">
+      <div class="host-card">
+        <div class="host-photo" id="nils-photo-wrap">
+          <img id="nils-photo-img" src="1779360555244_image.png" alt="Nils Labitzke" style="width:100%;height:100%;object-fit:cover;object-position:top;" onerror="this.style.display='none';document.getElementById('nils-photo-placeholder').style.display='flex';">
+          <div id="nils-photo-placeholder" class="host-photo-placeholder" style="display:none;">N</div>
+        </div>
+        <div class="host-info">
+          <div class="host-name">Nils Labitzke</div>
+          <div class="host-role">Host &amp; Co-Gründer</div>
+          <div class="host-bio">Ich studiere derzeit im 10. Semester Humanmedizin in Halle. Wenn ich gerade nicht am Podcasten bin, schreibe ich an meiner Doktorarbeit in der Anästhesiologie oder stehe auf dem Tennisplatz!</div>
+        </div>
+      </div>
+      <div class="host-card">
+        <div class="host-photo" id="leo-photo-wrap">
+          <img id="leo-photo-img" src="" alt="Leonard Kühn" style="width:100%;height:100%;object-fit:cover;object-position:top;display:none;" onerror="this.style.display='none';document.getElementById('leo-photo-placeholder').style.display='flex';">
+          <div id="leo-photo-placeholder" class="host-photo-placeholder">L</div>
+        </div>
+        <div class="host-info">
+          <div class="host-name">Leonard Kühn</div>
+          <div class="host-role">Host &amp; Co-Gründer</div>
+          <div class="host-bio">Ich studiere derzeit im 10. Semester Humanmedizin in Rostock. Aktuell sitze ich an meiner Doktorarbeit in der Urologie und werde bald Padel-Profi!</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact" id="kontakt">
+  <div class="contact-inner">
+    <div class="contact-wrap">
+      <div class="contact-left">
+        <h2>KONTAKTIERE UNS!</h2>
+        <p>Tritt jederzeit gerne mit uns in Kontakt!</p>
+        <div class="contact-info">
+          <div class="contact-row">
+            <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            <a href="mailto:leonils09@gmx.de">leonils09@gmx.de</a>
+          </div>
+          <div class="contact-row">
+            <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+            <a href="https://instagram.com/glansundgloria" target="_blank">@glansundgloria</a>
+          </div>
+        </div>
+      </div>
+      <form class="contact-form" id="contactForm">
+        <!-- SETUP: Ersetze DEINE_FORMSPREE_ID mit deiner ID von formspree.io (kostenlos, 50 Mails/Monat) -->
+        <div><label class="admin-label" style="color:rgba(255,255,255,0.5)">Name</label><input type="text" name="name" placeholder="Dein Name" class="admin-input" style="background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.15);color:#fff;" required></div>
+        <div><label class="admin-label" style="color:rgba(255,255,255,0.5)">E-Mail</label><input type="email" name="email" placeholder="deine@email.de" class="admin-input" style="background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.15);color:#fff;" required></div>
+        <div><label class="admin-label" style="color:rgba(255,255,255,0.5)">Nachricht</label><textarea name="message" placeholder="Deine Nachricht…" class="admin-input admin-textarea" style="background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.15);color:#fff;" required></textarea></div>
+        <button type="submit" id="contactSubmitBtn">Nachricht senden</button>
+        <div id="contactSuccess" style="display:none;background:rgba(255,255,255,0.1);color:#7fffb2;border-radius:8px;padding:10px;font-size:13px;font-weight:600;text-align:center;">✓ Nachricht gesendet! Wir melden uns bald.</div>
+        <div id="contactError" style="display:none;background:rgba(255,0,0,0.1);color:#ff7f7f;border-radius:8px;padding:10px;font-size:13px;text-align:center;">Fehler beim Senden. Bitte schreib uns direkt an leonils09@gmx.de</div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- IMPRESSUM MODAL -->
+<div class="legal-overlay" id="impressumOverlay">
+  <div class="legal-box">
+    <button class="legal-close" onclick="document.getElementById('impressumOverlay').classList.remove('open')">✕</button>
+    <h2>Impressum</h2>
+    <p>Angaben gemäß § 5 TMG</p>
+
+    <h3>Verantwortlich für den Inhalt</h3>
+    <p>
+      Nils Labitzke &amp; Leonard Kühn<br>
+      <!-- ⚠ BITTE AUSFÜLLEN: Eure Adresse eintragen -->
+      [Straße und Hausnummer]<br>
+      [PLZ] [Stadt]<br>
+      Deutschland
+    </p>
+
+    <h3>Kontakt</h3>
+    <p>
+      E-Mail: <a href="mailto:leonils09@gmx.de">leonils09@gmx.de</a><br>
+      Instagram: <a href="https://instagram.com/glansundgloria" target="_blank">@glansundgloria</a>
+    </p>
+
+    <h3>Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV</h3>
+    <p>Nils Labitzke &amp; Leonard Kühn (Adressen s.o.)</p>
+
+    <h3>Haftungsausschluss</h3>
+    <p>Die Inhalte dieses Podcasts dienen ausschließlich der Information und ersetzen keine professionelle medizinische Beratung, Diagnose oder Behandlung. Bei gesundheitlichen Beschwerden wende dich bitte an eine Ärztin oder einen Arzt.</p>
+
+    <h3>Urheberrecht</h3>
+    <p>Die durch die Seitenbetreiber erstellten Inhalte und Werke auf dieser Website unterliegen dem deutschen Urheberrecht. Die Vervielfältigung, Bearbeitung, Verbreitung und jede Art der Verwertung außerhalb der Grenzen des Urheberrechts bedürfen der schriftlichen Zustimmung des jeweiligen Autors.</p>
+  </div>
+</div>
+
+<!-- DATENSCHUTZ MODAL -->
+<div class="legal-overlay" id="datenschutzOverlay">
+  <div class="legal-box">
+    <button class="legal-close" onclick="document.getElementById('datenschutzOverlay').classList.remove('open')">✕</button>
+    <h2>Datenschutzerklärung</h2>
+
+    <h3>1. Verantwortliche Stelle</h3>
+    <p>Nils Labitzke &amp; Leonard Kühn<br>
+    E-Mail: <a href="mailto:leonils09@gmx.de">leonils09@gmx.de</a></p>
+
+    <h3>2. Welche Daten wir verarbeiten</h3>
+    <p>Diese Website erhebt von sich aus keine personenbezogenen Daten und setzt keine Tracking-Cookies oder Analyse-Tools ein.</p>
+    <p><strong>Kontaktformular:</strong> Wenn du das Kontaktformular nutzt, werden dein Name, deine E-Mail-Adresse und deine Nachricht über den Dienst <a href="https://formspree.io" target="_blank">Formspree</a> (Formspree Inc., USA) an uns weitergeleitet. Formspree verarbeitet diese Daten auf Grundlage von Art. 6 Abs. 1 lit. b DSGVO (Vertragserfüllung / vorvertragliche Maßnahmen). Weitere Informationen findest du in der <a href="https://formspree.io/legal/privacy-policy" target="_blank">Datenschutzerklärung von Formspree</a>.</p>
+    <p><strong>Lokaler Speicher (localStorage):</strong> Diese Website speichert Podcast-Daten lokal in deinem Browser (localStorage), um die Seite auch ohne Backend-Server zu betreiben. Diese Daten verlassen deinen Browser nicht und werden nicht an uns übermittelt.</p>
+
+    <h3>3. Externe Plattformen</h3>
+    <p>Diese Seite enthält Links zu externen Plattformen (Spotify, Apple Podcasts, YouTube, Instagram, TikTok, LinkedIn). Wenn du diese Links aufrufst, gelten die jeweiligen Datenschutzerklärungen der Anbieter. Wir haben keinen Einfluss auf die Datenerhebung durch diese Dienste.</p>
+
+    <h3>4. Deine Rechte</h3>
+    <p>Du hast gemäß DSGVO das Recht auf Auskunft, Berichtigung, Löschung, Einschränkung der Verarbeitung und Datenübertragbarkeit. Wende dich dazu an: <a href="mailto:leonils09@gmx.de">leonils09@gmx.de</a></p>
+    <p>Außerdem steht dir ein Beschwerderecht bei der zuständigen Aufsichtsbehörde zu.</p>
+
+    <h3>5. Hosting</h3>
+    <p>Diese Website wird über <a href="https://www.netlify.com" target="_blank">Netlify</a> (Netlify Inc., USA) gehostet. Beim Aufruf der Seite können Server-Logs (IP-Adresse, Datum, Uhrzeit, aufgerufene Seite) entstehen. Weitere Informationen: <a href="https://www.netlify.com/privacy/" target="_blank">Netlify Privacy Policy</a>.</p>
+
+    <h3>6. Änderungen</h3>
+    <p>Wir behalten uns vor, diese Datenschutzerklärung bei Bedarf anzupassen. Stand: Mai 2025.</p>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">GLANS <span>&</span> GLORIA</div>
+  <p>Dein Medizinpodcast · Überall wo es Podcasts gibt<br>
+  <a href="#" onclick="event.preventDefault();document.getElementById('impressumOverlay').classList.add('open')">Impressum</a> · <a href="#" onclick="event.preventDefault();document.getElementById('datenschutzOverlay').classList.add('open')">Datenschutz</a> · <a href="mailto:leonils09@gmx.de">leonils09@gmx.de</a></p>
+</footer>
+
+<!-- SHARE TOAST -->
+<div class="share-toast" id="shareToast">Link kopiert!</div>
+
+<!-- PIN DIALOG -->
+<div class="pin-overlay" id="pinOverlay">
+  <div class="pin-box">
+    <h3>Admin-Zugang</h3>
+    <p>Bitte PIN eingeben</p>
+    <input type="password" class="pin-input" id="pinInput" maxlength="6" placeholder="····" autocomplete="off">
+    <button class="pin-submit" id="pinSubmit">Bestätigen</button>
+    <div class="pin-error" id="pinError">Falscher PIN. Bitte nochmal versuchen.</div>
+  </div>
+</div>
+
+<!-- ADMIN BUTTON -->
+<button class="admin-toggle" id="adminToggle">
+  <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+  Neue Folge / Gast hinzufügen
+</button>
+
+<!-- ADMIN OVERLAY -->
+<div class="admin-overlay" id="adminOverlay">
+  <div class="admin-panel">
+    <button class="admin-close" id="adminClose">
+      <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <h3>
+      <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+      Admin-Panel
+    </h3>
+    <div class="admin-tabs">
+      <button class="admin-tab active" data-tab="rss">🔄 RSS-Import</button>
+      <button class="admin-tab" data-tab="episode">Neue Folge</button>
+      <button class="admin-tab" data-tab="hosts">Host-Fotos</button>
+      <button class="admin-tab" data-tab="gallery">Gast-Foto</button>
+      <button class="admin-tab" data-tab="latest">Neuste Folge</button>
+      <button class="admin-tab" data-tab="data">Daten</button>
+    </div>
+
+    <!-- TAB: RSS Import -->
+    <div class="admin-section active" id="tab-rss">
+      <div class="admin-form">
+        <p class="admin-hint" style="margin-bottom:12px;">Importiere alle Episoden automatisch aus eurem Spotify for Podcasters RSS-Feed. Den Link findest du in Spotify for Podcasters unter <strong>Einstellungen → RSS-Feed</strong>.</p>
+        <div>
+          <label class="admin-label">Euer RSS-Feed-Link</label>
+          <input type="url" id="rssUrl" class="admin-input" placeholder="https://anchor.fm/s/…/podcast/rss" value="">
+        </div>
+        <div id="rssPreview" style="display:none;background:var(--gray);border-radius:8px;padding:12px;font-size:13px;color:var(--muted);margin-top:4px;"></div>
+        <button class="admin-submit" id="rssFetch" style="background:var(--black);">🔍 Feed laden &amp; Vorschau</button>
+        <button class="admin-submit" id="rssImport" style="display:none;">✓ Alle Folgen importieren</button>
+        <div class="admin-success" id="successRss"></div>
+        <hr class="admin-divider">
+        <p class="admin-hint"><strong>Wo finde ich meinen RSS-Feed-Link?</strong><br>
+        Spotify for Podcasters → dein Podcast → Einstellungen → RSS-Feed → Link kopieren. Er sieht typisch so aus: <code style="font-size:11px;background:#eee;padding:2px 5px;border-radius:4px;">https://anchor.fm/s/XXXXXXXX/podcast/rss</code></p>
+      </div>
+    </div>
+
+    <!-- TAB: New Episode -->
+    <div class="admin-section" id="tab-episode">
+      <div class="admin-form">
+        <div class="admin-row">
+          <div><label class="admin-label">Nummer</label><input type="number" id="epNum" class="admin-input" placeholder="z.B. 64"></div>
+          <div><label class="admin-label">Dauer</label><input type="text" id="epDur" class="admin-input" placeholder="z.B. 52 Min"></div>
+        </div>
+        <div><label class="admin-label">Titel der Folge</label><input type="text" id="epTitle" class="admin-input" placeholder="Was Urologie wirklich ist: …"></div>
+        <div><label class="admin-label">Gast (optional)</label><input type="text" id="epGuest" class="admin-input" placeholder="Mit Prof. Dr. Max Mustermann"></div>
+        <div><label class="admin-label">Datum</label><input type="date" id="epDate" class="admin-input"></div>
+        <div><label class="admin-label">Kurzbeschreibung</label><textarea id="epDesc" class="admin-input admin-textarea" placeholder="Worum geht es in dieser Folge?"></textarea></div>
+        <div><label class="admin-label">Spotify-Link</label><input type="url" id="epSpotify" class="admin-input" placeholder="https://open.spotify.com/episode/..."></div>
+        <div><label class="admin-label">Apple Podcasts-Link (optional)</label><input type="url" id="epApple" class="admin-input" placeholder="https://podcasts.apple.com/..."></div>
+        <div><label class="admin-label">YouTube-Link (optional)</label><input type="url" id="epYoutube" class="admin-input" placeholder="https://youtu.be/..."></div>
+        <button class="admin-submit" id="submitEpisode">Folge veröffentlichen</button>
+        <div class="admin-success" id="successEpisode">✓ Folge wurde hinzugefügt!</div>
+      </div>
+    </div>
+
+    <!-- TAB: Host Photos -->
+    <div class="admin-section" id="tab-hosts">
+      <div class="admin-form">
+        <p class="admin-hint" style="margin-bottom:12px;">Lade Profilfotos für Nils und Leo hoch. Die Bilder werden lokal gespeichert und beim nächsten Öffnen wiederhergestellt.</p>
+        <label class="admin-label">Foto von Nils</label>
+        <div class="gallery-upload-area" onclick="document.getElementById('nilsPhoto').click()" style="margin-bottom:4px;">
+          <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#aaa" stroke-width="1.5" style="margin:0 auto 6px"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+          <p>Nils-Foto auswählen</p>
+          <input type="file" id="nilsPhoto" accept="image/*" style="display:none">
+        </div>
+        <div id="nilsPreview" style="display:none;margin-bottom:12px;"><img id="nilsPreviewImg" style="width:70px;height:70px;object-fit:cover;border-radius:50%;border:2px solid var(--orange);"></div>
+
+        <label class="admin-label">Foto von Leo</label>
+        <div class="gallery-upload-area" onclick="document.getElementById('leoPhoto').click()" style="margin-bottom:4px;">
+          <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#aaa" stroke-width="1.5" style="margin:0 auto 6px"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+          <p>Leo-Foto auswählen</p>
+          <input type="file" id="leoPhoto" accept="image/*" style="display:none">
+        </div>
+        <div id="leoPreview" style="display:none;margin-bottom:12px;"><img id="leoPreviewImg" style="width:70px;height:70px;object-fit:cover;border-radius:50%;border:2px solid var(--orange);"></div>
+
+        <button class="admin-submit" id="saveHostPhotos">Fotos speichern</button>
+        <div class="admin-success" id="successHosts">✓ Fotos gespeichert!</div>
+      </div>
+    </div>
+
+    <!-- TAB: Gallery -->
+    <div class="admin-section" id="tab-gallery">
+      <div class="admin-form">
+        <div><label class="admin-label">Name des Gastes</label><input type="text" id="guestName" class="admin-input" placeholder="Prof. Dr. Max Mustermann"></div>
+        <div><label class="admin-label">Foto des Gastes</label>
+          <div class="gallery-upload-area" onclick="document.getElementById('guestPhoto').click()">
+            <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="#aaa" stroke-width="1.5" style="margin:0 auto 8px"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+            <p>Foto hierher ziehen oder klicken zum Auswählen</p>
+            <input type="file" id="guestPhoto" accept="image/*" style="display:none">
+          </div>
+          <div id="guestPhotoPreview" style="display:none;margin-top:8px;"><img id="guestPhotoImg" style="width:80px;height:80px;object-fit:cover;border-radius:8px;"></div>
+        </div>
+        <button class="admin-submit" id="submitGuest">Gast hinzufügen</button>
+        <div class="admin-success" id="successGuest">✓ Gast wurde zur Galerie hinzugefügt!</div>
+      </div>
+    </div>
+
+    <!-- TAB: Latest Episode -->
+    <div class="admin-section" id="tab-latest">
+      <div class="admin-form">
+        <p style="font-size:13px;color:var(--muted);margin-bottom:12px;">Aktualisiere die Hero-Box "Neuste Folge" oben.</p>
+        <div><label class="admin-label">Episode-Nummer</label><input type="number" id="latestNum" class="admin-input" placeholder="63"></div>
+        <div><label class="admin-label">Titel</label><input type="text" id="latestTitle" class="admin-input" placeholder="Was Urologie wirklich ist: …"></div>
+        <div><label class="admin-label">Gast</label><input type="text" id="latestGuest" class="admin-input" placeholder="Mit PD Dr. Desiree-Louise Dräger"></div>
+        <div><label class="admin-label">Spotify-Link</label><input type="url" id="latestSpotify" class="admin-input" placeholder="https://open.spotify.com/episode/..."></div>
+        <div><label class="admin-label">Apple Podcasts-Link (optional)</label><input type="url" id="latestApple" class="admin-input" placeholder="https://podcasts.apple.com/..."></div>
+        <div><label class="admin-label">YouTube-Link (optional)</label><input type="url" id="latestYoutube" class="admin-input" placeholder="https://youtu.be/..."></div>
+        <button class="admin-submit" id="submitLatest">Neuste Folge aktualisieren</button>
+        <div class="admin-success" id="successLatest">✓ Neuste Folge aktualisiert!</div>
+      </div>
+    </div>
+
+    <!-- TAB: Data Export/Import -->
+    <div class="admin-section" id="tab-data">
+      <div class="admin-form">
+        <p class="admin-hint">Exportiere alle Episoden- und Gastdaten als JSON-Datei. So gehen deine Daten nicht verloren, wenn der Browser-Cache geleert wird – und du kannst sie auf einem anderen Gerät wieder importieren.</p>
+        <hr class="admin-divider">
+        <label class="admin-label">Daten exportieren</label>
+        <div class="data-actions">
+          <button class="btn-data btn-export" id="exportData">⬇ Episoden exportieren</button>
+          <button class="btn-data btn-export" id="exportGuests">⬇ Gäste exportieren</button>
+        </div>
+        <hr class="admin-divider">
+        <label class="admin-label">Daten importieren</label>
+        <p class="admin-hint" style="margin-bottom:8px;">Wähle eine zuvor exportierte JSON-Datei aus. Bestehende Daten werden dabei überschrieben.</p>
+        <div class="data-actions">
+          <button class="btn-data btn-import" id="importEpisodesBtn">⬆ Episoden importieren</button>
+          <button class="btn-data btn-import" id="importGuestsBtn">⬆ Gäste importieren</button>
+        </div>
+        <input type="file" id="importEpisodesFile" accept=".json" style="display:none">
+        <input type="file" id="importGuestsFile" accept=".json" style="display:none">
+        <hr class="admin-divider">
+        <label class="admin-label" style="color:#c0392b;">Daten zurücksetzen</label>
+        <button class="btn-data btn-import" id="resetData" style="border-color:#e74c3c;color:#c0392b;">⚠ Alle Daten zurücksetzen</button>
+        <div class="admin-success" id="successData">✓ Aktion erfolgreich!</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Storage helpers ──
+const LS = {
+  get(k,def){try{const v=localStorage.getItem(k);return v?JSON.parse(v):def;}catch{return def;}},
+  set(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch{}}
+};
+
+// ── Admin PIN Protection ──
+// ⚠ PIN hier ändern (nur Ziffern, 4–6 Stellen empfohlen):
+const ADMIN_PIN = '4242';
+
+function unlockAdmin(){
+  sessionStorage.setItem('gg_admin_unlocked','1');
+  document.getElementById('adminToggle').style.display='flex';
+  document.getElementById('pinOverlay').classList.remove('open');
+  // Clean URL hash without page scroll
+  history.replaceState(null,'',window.location.pathname + window.location.search);
+}
+
+function checkAdminHash(){
+  if(window.location.hash === '#admin'){
+    if(sessionStorage.getItem('gg_admin_unlocked')==='1'){
+      unlockAdmin();
+    } else {
+      document.getElementById('pinOverlay').classList.add('open');
+      setTimeout(()=>document.getElementById('pinInput').focus(), 100);
+    }
+  }
+}
+
+// Check on load and on hash change
+checkAdminHash();
+window.addEventListener('hashchange', checkAdminHash);
+
+// If already authenticated this session, restore button
+if(sessionStorage.getItem('gg_admin_unlocked')==='1'){
+  document.getElementById('adminToggle').style.display='flex';
+}
+
+function attemptPin(){
+  const entered = document.getElementById('pinInput').value;
+  const errEl = document.getElementById('pinError');
+  if(entered === ADMIN_PIN){
+    errEl.style.display='none';
+    unlockAdmin();
+  } else {
+    errEl.style.display='block';
+    document.getElementById('pinInput').value='';
+    document.getElementById('pinInput').focus();
+  }
+}
+
+document.getElementById('pinSubmit').addEventListener('click', attemptPin);
+document.getElementById('pinInput').addEventListener('keydown', e=>{
+  if(e.key==='Enter') attemptPin();
+  if(e.key==='Escape') document.getElementById('pinOverlay').classList.remove('open');
+});
+
+// ── Default data ──
+const defaultEpisodes = [
+  {num:63,title:"Was Urologie wirklich ist: Diagnostik, Notfälle und Männergesundheit",guest:"Mit PD Dr. Desiree-Louise Dräger",desc:"Mit PD Dr. Desiree-Louise Dräger sprechen wir über alles, was man über Urologie wissen sollte – von Diagnostik über Notfälle bis Männergesundheit.",date:"2025-05-15",duration:"58 Min",spotify:"#",apple:"",youtube:""},
+  {num:62,title:"Schlaf & Gesundheit: Was passiert wirklich nachts?",guest:"",desc:"Warum Schlaf kein Luxus ist – und was Schlafentzug mit deinem Gehirn, Immunsystem und Stoffwechsel macht.",date:"2025-04-28",duration:"52 Min",spotify:"#",apple:"",youtube:""},
+  {num:61,title:"Mythos Muskelkater: Schmerz = Wachstum?",guest:"",desc:"Der populärste Fitness-Mythos auf dem Prüfstand. Was sagt die aktuelle Forschung wirklich über Muskelkater?",date:"2025-04-10",duration:"44 Min",spotify:"#",apple:"",youtube:""},
+];
+const defaultLatest = {num:63,title:"Was Urologie wirklich ist: Diagnostik, Notfälle und Männergesundheit",guest:"Mit PD Dr. Desiree-Louise Dräger",spotify:"#",apple:"",youtube:""};
+const defaultGuests = [];
+
+function fmtDate(s){if(!s)return'';const d=new Date(s);return d.toLocaleDateString('de-DE',{day:'2-digit',month:'long',year:'numeric'});}
+
+function ytThumb(url){
+  if(!url)return'';
+  const m=url.match(/(?:v=|youtu\.be\/)([A-Za-z0-9_-]{11})/);
+  return m?`https://img.youtube.com/vi/${m[1]}/mqdefault.jpg`:'';
+}
+
+// ── Spotify ID extrahieren ──
+function spotifyEpisodeId(url){
+  if(!url||url==='#') return '';
+  const m = url.match(/episode\/([A-Za-z0-9]+)/);
+  return m ? m[1] : '';
+}
+
+// ── Render Latest ──
+function renderLatest(){
+  const ep = LS.get('gg_latest', defaultLatest);
+  const epId = spotifyEpisodeId(ep.spotify);
+  const embedHtml = epId
+    ? `<div class="latest-embed">
+        <iframe src="https://open.spotify.com/embed/episode/${epId}?utm_source=generator&theme=0"
+          width="100%" height="152" frameborder="0"
+          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+          loading="lazy"></iframe>
+       </div>`
+    : '';
+
+  const thumb = ytThumb(ep.youtube);
+  const thumbHtml = !epId
+    ? `<div class="latest-thumb">${thumb ? `<img src="${thumb}" alt="Thumbnail">` : `<div class="latest-thumb-placeholder">🎙️</div>`}</div>`
+    : '';
+
+  document.getElementById('latest-episode-card').innerHTML = `
+    <div class="latest-card">
+      <div class="latest-card-top">
+        <div>
+          <div class="latest-ep-tag">Episode ${ep.num}</div>
+          <div class="latest-title">${ep.title}</div>
+          <div class="latest-desc">${ep.guest||''}</div>
+          <div class="latest-btns">
+            ${ep.spotify&&ep.spotify!='#'?`<a href="${ep.spotify}" target="_blank" class="btn-orange"><svg width="14" height="14" viewBox="0 0 24 24" fill="white"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.586 14.424a.622.622 0 01-.857.207c-2.348-1.435-5.304-1.76-8.785-.964a.622.622 0 11-.277-1.215c3.809-.87 7.076-.496 9.712 1.115a.623.623 0 01.207.857zm1.223-2.72a.778.778 0 01-1.072.257c-2.687-1.652-6.785-2.131-9.965-1.166a.778.778 0 01-.97-.518.779.779 0 01.519-.971c3.632-1.102 8.147-.568 11.234 1.326a.777.777 0 01.254 1.072zm.105-2.835C14.692 8.95 9.375 8.775 6.297 9.71a.935.935 0 11-.543-1.79c3.533-1.072 9.404-.865 13.115 1.338a.936.936 0 01-.954 1.611z"/></svg>Auf Spotify</a>`:''}
+            ${ep.apple?`<a href="${ep.apple}" target="_blank" class="btn-white-outline">🎙 Apple</a>`:''}
+            ${ep.youtube?`<a href="${ep.youtube}" target="_blank" class="btn-white-outline"><svg width="14" height="14" viewBox="0 0 24 24" fill="white"><path d="M21.593 7.203a2.506 2.506 0 00-1.762-1.766C18.265 5.007 12 5 12 5s-6.264-.007-7.831.404a2.56 2.56 0 00-1.766 1.778C2.036 8.746 2 10.266 2 12.001c0 1.734.036 3.255.406 4.797a2.5 2.5 0 001.765 1.765C5.739 19.003 12 19 12 19s6.265.003 7.831-.437a2.5 2.5 0 001.762-1.765C21.961 15.258 22 13.739 22 12.004c0-1.735-.036-3.255-.407-4.801zM9.996 15.005l.005-6 5.207 3.005-5.212 2.995z"/></svg>YouTube</a>`:''}
+            <a href="#folgen" class="btn-white-outline">Alle Folgen</a>
+          </div>
+        </div>
+        ${thumbHtml}
+      </div>
+      ${embedHtml}
+    </div>`;
+}
+
+// ── Render Episodes (with optional search filter) ──
+let allEpisodes = [];
+
+function renderEpisodes(filter=''){
+  allEpisodes = LS.get('gg_episodes',defaultEpisodes).sort((a,b)=>b.num-a.num);
+  const q = filter.trim().toLowerCase();
+  const filtered = q
+    ? allEpisodes.filter(ep =>
+        (ep.title||'').toLowerCase().includes(q) ||
+        (ep.desc||'').toLowerCase().includes(q) ||
+        (ep.guest||'').toLowerCase().includes(q))
+    : allEpisodes;
+
+  const countEl = document.getElementById('searchCount');
+  if(q){
+    countEl.textContent = filtered.length===0
+      ? 'Keine Folgen gefunden.'
+      : `${filtered.length} von ${allEpisodes.length} Folgen`;
+  } else {
+    countEl.textContent = '';
+  }
+
+  const list = document.getElementById('episodes-list');
+  if(filtered.length===0){
+    list.innerHTML = `<div class="no-results">Keine Folgen gefunden für „${filter}"</div>`;
+    return;
+  }
+
+  list.innerHTML = filtered.map(ep=>{
+    const platforms = [];
+    if(ep.spotify&&ep.spotify!='#') platforms.push(`<a href="${ep.spotify}" target="_blank" class="ep-btn ep-btn-spotify"><svg viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.586 14.424a.622.622 0 01-.857.207c-2.348-1.435-5.304-1.76-8.785-.964a.622.622 0 11-.277-1.215c3.809-.87 7.076-.496 9.712 1.115a.623.623 0 01.207.857zm1.223-2.72a.778.778 0 01-1.072.257c-2.687-1.652-6.785-2.131-9.965-1.166a.778.778 0 01-.97-.518.779.779 0 01.519-.971c3.632-1.102 8.147-.568 11.234 1.326a.777.777 0 01.254 1.072zm.105-2.835C14.692 8.95 9.375 8.775 6.297 9.71a.935.935 0 11-.543-1.79c3.533-1.072 9.404-.865 13.115 1.338a.936.936 0 01-.954 1.611z"/></svg>Spotify</a>`);
+    if(ep.apple) platforms.push(`<a href="${ep.apple}" target="_blank" class="ep-btn ep-btn-apple">🎙 Apple</a>`);
+    if(ep.youtube) platforms.push(`<a href="${ep.youtube}" target="_blank" class="ep-btn ep-btn-youtube"><svg viewBox="0 0 24 24"><path d="M21.593 7.203a2.506 2.506 0 00-1.762-1.766C18.265 5.007 12 5 12 5s-6.264-.007-7.831.404a2.56 2.56 0 00-1.766 1.778C2.036 8.746 2 10.266 2 12.001c0 1.734.036 3.255.406 4.797a2.5 2.5 0 001.765 1.765C5.739 19.003 12 19 12 19s6.265.003 7.831-.437a2.5 2.5 0 001.762-1.765C21.961 15.258 22 13.739 22 12.004c0-1.735-.036-3.255-.407-4.801zM9.996 15.005l.005-6 5.207 3.005-5.212 2.995z"/></svg>YouTube</a>`);
+
+    const shareUrl  = ep.spotify && ep.spotify !== '#' ? ep.spotify : window.location.href;
+    const shareText = `🎙️ Glans & Gloria – Folge ${ep.num}: „${ep.title}" ${shareUrl}`;
+
+    return `<div class="ep-card">
+      <div class="ep-num">${String(ep.num).padStart(2,'0')}</div>
+      <div class="ep-body">
+        <div class="ep-meta">${fmtDate(ep.date)}${ep.duration?' · '+ep.duration:''}</div>
+        <div class="ep-title">${ep.title}</div>
+        ${ep.guest?`<div class="ep-guest">${ep.guest}</div>`:''}
+        ${ep.desc?`<div class="ep-desc">${ep.desc}</div>`:''}
+        <div class="ep-platforms">
+          ${platforms.join('')}
+          <button class="ep-share" onclick="shareEp(${JSON.stringify(ep.title)},${JSON.stringify(shareUrl)},${JSON.stringify(shareText)})">
+            <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+            Teilen
+          </button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── Render Gallery ──
+function renderGallery(){
+  const guests = LS.get('gg_guests',defaultGuests);
+  const grid = document.getElementById('gallery-grid');
+  const items = guests.map(g=>`
+    <div class="gallery-item" title="${g.name||''}">
+      <img src="${g.photo}" alt="${g.name||'Gast'}">
+    </div>`).join('');
+  const addBtn = `<div class="gallery-add" onclick="document.querySelector('[data-tab=gallery]').click();document.getElementById('adminToggle').click()">
+    <svg viewBox="0 0 24 24" width="28" height="28"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    Gast hinzufügen
+  </div>`;
+  grid.innerHTML = items + addBtn;
+}
+
+// ── Init ──
+renderLatest();
+renderEpisodes();
+renderGallery();
+
+// ── Search ──
+const searchInput = document.getElementById('episodeSearch');
+const searchClear = document.getElementById('searchClear');
+
+searchInput.addEventListener('input', function(){
+  const val = this.value;
+  searchClear.classList.toggle('visible', val.length > 0);
+  renderEpisodes(val);
+});
+
+searchClear.addEventListener('click', function(){
+  searchInput.value = '';
+  this.classList.remove('visible');
+  renderEpisodes('');
+  searchInput.focus();
+});
+
+// ── Admin tabs ──
+document.querySelectorAll('.admin-tab').forEach(tab=>{
+  tab.addEventListener('click',()=>{
+    document.querySelectorAll('.admin-tab').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.admin-section').forEach(s=>s.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('tab-'+tab.dataset.tab).classList.add('active');
+  });
+});
+
+// ── Admin open/close ──
+document.getElementById('adminToggle').addEventListener('click',()=>{
+  document.getElementById('adminOverlay').classList.toggle('open');
+});
+document.getElementById('adminClose').addEventListener('click',()=>{
+  document.getElementById('adminOverlay').classList.remove('open');
+});
+document.getElementById('adminOverlay').addEventListener('click',e=>{
+  if(e.target===e.currentTarget) e.currentTarget.classList.remove('open');
+});
+
+function showSuccess(id){
+  const el=document.getElementById(id);
+  el.style.display='block';
+  setTimeout(()=>el.style.display='none',3000);
+}
+
+// ── Submit Episode ──
+document.getElementById('submitEpisode').addEventListener('click',()=>{
+  const num=parseInt(document.getElementById('epNum').value);
+  const title=document.getElementById('epTitle').value.trim();
+  if(!num||!title){alert('Bitte Nummer und Titel ausfüllen.');return;}
+  const eps=LS.get('gg_episodes',defaultEpisodes);
+  eps.push({
+    num,
+    title,
+    guest:document.getElementById('epGuest').value.trim(),
+    desc:document.getElementById('epDesc').value.trim(),
+    date:document.getElementById('epDate').value,
+    duration:document.getElementById('epDur').value.trim(),
+    spotify:document.getElementById('epSpotify').value.trim()||'#',
+    apple:document.getElementById('epApple').value.trim(),
+    youtube:document.getElementById('epYoutube').value.trim()
+  });
+  LS.set('gg_episodes',eps);
+  renderEpisodes(searchInput.value);
+  ['epNum','epTitle','epGuest','epDesc','epDate','epDur','epSpotify','epApple','epYoutube'].forEach(id=>document.getElementById(id).value='');
+  showSuccess('successEpisode');
+});
+
+// ── Submit Latest ──
+document.getElementById('submitLatest').addEventListener('click',()=>{
+  const num=parseInt(document.getElementById('latestNum').value);
+  const title=document.getElementById('latestTitle').value.trim();
+  if(!num||!title){alert('Bitte Nummer und Titel ausfüllen.');return;}
+  LS.set('gg_latest',{
+    num,title,
+    guest:document.getElementById('latestGuest').value.trim(),
+    spotify:document.getElementById('latestSpotify').value.trim()||'#',
+    apple:document.getElementById('latestApple').value.trim(),
+    youtube:document.getElementById('latestYoutube').value.trim()
+  });
+  renderLatest();
+  showSuccess('successLatest');
+});
+
+// ── Guest photo preview ──
+document.getElementById('guestPhoto').addEventListener('change',function(){
+  const file=this.files[0];
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    document.getElementById('guestPhotoImg').src=e.target.result;
+    document.getElementById('guestPhotoPreview').style.display='block';
+  };
+  reader.readAsDataURL(file);
+});
+
+// ── Submit Guest ──
+document.getElementById('submitGuest').addEventListener('click',()=>{
+  const name=document.getElementById('guestName').value.trim();
+  const img=document.getElementById('guestPhotoImg').src;
+  if(!img||img===window.location.href){alert('Bitte ein Foto auswählen.');return;}
+  const guests=LS.get('gg_guests',defaultGuests);
+  guests.push({name,photo:img});
+  LS.set('gg_guests',guests);
+  renderGallery();
+  document.getElementById('guestName').value='';
+  document.getElementById('guestPhoto').value='';
+  document.getElementById('guestPhotoPreview').style.display='none';
+  showSuccess('successGuest');
+});
+
+// ── Export ──
+function downloadJSON(data, filename){
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename; a.click();
+  URL.revokeObjectURL(url);
+}
+
+document.getElementById('exportData').addEventListener('click',()=>{
+  downloadJSON(LS.get('gg_episodes',defaultEpisodes), 'gg-episoden.json');
+});
+document.getElementById('exportGuests').addEventListener('click',()=>{
+  downloadJSON(LS.get('gg_guests',defaultGuests), 'gg-gaeste.json');
+});
+
+// ── Import ──
+document.getElementById('importEpisodesBtn').addEventListener('click',()=>{
+  document.getElementById('importEpisodesFile').click();
+});
+document.getElementById('importGuestsBtn').addEventListener('click',()=>{
+  document.getElementById('importGuestsFile').click();
+});
+
+document.getElementById('importEpisodesFile').addEventListener('change',function(){
+  const file=this.files[0]; if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      const data=JSON.parse(e.target.result);
+      if(!Array.isArray(data))throw new Error();
+      LS.set('gg_episodes',data);
+      renderEpisodes(searchInput.value);
+      showSuccess('successData');
+    }catch{alert('Ungültige JSON-Datei.');}
+  };
+  reader.readAsText(file);
+  this.value='';
+});
+
+document.getElementById('importGuestsFile').addEventListener('change',function(){
+  const file=this.files[0]; if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      const data=JSON.parse(e.target.result);
+      if(!Array.isArray(data))throw new Error();
+      LS.set('gg_guests',data);
+      renderGallery();
+      showSuccess('successData');
+    }catch{alert('Ungültige JSON-Datei.');}
+  };
+  reader.readAsText(file);
+  this.value='';
+});
+
+// ── Reset ──
+document.getElementById('resetData').addEventListener('click',()=>{
+  if(!confirm('Wirklich alle Daten zurücksetzen? Das kann nicht rückgängig gemacht werden.'))return;
+  localStorage.removeItem('gg_episodes');
+  localStorage.removeItem('gg_guests');
+  localStorage.removeItem('gg_latest');
+  renderLatest();
+  renderEpisodes(searchInput.value);
+  renderGallery();
+  showSuccess('successData');
+});
+
+// ── Kontaktformular (Formspree) ──
+// SETUP: Gehe auf formspree.io, erstelle ein kostenloses Konto, lege ein neues Formular an
+// und ersetze 'DEINE_FORMSPREE_ID' mit der ID aus dem Dashboard (z.B. xpwqabcd).
+const FORMSPREE_ID = 'DEINE_FORMSPREE_ID';
+
+document.getElementById('contactForm').addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  const btn = document.getElementById('contactSubmitBtn');
+  const successEl = document.getElementById('contactSuccess');
+  const errorEl = document.getElementById('contactError');
+  successEl.style.display='none';
+  errorEl.style.display='none';
+
+  if(FORMSPREE_ID==='DEINE_FORMSPREE_ID'){
+    // Fallback wenn noch nicht eingerichtet
+    errorEl.textContent='Formular noch nicht eingerichtet. Bitte schreib uns direkt an leonils09@gmx.de';
+    errorEl.style.display='block';
+    return;
+  }
+
+  btn.textContent='Wird gesendet…';
+  btn.disabled=true;
+
+  try{
+    const formData = new FormData(e.target);
+    const res = await fetch(`https://formspree.io/f/${FORMSPREE_ID}`,{
+      method:'POST', body:formData, headers:{Accept:'application/json'}
+    });
+    if(res.ok){
+      successEl.style.display='block';
+      e.target.reset();
+    }else{
+      throw new Error();
+    }
+  }catch{
+    errorEl.style.display='block';
+  }finally{
+    btn.textContent='Nachricht senden';
+    btn.disabled=false;
+  }
+});
+
+// ── RSS Import ──
+let rssParsedEpisodes = [];
+
+function stripHtml(html){
+  const d=document.createElement('div');
+  d.innerHTML=html;
+  return d.textContent||d.innerText||'';
+}
+
+function fmtDuration(raw){
+  if(!raw)return'';
+  // HH:MM:SS or MM:SS or seconds
+  if(typeof raw==='string'&&raw.includes(':')){
+    const parts=raw.split(':').map(Number);
+    if(parts.length===3){
+      const h=parts[0],m=parts[1];
+      return h>0?`${h} Std ${m} Min`:`${m} Min`;
+    }
+    if(parts.length===2) return `${parts[0]} Min`;
+  }
+  const sec=parseInt(raw);
+  if(!isNaN(sec)){
+    const m=Math.round(sec/60);
+    return m>0?`${m} Min`:'';
+  }
+  return raw;
+}
+
+// Parses RSS XML string into episode objects
+function parseRssXml(xmlStr, rssUrl){
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(xmlStr, 'text/xml');
+  if(doc.querySelector('parsererror')) throw new Error('XML konnte nicht geparst werden.');
+  const items = [...doc.querySelectorAll('item')];
+  const feedTitle = doc.querySelector('channel > title')?.textContent || '';
+
+  const episodes = items.map((item, i) => {
+    const get = tag => item.querySelector(tag)?.textContent?.trim() || '';
+    const getAttr = (tag, attr) => item.querySelector(tag)?.getAttribute(attr) || '';
+
+    const epNumRaw = get('itunes\\:episode') || getAttr('itunes\\:episode','') || get('episode');
+    let num = parseInt(epNumRaw);
+    if(isNaN(num)) num = items.length - i;
+
+    const pubDate = get('pubDate');
+    let dateStr = '';
+    if(pubDate){ try{ dateStr = new Date(pubDate).toISOString().split('T')[0]; }catch{} }
+
+    const link = get('link') || get('guid') || rssUrl;
+    const desc = stripHtml(get('description') || get('itunes\\:summary') || '').slice(0, 400);
+    const dur = fmtDuration(get('itunes\\:duration') || '');
+
+    return { num, title: get('title'), guest:'', desc, date: dateStr, duration: dur, spotify: link, apple:'', youtube:'' };
+  });
+
+  return { feedTitle, episodes };
+}
+
+async function fetchRssFeed(rssUrl){
+  // 1) Try rss2json API (works well when deployed on Netlify/server)
+  try{
+    const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}&count=200`;
+    const res = await fetch(apiUrl, {signal: AbortSignal.timeout(8000)});
+    const data = await res.json();
+    if(data.status === 'ok' && data.items?.length){
+      const episodes = data.items.map((item, i) => {
+        let num = item.itunes_episode ? parseInt(item.itunes_episode) : (data.items.length - i);
+        const desc = stripHtml(item.description || item.content || '').slice(0, 400);
+        const dateStr = item.pubDate ? item.pubDate.split(' ')[0] : '';
+        return { num, title: item.title||'', guest:'', desc, date: dateStr, duration: fmtDuration(item.itunes_duration||''), spotify: item.link||rssUrl, apple:'', youtube:'' };
+      });
+      return { feedTitle: data.feed?.title || '', episodes };
+    }
+  }catch(e){ /* try next */ }
+
+  // 2) Try corsproxy.io + XML parse
+  try{
+    const res = await fetch(`https://corsproxy.io/?${encodeURIComponent(rssUrl)}`, {signal: AbortSignal.timeout(8000)});
+    const xml = await res.text();
+    return parseRssXml(xml, rssUrl);
+  }catch(e){ /* try next */ }
+
+  // 3) Try allorigins.win + XML parse
+  try{
+    const res = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(rssUrl)}`, {signal: AbortSignal.timeout(8000)});
+    const json = await res.json();
+    return parseRssXml(json.contents, rssUrl);
+  }catch(e){ /* all failed */ }
+
+  throw new Error('Feed konnte nicht geladen werden. Wenn du die Seite lokal (file://) öffnest, funktioniert der Import erst nach dem Deployment auf Netlify. Alternativ: die Seite über einen lokalen Server starten (z.B. VS Code Live Server).');
+}
+
+document.getElementById('rssFetch').addEventListener('click', async ()=>{
+  const url = document.getElementById('rssUrl').value.trim();
+  if(!url){alert('Bitte einen RSS-Feed-Link eingeben.');return;}
+  LS.set('gg_rss_url', url);
+
+  const btn = document.getElementById('rssFetch');
+  btn.textContent='⏳ Lade Feed…';
+  btn.disabled=true;
+
+  const preview = document.getElementById('rssPreview');
+  const importBtn = document.getElementById('rssImport');
+  const successEl = document.getElementById('successRss');
+  preview.style.display='none';
+  preview.style.background='';
+  preview.style.color='';
+  importBtn.style.display='none';
+  successEl.style.display='none';
+
+  try{
+    const {feedTitle, episodes} = await fetchRssFeed(url);
+    rssParsedEpisodes = episodes;
+    preview.style.display='block';
+    preview.innerHTML = `<strong>✓ ${rssParsedEpisodes.length} Folgen gefunden</strong>${feedTitle?' aus „'+feedTitle+'"':''}<br>
+      Neueste: <em>${rssParsedEpisodes[0]?.title||''}</em><br>
+      Älteste: <em>${rssParsedEpisodes[rssParsedEpisodes.length-1]?.title||''}</em>`;
+    importBtn.style.display='block';
+  }catch(err){
+    preview.style.display='block';
+    preview.style.background='#fdecea';
+    preview.style.color='#c0392b';
+    preview.innerHTML=`⚠ ${err.message}`;
+  }finally{
+    btn.textContent='🔍 Feed laden & Vorschau';
+    btn.disabled=false;
+  }
+});
+
+// ── Share ──
+let toastTimer;
+function showToast(msg){
+  const t = document.getElementById('shareToast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove('show'), 2500);
+}
+
+function shareEp(title, url, text){
+  if(navigator.share){
+    navigator.share({ title: `Glans & Gloria – ${title}`, text, url }).catch(()=>{});
+  } else {
+    navigator.clipboard.writeText(text).then(()=>showToast('Link kopiert! 🎙️')).catch(()=>showToast('Bitte manuell kopieren: ' + url));
+  }
+}
+
+// ── Legal Modals ──
+['impressumOverlay','datenschutzOverlay'].forEach(id=>{
+  document.getElementById(id).addEventListener('click',e=>{
+    if(e.target===e.currentTarget) e.currentTarget.classList.remove('open');
+  });
+});
+
+// ── Host Photos ──
+function loadHostPhotos(){
+  const nilsSrc = LS.get('gg_host_nils','');
+  const leoSrc  = LS.get('gg_host_leo','');
+  if(nilsSrc){
+    const img = document.getElementById('nils-photo-img');
+    img.src = nilsSrc; img.style.display='block';
+    document.getElementById('nils-photo-placeholder').style.display='none';
+  }
+  if(leoSrc){
+    const img = document.getElementById('leo-photo-img');
+    img.src = leoSrc; img.style.display='block';
+    document.getElementById('leo-photo-placeholder').style.display='none';
+  }
+}
+loadHostPhotos();
+
+function hostPhotoPreview(inputId, previewId, previewImgId){
+  document.getElementById(inputId).addEventListener('change',function(){
+    const file=this.files[0]; if(!file)return;
+    const reader=new FileReader();
+    reader.onload=e=>{
+      document.getElementById(previewImgId).src=e.target.result;
+      document.getElementById(previewId).style.display='block';
     };
+    reader.readAsDataURL(file);
+  });
+}
+hostPhotoPreview('nilsPhoto','nilsPreview','nilsPreviewImg');
+hostPhotoPreview('leoPhoto','leoPreview','leoPreviewImg');
 
-    async function onConfigChange(config) {
-      const app = document.getElementById('app');
-      const baseFontStack = 'Inter, sans-serif';
-      const headingFontStack = 'Poppins, sans-serif';
-      const customFont = config.font_family || defaultConfig.font_family;
-      const baseSize = config.font_size || defaultConfig.font_size;
-      
-      // Apply colors
-      app.style.backgroundColor = config.background_color || defaultConfig.background_color;
-      
-      const gradientElements = document.querySelectorAll('.gradient-bg');
-      gradientElements.forEach(el => {
-        const primaryColor = config.primary_action_color || defaultConfig.primary_action_color;
-        const secondaryColor = config.secondary_action_color || defaultConfig.secondary_action_color;
-        el.style.background = `linear-gradient(135deg, ${primaryColor} 0%, ${secondaryColor} 100%)`;
-      });
-      
-      const textElements = document.querySelectorAll('p, span, a, button, div');
-      textElements.forEach(el => {
-        if (!el.classList.contains('text-white') && !el.classList.contains('text-gray-400') && !el.classList.contains('text-gray-500') && !el.classList.contains('text-gray-600')) {
-          el.style.color = config.text_color || defaultConfig.text_color;
-        }
-      });
-      
-      const surfaceElements = document.querySelectorAll('.bg-gradient-to-br');
-      surfaceElements.forEach(el => {
-        const surfaceColor = config.surface_color || defaultConfig.surface_color;
-        el.style.background = `linear-gradient(to bottom right, ${surfaceColor}, ${config.background_color || defaultConfig.background_color})`;
-      });
-      
-      // Apply fonts
-      document.body.style.fontFamily = `${customFont}, ${baseFontStack}`;
-      const headings = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
-      headings.forEach(h => {
-        h.style.fontFamily = `${customFont}, ${headingFontStack}`;
-      });
-      
-      // Apply font sizes
-      document.getElementById('podcast-title').style.fontSize = `${baseSize * 1.5}px`;
-      document.getElementById('podcast-subtitle').style.fontSize = `${baseSize * 0.875}px`;
-      document.getElementById('hero-headline').style.fontSize = `${baseSize * 3.75}px`;
-      document.getElementById('hero-description').style.fontSize = `${baseSize * 1.5}px`;
-      document.getElementById('cta-button').style.fontSize = `${baseSize * 1.125}px`;
-      
-      const contentHeadings = document.querySelectorAll('main h3');
-      contentHeadings.forEach(h => h.style.fontSize = `${baseSize * 1.875}px`);
-      
-      const cardHeadings = document.querySelectorAll('.episode-card h4, main h4');
-      cardHeadings.forEach(h => h.style.fontSize = `${baseSize * 1.25}px`);
-      
-      const bodyText = document.querySelectorAll('main p');
-      bodyText.forEach(p => p.style.fontSize = `${baseSize}px`);
-      
-      // Update text content
-      document.getElementById('podcast-title').textContent = config.podcast_title || defaultConfig.podcast_title;
-      document.getElementById('podcast-subtitle').textContent = config.podcast_subtitle || defaultConfig.podcast_subtitle;
-      document.getElementById('hero-headline').textContent = config.hero_headline || defaultConfig.hero_headline;
-      document.getElementById('hero-description').textContent = config.hero_description || defaultConfig.hero_description;
-      document.getElementById('cta-button').textContent = config.cta_button || defaultConfig.cta_button;
-      document.getElementById('about-title').textContent = config.about_title || defaultConfig.about_title;
-      document.getElementById('about-text').textContent = config.about_text || defaultConfig.about_text;
-      document.getElementById('contact-title').textContent = config.contact_title || defaultConfig.contact_title;
-      document.getElementById('contact-email').textContent = config.contact_email || defaultConfig.contact_email;
-      document.getElementById('contact-email').href = `mailto:${config.contact_email || defaultConfig.contact_email}`;
-      document.getElementById('footer-text').textContent = config.footer_text || defaultConfig.footer_text;
+document.getElementById('saveHostPhotos').addEventListener('click',()=>{
+  const nilsNew = document.getElementById('nilsPreviewImg').src;
+  const leoNew  = document.getElementById('leoPreviewImg').src;
+  if(nilsNew && nilsNew !== window.location.href){
+    LS.set('gg_host_nils', nilsNew);
+    const img = document.getElementById('nils-photo-img');
+    img.src = nilsNew; img.style.display='block';
+    document.getElementById('nils-photo-placeholder').style.display='none';
+  }
+  if(leoNew && leoNew !== window.location.href){
+    LS.set('gg_host_leo', leoNew);
+    const img = document.getElementById('leo-photo-img');
+    img.src = leoNew; img.style.display='block';
+    document.getElementById('leo-photo-placeholder').style.display='none';
+  }
+  showSuccess('successHosts');
+});
+
+// Restore saved RSS URL
+const savedRssUrl = LS.get('gg_rss_url','');
+if(savedRssUrl) document.getElementById('rssUrl').value = savedRssUrl;
+
+document.getElementById('rssImport').addEventListener('click',()=>{
+  if(!rssParsedEpisodes.length){return;}
+  const existing = LS.get('gg_episodes', defaultEpisodes);
+  const existingNums = new Set(existing.map(e=>e.num));
+  const newOnes = rssParsedEpisodes.filter(e=>!existingNums.has(e.num));
+  const merged = [...existing, ...newOnes].sort((a,b)=>b.num-a.num);
+  LS.set('gg_episodes', merged);
+
+  // Auto-set latest from RSS
+  const latest = rssParsedEpisodes[0];
+  if(latest){
+    const cur = LS.get('gg_latest', defaultLatest);
+    if(latest.num > cur.num){
+      LS.set('gg_latest',{num:latest.num,title:latest.title,guest:'',spotify:latest.spotify,apple:'',youtube:''});
+      renderLatest();
     }
+  }
 
-    function mapToCapabilities(config) {
-      return {
-        recolorables: [
-          {
-            get: () => config.background_color || defaultConfig.background_color,
-            set: (value) => {
-              config.background_color = value;
-              window.elementSdk.setConfig({ background_color: value });
-            }
-          },
-          {
-            get: () => config.surface_color || defaultConfig.surface_color,
-            set: (value) => {
-              config.surface_color = value;
-              window.elementSdk.setConfig({ surface_color: value });
-            }
-          },
-          {
-            get: () => config.text_color || defaultConfig.text_color,
-            set: (value) => {
-              config.text_color = value;
-              window.elementSdk.setConfig({ text_color: value });
-            }
-          },
-          {
-            get: () => config.primary_action_color || defaultConfig.primary_action_color,
-            set: (value) => {
-              config.primary_action_color = value;
-              window.elementSdk.setConfig({ primary_action_color: value });
-            }
-          },
-          {
-            get: () => config.secondary_action_color || defaultConfig.secondary_action_color,
-            set: (value) => {
-              config.secondary_action_color = value;
-              window.elementSdk.setConfig({ secondary_action_color: value });
-            }
-          }
-        ],
-        borderables: [],
-        fontEditable: {
-          get: () => config.font_family || defaultConfig.font_family,
-          set: (value) => {
-            config.font_family = value;
-            window.elementSdk.setConfig({ font_family: value });
-          }
-        },
-        fontSizeable: {
-          get: () => config.font_size || defaultConfig.font_size,
-          set: (value) => {
-            config.font_size = value;
-            window.elementSdk.setConfig({ font_size: value });
-          }
-        }
-      };
-    }
-
-    function mapToEditPanelValues(config) {
-      return new Map([
-        ['podcast_title', config.podcast_title || defaultConfig.podcast_title],
-        ['podcast_subtitle', config.podcast_subtitle || defaultConfig.podcast_subtitle],
-        ['hero_headline', config.hero_headline || defaultConfig.hero_headline],
-        ['hero_description', config.hero_description || defaultConfig.hero_description],
-        ['cta_button', config.cta_button || defaultConfig.cta_button],
-        ['about_title', config.about_title || defaultConfig.about_title],
-        ['about_text', config.about_text || defaultConfig.about_text],
-        ['contact_title', config.contact_title || defaultConfig.contact_title],
-        ['contact_email', config.contact_email || defaultConfig.contact_email],
-        ['footer_text', config.footer_text || defaultConfig.footer_text]
-      ]);
-    }
-
-    // Tab functionality
-    function switchTab(tabName) {
-      document.querySelectorAll('.tab-content').forEach(content => {
-        content.classList.add('hidden');
-      });
-      
-      document.querySelectorAll('.tab-button').forEach(btn => {
-        btn.classList.remove('active');
-        btn.classList.remove('text-gray-900');
-        btn.classList.add('text-gray-600');
-      });
-      
-      document.getElementById(`${tabName}-content`).classList.remove('hidden');
-      
-      document.querySelectorAll(`[data-tab="${tabName}"]`).forEach(btn => {
-        btn.classList.add('active');
-        btn.classList.add('text-gray-900');
-        btn.classList.remove('text-gray-600');
-      });
-    }
-
-    document.querySelectorAll('.tab-button').forEach(button => {
-      button.addEventListener('click', () => {
-        const tab = button.getAttribute('data-tab');
-        switchTab(tab);
-        
-        const mobileMenu = document.getElementById('mobile-menu');
-        if (window.innerWidth < 768) {
-          mobileMenu.classList.add('hidden');
-        }
-      });
-    });
-
-    document.getElementById('mobile-menu-btn').addEventListener('click', () => {
-      const mobileMenu = document.getElementById('mobile-menu');
-      mobileMenu.classList.toggle('hidden');
-    });
-
-    document.getElementById('cta-button').addEventListener('click', () => {
-      switchTab('episodes');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
-
-    if (window.elementSdk) {
-      window.elementSdk.init({
-        defaultConfig,
-        onConfigChange,
-        mapToCapabilities,
-        mapToEditPanelValues
-      });
-    }
-  </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9af03591613cb173',t:'MTc2NTkwOTM3OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+  renderEpisodes(searchInput.value);
+  const successEl = document.getElementById('successRss');
+  successEl.style.display='block';
+  successEl.textContent = newOnes.length>0
+    ? `✓ ${newOnes.length} neue Folgen importiert! (${merged.length} gesamt)`
+    : `✓ Keine neuen Folgen – alle ${merged.length} sind bereits vorhanden.`;
+  setTimeout(()=>successEl.style.display='none', 5000);
+  document.getElementById('rssImport').style.display='none';
+});
+</script>
+</body>
 </html>
