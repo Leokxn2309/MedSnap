@@ -1,0 +1,18 @@
+# Netlify Redirects – Glans & Gloria
+# Dokumentation: https://docs.netlify.com/routing/redirects/
+
+# ── Saubere Kurz-URLs für Sektionen ──
+/folgen          /#folgen         301
+/episoden        /#folgen         301
+/ueber-uns       /#ueber-uns      301
+/hosts           /#ueber-uns      301
+/kontakt         /#kontakt        301
+/spenden         /#spenden        301
+/gaeste          /#gaeste         301
+
+# ── www → non-www weiterleiten ──
+# (Nur nötig wenn die Domain www.glansundgloria.de hat)
+# https://www.glansundgloria.de/* https://glansundgloria.de/:splat 301!
+
+# ── Fallback: alle unbekannten Pfade → Startseite (SPA) ──
+/*               /index.html      200
