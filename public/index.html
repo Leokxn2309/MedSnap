@@ -1241,7 +1241,13 @@ function parseRssXml(xmlStr, rssUrl){
 }
 
 async function fetchRssFeed(rssUrl){
-  // 1) Try rss2json API (works well when deployed on Netlify/server)
+  // 1) Eigene Netlify Function – zuverlässig, kein CORS (läuft auf glansundgloria.de)
+  try{
+    const res = await fetch(`/.netlify/functions/rss-proxy?url=${encodeURIComponent(rssUrl)}`, {signal: AbortSignal.timeout(10000)});
+    if(res.ok){ const xml = await res.text(); return parseRssXml(xml, rssUrl); }
+  }catch(e){ /* try next */ }
+
+  // 2) rss2json API (Fallback für lokale Entwicklung)
   try{
     const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}&count=200`;
     const res = await fetch(apiUrl, {signal: AbortSignal.timeout(8000)});
@@ -1257,21 +1263,19 @@ async function fetchRssFeed(rssUrl){
     }
   }catch(e){ /* try next */ }
 
-  // 2) Try corsproxy.io + XML parse
+  // 3) corsproxy.io (Fallback)
   try{
     const res = await fetch(`https://corsproxy.io/?${encodeURIComponent(rssUrl)}`, {signal: AbortSignal.timeout(8000)});
-    const xml = await res.text();
-    return parseRssXml(xml, rssUrl);
+    if(res.ok){ const xml = await res.text(); return parseRssXml(xml, rssUrl); }
   }catch(e){ /* try next */ }
 
-  // 3) Try allorigins.win + XML parse
+  // 4) allorigins.win (letzter Fallback)
   try{
     const res = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(rssUrl)}`, {signal: AbortSignal.timeout(8000)});
-    const json = await res.json();
-    return parseRssXml(json.contents, rssUrl);
+    if(res.ok){ const json = await res.json(); return parseRssXml(json.contents, rssUrl); }
   }catch(e){ /* all failed */ }
 
-  throw new Error('Feed konnte nicht geladen werden. Wenn du die Seite lokal (file://) öffnest, funktioniert der Import erst nach dem Deployment auf Netlify. Alternativ: die Seite über einen lokalen Server starten (z.B. VS Code Live Server).');
+  throw new Error('RSS-Feed konnte nicht geladen werden. Bitte prüfe ob der Link korrekt ist (Spotify for Podcasters → Einstellungen → RSS-Feed). Auf der live-Seite sollte der Import nach dem nächsten Netlify-Deploy automatisch funktionieren.');
 }
 
 document.getElementById('rssFetch').addEventListener('click', async ()=>{
