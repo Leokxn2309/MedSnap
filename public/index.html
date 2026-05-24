@@ -160,6 +160,13 @@ nav{position:sticky;top:0;z-index:200;background:rgba(255,255,255,0.96);backdrop
 .ep-btn-youtube:hover{background:#cc0000;}
 .ep-btn svg{width:13px;height:13px;fill:currentColor;flex-shrink:0;}
 .no-results{text-align:center;padding:3rem 2rem;color:var(--muted);font-size:15px;}
+.ep-loading{text-align:center;padding:3rem 2rem;color:var(--muted);font-size:14px;display:flex;align-items:center;justify-content:center;gap:10px;}
+.ep-loading-spinner{width:20px;height:20px;border:2px solid #ddd;border-top-color:var(--orange);border-radius:50%;animation:spin .8s linear infinite;flex-shrink:0;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.rss-status-ok{background:#e9f8f0;color:#1a7a4a;border-radius:8px;padding:10px 14px;font-size:13px;line-height:1.5;}
+.rss-status-warn{background:#fff8e1;color:#8a6200;border-radius:8px;padding:10px 14px;font-size:13px;line-height:1.5;}
+.rss-status-err{background:#fdecea;color:#c0392b;border-radius:8px;padding:10px 14px;font-size:13px;line-height:1.5;}
+.rss-status-none{background:var(--gray);color:var(--muted);border-radius:8px;padding:10px 14px;font-size:13px;line-height:1.5;}
 
 /* ── MEHR ANZEIGEN ── */
 .show-more-wrap{text-align:center;margin-top:1.2rem;}
@@ -660,18 +667,21 @@ footer a:hover{color:var(--orange);}
     <!-- TAB: RSS Import -->
     <div class="admin-section active" id="tab-rss">
       <div class="admin-form">
-        <p class="admin-hint" style="margin-bottom:12px;">Importiere alle Episoden automatisch aus eurem Spotify for Podcasters RSS-Feed. Den Link findest du in Spotify for Podcasters unter <strong>Einstellungen → RSS-Feed</strong>.</p>
-        <div>
-          <label class="admin-label">Euer RSS-Feed-Link</label>
-          <input type="url" id="rssUrl" class="admin-input" placeholder="https://anchor.fm/s/…/podcast/rss" value="">
+        <div id="rssStatusBox" class="rss-status-none">Kein RSS-Feed konfiguriert. Bitte URL eingeben und speichern.</div>
+        <div style="margin-top:12px;">
+          <label class="admin-label">RSS-Feed-Link (Spotify for Podcasters)</label>
+          <input type="url" id="rssUrl" class="admin-input" placeholder="https://anchor.fm/s/…/podcast/rss">
         </div>
-        <div id="rssPreview" style="display:none;background:var(--gray);border-radius:8px;padding:12px;font-size:13px;color:var(--muted);margin-top:4px;"></div>
-        <button class="admin-submit" id="rssFetch" style="background:var(--black);">🔍 Feed laden &amp; Vorschau</button>
-        <button class="admin-submit" id="rssImport" style="display:none;">✓ Alle Folgen importieren</button>
+        <div style="display:flex;gap:8px;margin-top:4px;">
+          <button class="admin-submit" id="rssSaveUrl" style="background:var(--black);flex:1;">💾 URL speichern</button>
+          <button class="admin-submit" id="rssRefresh" style="flex:1;">🔄 Jetzt aktualisieren</button>
+        </div>
         <div class="admin-success" id="successRss"></div>
         <hr class="admin-divider">
-        <p class="admin-hint"><strong>Wo finde ich meinen RSS-Feed-Link?</strong><br>
-        Spotify for Podcasters → dein Podcast → Einstellungen → RSS-Feed → Link kopieren. Er sieht typisch so aus: <code style="font-size:11px;background:#eee;padding:2px 5px;border-radius:4px;">https://anchor.fm/s/XXXXXXXX/podcast/rss</code></p>
+        <p class="admin-hint"><strong>Wo finde ich den Link?</strong><br>
+        Spotify for Podcasters → dein Podcast → Einstellungen → RSS-Feed → Link kopieren.<br>
+        Sieht so aus: <code style="font-size:11px;background:#eee;padding:2px 5px;border-radius:4px;">https://anchor.fm/s/XXXXXXXX/podcast/rss</code><br><br>
+        Der Feed wird bei jedem Seitenaufruf automatisch geladen – so sehen alle Besucher direkt die neusten Folgen.</p>
       </div>
     </div>
 
@@ -739,15 +749,11 @@ footer a:hover{color:var(--orange);}
     <!-- TAB: Latest Episode -->
     <div class="admin-section" id="tab-latest">
       <div class="admin-form">
-        <p style="font-size:13px;color:var(--muted);margin-bottom:12px;">Aktualisiere die Hero-Box "Neuste Folge" oben.</p>
-        <div><label class="admin-label">Episode-Nummer</label><input type="number" id="latestNum" class="admin-input" placeholder="63"></div>
-        <div><label class="admin-label">Titel</label><input type="text" id="latestTitle" class="admin-input" placeholder="Was Urologie wirklich ist: …"></div>
-        <div><label class="admin-label">Gast</label><input type="text" id="latestGuest" class="admin-input" placeholder="Mit PD Dr. Desiree-Louise Dräger"></div>
-        <div><label class="admin-label">Spotify-Link</label><input type="url" id="latestSpotify" class="admin-input" placeholder="https://open.spotify.com/episode/..."></div>
+        <p class="admin-hint" style="margin-bottom:12px;">Titel, Nummer und Spotify-Link kommen automatisch aus dem RSS-Feed. Hier kannst du zusätzliche Plattform-Links für die Neuste-Folge-Box eintragen.</p>
         <div><label class="admin-label">Apple Podcasts-Link (optional)</label><input type="url" id="latestApple" class="admin-input" placeholder="https://podcasts.apple.com/..."></div>
         <div><label class="admin-label">YouTube-Link (optional)</label><input type="url" id="latestYoutube" class="admin-input" placeholder="https://youtu.be/..."></div>
-        <button class="admin-submit" id="submitLatest">Neuste Folge aktualisieren</button>
-        <div class="admin-success" id="successLatest">✓ Neuste Folge aktualisiert!</div>
+        <button class="admin-submit" id="submitLatest">Links speichern</button>
+        <div class="admin-success" id="successLatest">✓ Links gespeichert!</div>
       </div>
     </div>
 
@@ -863,7 +869,21 @@ function spotifyEpisodeId(url){
 
 // ── Render Latest ──
 function renderLatest(){
-  const ep = LS.get('gg_latest', defaultLatest);
+  let ep;
+  if(allEpisodes.length > 0){
+    const rssEp = allEpisodes[0]; // allEpisodes is sorted newest-first
+    const ov = LS.get('gg_latest', {}); // only youtube/apple overrides
+    ep = {
+      num: rssEp.num,
+      title: rssEp.title,
+      guest: rssEp.guest || '',
+      spotify: rssEp.spotify || '#',
+      apple: ov.apple || rssEp.apple || '',
+      youtube: ov.youtube || rssEp.youtube || ''
+    };
+  } else {
+    ep = LS.get('gg_latest', defaultLatest);
+  }
   const epId = spotifyEpisodeId(ep.spotify);
   const embedHtml = epId
     ? `<div class="latest-embed">
@@ -930,7 +950,7 @@ function epCardHtml(ep){
 }
 
 function renderEpisodes(filter='', resetPagination=true){
-  allEpisodes = LS.get('gg_episodes',defaultEpisodes).sort((a,b)=>b.num-a.num);
+  // allEpisodes is populated by initData() from RSS + manual episodes
   if(resetPagination) epVisible = EP_PAGE_SIZE;
 
   const q = filter.trim().toLowerCase();
@@ -993,10 +1013,50 @@ function renderGallery(){
   grid.innerHTML = items + addBtn;
 }
 
+// ── initData: RSS auto-load on every page visit ──
+async function initData(){
+  const rssUrl = LS.get('gg_rss_url','');
+  const manual = LS.get('gg_manual_episodes',[]);
+
+  if(!rssUrl){
+    // No RSS URL set – use manual entries or default placeholder episodes
+    allEpisodes = (manual.length ? manual : defaultEpisodes).slice().sort((a,b)=>b.num-a.num);
+    renderLatest();
+    renderEpisodes();
+    return;
+  }
+
+  // Show loading state while fetching
+  document.getElementById('episodes-list').innerHTML =
+    '<div class="ep-loading"><div class="ep-loading-spinner"></div>Episoden werden geladen…</div>';
+  document.getElementById('latest-episode-card').innerHTML =
+    '<div class="latest-card" style="min-height:110px;display:flex;align-items:center;justify-content:center;">' +
+    '<div style="color:rgba(255,255,255,0.35);font-size:14px;">⏳ Lade neuste Folge…</div></div>';
+
+  try{
+    const {episodes} = await fetchRssFeed(rssUrl);
+    const rssNums = new Set(episodes.map(e=>e.num));
+    const manualOnly = manual.filter(e=>!rssNums.has(e.num));
+    allEpisodes = [...episodes, ...manualOnly].sort((a,b)=>b.num-a.num);
+    LS.set('gg_rss_cache', allEpisodes);
+    LS.set('gg_rss_last_fetch', Date.now());
+  }catch(err){
+    // Fallback: try cached data, then manual, then defaults
+    const cached = LS.get('gg_rss_cache',[]);
+    if(cached.length){
+      allEpisodes = cached;
+    } else {
+      allEpisodes = (manual.length ? manual : defaultEpisodes).slice().sort((a,b)=>b.num-a.num);
+    }
+  }
+
+  renderLatest();
+  renderEpisodes();
+}
+
 // ── Init ──
-renderLatest();
-renderEpisodes();
 renderGallery();
+initData(); // async: fetches RSS, then calls renderLatest + renderEpisodes
 
 // ── Search ──
 const searchInput = document.getElementById('episodeSearch');
@@ -1047,8 +1107,7 @@ document.getElementById('submitEpisode').addEventListener('click',()=>{
   const num=parseInt(document.getElementById('epNum').value);
   const title=document.getElementById('epTitle').value.trim();
   if(!num||!title){alert('Bitte Nummer und Titel ausfüllen.');return;}
-  const eps=LS.get('gg_episodes',defaultEpisodes);
-  eps.push({
+  const newEp={
     num,
     title,
     guest:document.getElementById('epGuest').value.trim(),
@@ -1058,22 +1117,24 @@ document.getElementById('submitEpisode').addEventListener('click',()=>{
     spotify:document.getElementById('epSpotify').value.trim()||'#',
     apple:document.getElementById('epApple').value.trim(),
     youtube:document.getElementById('epYoutube').value.trim()
-  });
-  LS.set('gg_episodes',eps);
+  };
+  // Save to manual episodes (persists across devices via future export/import)
+  const manual=LS.get('gg_manual_episodes',[]);
+  const existIdx=manual.findIndex(e=>e.num===num);
+  if(existIdx>=0) manual[existIdx]=newEp; else manual.push(newEp);
+  LS.set('gg_manual_episodes',manual);
+  // Also update allEpisodes in memory so it shows immediately
+  const existAllIdx=allEpisodes.findIndex(e=>e.num===num);
+  if(existAllIdx>=0) allEpisodes[existAllIdx]=newEp; else allEpisodes.push(newEp);
+  allEpisodes.sort((a,b)=>b.num-a.num);
   renderEpisodes(searchInput.value);
   ['epNum','epTitle','epGuest','epDesc','epDate','epDur','epSpotify','epApple','epYoutube'].forEach(id=>document.getElementById(id).value='');
   showSuccess('successEpisode');
 });
 
-// ── Submit Latest ──
+// ── Submit Latest (YouTube/Apple override only – title/num/spotify come from RSS) ──
 document.getElementById('submitLatest').addEventListener('click',()=>{
-  const num=parseInt(document.getElementById('latestNum').value);
-  const title=document.getElementById('latestTitle').value.trim();
-  if(!num||!title){alert('Bitte Nummer und Titel ausfüllen.');return;}
   LS.set('gg_latest',{
-    num,title,
-    guest:document.getElementById('latestGuest').value.trim(),
-    spotify:document.getElementById('latestSpotify').value.trim()||'#',
     apple:document.getElementById('latestApple').value.trim(),
     youtube:document.getElementById('latestYoutube').value.trim()
   });
@@ -1118,7 +1179,8 @@ function downloadJSON(data, filename){
 }
 
 document.getElementById('exportData').addEventListener('click',()=>{
-  downloadJSON(LS.get('gg_episodes',defaultEpisodes), 'gg-episoden.json');
+  // Export manual episodes (RSS episodes are always re-fetched from the feed)
+  downloadJSON(LS.get('gg_manual_episodes',[]), 'gg-manuelle-episoden.json');
 });
 document.getElementById('exportGuests').addEventListener('click',()=>{
   downloadJSON(LS.get('gg_guests',defaultGuests), 'gg-gaeste.json');
@@ -1139,7 +1201,11 @@ document.getElementById('importEpisodesFile').addEventListener('change',function
     try{
       const data=JSON.parse(e.target.result);
       if(!Array.isArray(data))throw new Error();
-      LS.set('gg_episodes',data);
+      LS.set('gg_manual_episodes',data);
+      // Merge with current RSS episodes
+      const rssNums = new Set(allEpisodes.map(ep=>ep.num));
+      const manualOnly = data.filter(ep=>!rssNums.has(ep.num));
+      allEpisodes = [...allEpisodes.filter(ep=>rssNums.has(ep.num)), ...manualOnly].sort((a,b)=>b.num-a.num);
       renderEpisodes(searchInput.value);
       showSuccess('successData');
     }catch{alert('Ungültige JSON-Datei.');}
@@ -1167,12 +1233,12 @@ document.getElementById('importGuestsFile').addEventListener('change',function()
 // ── Reset ──
 document.getElementById('resetData').addEventListener('click',()=>{
   if(!confirm('Wirklich alle Daten zurücksetzen? Das kann nicht rückgängig gemacht werden.'))return;
-  localStorage.removeItem('gg_episodes');
-  localStorage.removeItem('gg_guests');
-  localStorage.removeItem('gg_latest');
+  ['gg_episodes','gg_manual_episodes','gg_guests','gg_latest','gg_rss_cache','gg_rss_last_fetch'].forEach(k=>localStorage.removeItem(k));
+  allEpisodes = defaultEpisodes.slice();
   renderLatest();
   renderEpisodes(searchInput.value);
   renderGallery();
+  updateRssAdminStatus();
   showSuccess('successData');
 });
 
@@ -1218,8 +1284,7 @@ document.getElementById('contactForm').addEventListener('submit', async (e)=>{
   }
 });
 
-// ── RSS Import ──
-let rssParsedEpisodes = [];
+// ── RSS: Hilfsfunktionen ──
 
 function stripHtml(html){
   const d=document.createElement('div');
@@ -1314,40 +1379,75 @@ async function fetchRssFeed(rssUrl){
   throw new Error('RSS-Feed konnte nicht geladen werden. Bitte prüfe ob der Link korrekt ist (Spotify for Podcasters → Einstellungen → RSS-Feed). Auf der live-Seite sollte der Import nach dem nächsten Netlify-Deploy automatisch funktionieren.');
 }
 
-document.getElementById('rssFetch').addEventListener('click', async ()=>{
+// ── RSS Status im Admin-Panel anzeigen ──
+function updateRssAdminStatus(){
+  const box = document.getElementById('rssStatusBox');
+  if(!box) return;
+  const rssUrl = LS.get('gg_rss_url','');
+  const lastFetch = LS.get('gg_rss_last_fetch', null);
+  const cached = LS.get('gg_rss_cache',[]);
+
+  if(!rssUrl){
+    box.className='rss-status-none';
+    box.innerHTML='Kein RSS-Feed konfiguriert. Bitte URL eingeben und speichern.';
+    return;
+  }
+  if(lastFetch){
+    const t = new Date(lastFetch).toLocaleString('de-DE');
+    box.className='rss-status-ok';
+    box.innerHTML=`✅ <strong>${cached.length} Folgen geladen</strong><br>Letzter Abruf: ${t}`;
+  } else if(cached.length){
+    box.className='rss-status-warn';
+    box.innerHTML=`⚠️ <strong>${cached.length} Folgen aus Cache</strong><br>Feed konnte noch nicht live geladen werden.`;
+  } else {
+    box.className='rss-status-warn';
+    box.innerHTML='⚠️ URL gespeichert, aber noch kein Feed geladen.';
+  }
+}
+
+// ── URL speichern ──
+document.getElementById('rssSaveUrl').addEventListener('click',()=>{
   const url = document.getElementById('rssUrl').value.trim();
   if(!url){alert('Bitte einen RSS-Feed-Link eingeben.');return;}
   LS.set('gg_rss_url', url);
+  const s = document.getElementById('successRss');
+  s.textContent='✓ URL gespeichert! Seite lädt jetzt beim nächsten Aufruf automatisch.';
+  s.style.display='block';
+  setTimeout(()=>s.style.display='none', 3500);
+  updateRssAdminStatus();
+});
 
-  const btn = document.getElementById('rssFetch');
-  btn.textContent='⏳ Lade Feed…';
-  btn.disabled=true;
+// ── Jetzt aktualisieren ──
+document.getElementById('rssRefresh').addEventListener('click', async ()=>{
+  const url = LS.get('gg_rss_url','') || document.getElementById('rssUrl').value.trim();
+  if(!url){alert('Bitte zuerst eine RSS-Feed-URL eingeben und speichern.');return;}
+  LS.set('gg_rss_url', url);
+  document.getElementById('rssUrl').value = url;
 
-  const preview = document.getElementById('rssPreview');
-  const importBtn = document.getElementById('rssImport');
-  const successEl = document.getElementById('successRss');
-  preview.style.display='none';
-  preview.style.background='';
-  preview.style.color='';
-  importBtn.style.display='none';
-  successEl.style.display='none';
+  const btn = document.getElementById('rssRefresh');
+  btn.textContent='⏳ Lade…'; btn.disabled=true;
 
   try{
-    const {feedTitle, episodes} = await fetchRssFeed(url);
-    rssParsedEpisodes = episodes;
-    preview.style.display='block';
-    preview.innerHTML = `<strong>✓ ${rssParsedEpisodes.length} Folgen gefunden</strong>${feedTitle?' aus „'+feedTitle+'"':''}<br>
-      Neueste: <em>${rssParsedEpisodes[0]?.title||''}</em><br>
-      Älteste: <em>${rssParsedEpisodes[rssParsedEpisodes.length-1]?.title||''}</em>`;
-    importBtn.style.display='block';
+    const {episodes} = await fetchRssFeed(url);
+    const manual = LS.get('gg_manual_episodes',[]);
+    const rssNums = new Set(episodes.map(e=>e.num));
+    const manualOnly = manual.filter(e=>!rssNums.has(e.num));
+    allEpisodes = [...episodes, ...manualOnly].sort((a,b)=>b.num-a.num);
+    LS.set('gg_rss_cache', allEpisodes);
+    LS.set('gg_rss_last_fetch', Date.now());
+    renderLatest();
+    renderEpisodes(searchInput.value);
+    updateRssAdminStatus();
+    const s = document.getElementById('successRss');
+    s.textContent=`✓ ${episodes.length} Folgen geladen!`;
+    s.style.display='block';
+    setTimeout(()=>s.style.display='none', 3500);
   }catch(err){
-    preview.style.display='block';
-    preview.style.background='#fdecea';
-    preview.style.color='#c0392b';
-    preview.innerHTML=`⚠ ${err.message}`;
+    const box = document.getElementById('rssStatusBox');
+    box.className='rss-status-err';
+    box.innerHTML=`⚠️ Fehler: ${err.message.slice(0,120)}`;
   }finally{
-    btn.textContent='🔍 Feed laden & Vorschau';
-    btn.disabled=false;
+    btn.textContent='🔄 Jetzt aktualisieren'; btn.disabled=false;
   }
 });
 
@@ -1425,37 +1525,10 @@ document.getElementById('saveHostPhotos').addEventListener('click',()=>{
   showSuccess('successHosts');
 });
 
-// Restore saved RSS URL
+// ── Restore saved RSS URL in admin input ──
 const savedRssUrl = LS.get('gg_rss_url','');
 if(savedRssUrl) document.getElementById('rssUrl').value = savedRssUrl;
-
-document.getElementById('rssImport').addEventListener('click',()=>{
-  if(!rssParsedEpisodes.length){return;}
-  const existing = LS.get('gg_episodes', defaultEpisodes);
-  const existingNums = new Set(existing.map(e=>e.num));
-  const newOnes = rssParsedEpisodes.filter(e=>!existingNums.has(e.num));
-  const merged = [...existing, ...newOnes].sort((a,b)=>b.num-a.num);
-  LS.set('gg_episodes', merged);
-
-  // Auto-set latest from RSS
-  const latest = rssParsedEpisodes[0];
-  if(latest){
-    const cur = LS.get('gg_latest', defaultLatest);
-    if(latest.num > cur.num){
-      LS.set('gg_latest',{num:latest.num,title:latest.title,guest:'',spotify:latest.spotify,apple:'',youtube:''});
-      renderLatest();
-    }
-  }
-
-  renderEpisodes(searchInput.value);
-  const successEl = document.getElementById('successRss');
-  successEl.style.display='block';
-  successEl.textContent = newOnes.length>0
-    ? `✓ ${newOnes.length} neue Folgen importiert! (${merged.length} gesamt)`
-    : `✓ Keine neuen Folgen – alle ${merged.length} sind bereits vorhanden.`;
-  setTimeout(()=>successEl.style.display='none', 5000);
-  document.getElementById('rssImport').style.display='none';
-});
+updateRssAdminStatus();
 </script>
 </body>
 </html>
