@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Seite nicht gefunden – Glans & Gloria</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --orange:#ffa547;
+  --orange-dark:#e08830;
+  --black:#141414;
+  --white:#FFFFFF;
+  --muted:#6B6B6B;
+}
+html,body{height:100%;}
+body{
+  font-family:'DM Sans',sans-serif;
+  background:var(--orange);
+  color:var(--black);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  min-height:100vh;
+  padding:2rem;
+  text-align:center;
+}
+.logo{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:22px;
+  letter-spacing:2px;
+  margin-bottom:3rem;
+  color:var(--black);
+}
+.logo span{color:rgba(0,0,0,0.4);}
+.error-num{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(120px,20vw,220px);
+  line-height:0.85;
+  letter-spacing:4px;
+  color:var(--black);
+  opacity:0.15;
+  user-select:none;
+}
+.icon{font-size:56px;margin:1.5rem 0 1rem;}
+h1{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(32px,5vw,52px);
+  letter-spacing:1px;
+  color:var(--black);
+  margin-bottom:0.8rem;
+}
+p{
+  font-size:16px;
+  color:rgba(0,0,0,0.6);
+  line-height:1.6;
+  max-width:420px;
+  margin-bottom:2.5rem;
+}
+.btn-home{
+  background:var(--black);
+  color:#fff;
+  padding:16px 36px;
+  border-radius:10px;
+  font-weight:700;
+  font-size:15px;
+  text-decoration:none;
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+  transition:background .2s;
+}
+.btn-home:hover{background:#333;}
+.btn-home svg{width:18px;height:18px;fill:none;stroke:#fff;stroke-width:2.5;}
+.links{margin-top:1.5rem;display:flex;gap:1.5rem;flex-wrap:wrap;justify-content:center;}
+.links a{
+  color:rgba(0,0,0,0.5);
+  font-size:14px;
+  font-weight:500;
+  text-decoration:none;
+  transition:color .2s;
+}
+.links a:hover{color:var(--black);}
+</style>
+</head>
+<body>
+  <div class="logo">GLANS <span>&</span> GLORIA</div>
+
+  <div class="error-num">404</div>
+
+  <div class="icon">🎙️</div>
+  <h1>Diese Folge existiert nicht</h1>
+  <p>Die Seite, die du suchst, wurde nicht gefunden. Vielleicht wurde sie verschoben oder der Link ist veraltet.</p>
+
+  <a href="/" class="btn-home">
+    <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9,22 9,12 15,12 15,22"/></svg>
+    Zurück zur Startseite
+  </a>
+
+  <div class="links">
+    <a href="/#folgen">Alle Episoden</a>
+    <a href="/#ueber-uns">Über uns</a>
+    <a href="/#kontakt">Kontakt</a>
+  </div>
+</body>
+</html>
