@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+  <!-- Hauptseite -->
+  <!-- ⚠ Domain anpassen falls nötig -->
+  <url>
+    <loc>https://glansundgloria.de/</loc>
+    <lastmod>2025-05-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  <!-- Abschnitt: Neuste Folge -->
+  <url>
+    <loc>https://glansundgloria.de/#latest</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Abschnitt: Alle Episoden -->
+  <url>
+    <loc>https://glansundgloria.de/#folgen</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Abschnitt: Über uns -->
+  <url>
+    <loc>https://glansundgloria.de/#ueber-uns</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- Abschnitt: Kontakt -->
+  <url>
+    <loc>https://glansundgloria.de/#kontakt</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
+</urlset>
