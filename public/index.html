@@ -667,21 +667,12 @@ footer a:hover{color:var(--orange);}
     <!-- TAB: RSS Import -->
     <div class="admin-section active" id="tab-rss">
       <div class="admin-form">
-        <div id="rssStatusBox" class="rss-status-none">Kein RSS-Feed konfiguriert. Bitte URL eingeben und speichern.</div>
-        <div style="margin-top:12px;">
-          <label class="admin-label">RSS-Feed-Link (Spotify for Podcasters)</label>
-          <input type="url" id="rssUrl" class="admin-input" placeholder="https://anchor.fm/s/…/podcast/rss">
-        </div>
-        <div style="display:flex;gap:8px;margin-top:4px;">
-          <button class="admin-submit" id="rssSaveUrl" style="background:var(--black);flex:1;">💾 URL speichern</button>
-          <button class="admin-submit" id="rssRefresh" style="flex:1;">🔄 Jetzt aktualisieren</button>
-        </div>
+        <div id="rssStatusBox" class="rss-status-none">Feed wird geprüft…</div>
+        <button class="admin-submit" id="rssRefresh" style="margin-top:10px;">🔄 Feed jetzt neu laden</button>
         <div class="admin-success" id="successRss"></div>
         <hr class="admin-divider">
-        <p class="admin-hint"><strong>Wo finde ich den Link?</strong><br>
-        Spotify for Podcasters → dein Podcast → Einstellungen → RSS-Feed → Link kopieren.<br>
-        Sieht so aus: <code style="font-size:11px;background:#eee;padding:2px 5px;border-radius:4px;">https://anchor.fm/s/XXXXXXXX/podcast/rss</code><br><br>
-        Der Feed wird bei jedem Seitenaufruf automatisch geladen – so sehen alle Besucher direkt die neusten Folgen.</p>
+        <p class="admin-hint">Der Feed wird bei <strong>jedem Seitenaufruf</strong> automatisch geladen – neue Episoden erscheinen sofort für alle Besucher, sobald Spotify sie veröffentlicht.<br><br>
+        Aktueller Feed:<br><code style="font-size:11px;background:#eee;padding:2px 5px;border-radius:4px;word-break:break-all;">https://anchor.fm/s/e984c364/podcast/rss</code></p>
       </div>
     </div>
 
@@ -791,6 +782,9 @@ const LS = {
   get(k,def){try{const v=localStorage.getItem(k);return v?JSON.parse(v):def;}catch{return def;}},
   set(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch{}}
 };
+
+// ── RSS Feed URL (einmalig hier setzen – gilt für alle Besucher) ──
+const RSS_FEED_URL = 'https://anchor.fm/s/e984c364/podcast/rss';
 
 // ── Admin PIN Protection ──
 // ⚠ PIN hier ändern (nur Ziffern, 4–6 Stellen empfohlen):
@@ -1015,16 +1009,8 @@ function renderGallery(){
 
 // ── initData: RSS auto-load on every page visit ──
 async function initData(){
-  const rssUrl = LS.get('gg_rss_url','');
+  // RSS_FEED_URL ist fest im Code – gilt für jeden Besucher automatisch
   const manual = LS.get('gg_manual_episodes',[]);
-
-  if(!rssUrl){
-    // No RSS URL set – use manual entries or default placeholder episodes
-    allEpisodes = (manual.length ? manual : defaultEpisodes).slice().sort((a,b)=>b.num-a.num);
-    renderLatest();
-    renderEpisodes();
-    return;
-  }
 
   // Show loading state while fetching
   document.getElementById('episodes-list').innerHTML =
@@ -1034,24 +1020,26 @@ async function initData(){
     '<div style="color:rgba(255,255,255,0.35);font-size:14px;">⏳ Lade neuste Folge…</div></div>';
 
   try{
-    const {episodes} = await fetchRssFeed(rssUrl);
+    const {episodes} = await fetchRssFeed(RSS_FEED_URL);
     const rssNums = new Set(episodes.map(e=>e.num));
     const manualOnly = manual.filter(e=>!rssNums.has(e.num));
     allEpisodes = [...episodes, ...manualOnly].sort((a,b)=>b.num-a.num);
     LS.set('gg_rss_cache', allEpisodes);
     LS.set('gg_rss_last_fetch', Date.now());
   }catch(err){
-    // Fallback: try cached data, then manual, then defaults
+    // Fallback: gecachte Daten aus letztem erfolgreichen Abruf
     const cached = LS.get('gg_rss_cache',[]);
     if(cached.length){
       allEpisodes = cached;
     } else {
+      // Letzter Fallback: manuelle Einträge oder Beispielepisoden
       allEpisodes = (manual.length ? manual : defaultEpisodes).slice().sort((a,b)=>b.num-a.num);
     }
   }
 
   renderLatest();
   renderEpisodes();
+  updateRssAdminStatus();
 }
 
 // ── Init ──
@@ -1380,55 +1368,33 @@ async function fetchRssFeed(rssUrl){
 }
 
 // ── RSS Status im Admin-Panel anzeigen ──
-function updateRssAdminStatus(){
+function updateRssAdminStatus(errMsg){
   const box = document.getElementById('rssStatusBox');
   if(!box) return;
-  const rssUrl = LS.get('gg_rss_url','');
   const lastFetch = LS.get('gg_rss_last_fetch', null);
   const cached = LS.get('gg_rss_cache',[]);
-
-  if(!rssUrl){
-    box.className='rss-status-none';
-    box.innerHTML='Kein RSS-Feed konfiguriert. Bitte URL eingeben und speichern.';
-    return;
-  }
-  if(lastFetch){
+  if(errMsg){
+    box.className='rss-status-err';
+    box.innerHTML=`⚠️ Fehler: ${errMsg}`;
+  } else if(lastFetch && cached.length){
     const t = new Date(lastFetch).toLocaleString('de-DE');
     box.className='rss-status-ok';
-    box.innerHTML=`✅ <strong>${cached.length} Folgen geladen</strong><br>Letzter Abruf: ${t}`;
+    box.innerHTML=`✅ <strong>${cached.length} Folgen geladen</strong> · Letzter Abruf: ${t}`;
   } else if(cached.length){
     box.className='rss-status-warn';
-    box.innerHTML=`⚠️ <strong>${cached.length} Folgen aus Cache</strong><br>Feed konnte noch nicht live geladen werden.`;
+    box.innerHTML=`⚠️ <strong>${cached.length} Folgen aus Cache</strong> · Feed konnte noch nicht live abgerufen werden.`;
   } else {
     box.className='rss-status-warn';
-    box.innerHTML='⚠️ URL gespeichert, aber noch kein Feed geladen.';
+    box.innerHTML='Feed wird beim nächsten Seitenaufruf geladen…';
   }
 }
 
-// ── URL speichern ──
-document.getElementById('rssSaveUrl').addEventListener('click',()=>{
-  const url = document.getElementById('rssUrl').value.trim();
-  if(!url){alert('Bitte einen RSS-Feed-Link eingeben.');return;}
-  LS.set('gg_rss_url', url);
-  const s = document.getElementById('successRss');
-  s.textContent='✓ URL gespeichert! Seite lädt jetzt beim nächsten Aufruf automatisch.';
-  s.style.display='block';
-  setTimeout(()=>s.style.display='none', 3500);
-  updateRssAdminStatus();
-});
-
-// ── Jetzt aktualisieren ──
+// ── Feed manuell neu laden (Admin) ──
 document.getElementById('rssRefresh').addEventListener('click', async ()=>{
-  const url = LS.get('gg_rss_url','') || document.getElementById('rssUrl').value.trim();
-  if(!url){alert('Bitte zuerst eine RSS-Feed-URL eingeben und speichern.');return;}
-  LS.set('gg_rss_url', url);
-  document.getElementById('rssUrl').value = url;
-
   const btn = document.getElementById('rssRefresh');
   btn.textContent='⏳ Lade…'; btn.disabled=true;
-
   try{
-    const {episodes} = await fetchRssFeed(url);
+    const {episodes} = await fetchRssFeed(RSS_FEED_URL);
     const manual = LS.get('gg_manual_episodes',[]);
     const rssNums = new Set(episodes.map(e=>e.num));
     const manualOnly = manual.filter(e=>!rssNums.has(e.num));
@@ -1443,11 +1409,9 @@ document.getElementById('rssRefresh').addEventListener('click', async ()=>{
     s.style.display='block';
     setTimeout(()=>s.style.display='none', 3500);
   }catch(err){
-    const box = document.getElementById('rssStatusBox');
-    box.className='rss-status-err';
-    box.innerHTML=`⚠️ Fehler: ${err.message.slice(0,120)}`;
+    updateRssAdminStatus(err.message.slice(0,120));
   }finally{
-    btn.textContent='🔄 Jetzt aktualisieren'; btn.disabled=false;
+    btn.textContent='🔄 Feed jetzt neu laden'; btn.disabled=false;
   }
 });
 
@@ -1525,9 +1489,7 @@ document.getElementById('saveHostPhotos').addEventListener('click',()=>{
   showSuccess('successHosts');
 });
 
-// ── Restore saved RSS URL in admin input ──
-const savedRssUrl = LS.get('gg_rss_url','');
-if(savedRssUrl) document.getElementById('rssUrl').value = savedRssUrl;
+// RSS-Status im Admin-Panel beim Laden aktualisieren
 updateRssAdminStatus();
 </script>
 </body>
