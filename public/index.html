@@ -807,7 +807,7 @@ async function loadSharedData() {
     const cached = LS.get('gg_shared_cache', null);
     if (cached) sharedData = { guests: [], hostNils: '', hostLeo: '', latestOverride: {}, manualEpisodes: [], ...cached };
   }
-  applySharedData();
+  try { applySharedData(); } catch(e) { console.warn('applySharedData fehlgeschlagen:', e); }
 }
 
 function applySharedData() {
@@ -1072,7 +1072,8 @@ async function initData(){
     '<div style="color:rgba(255,255,255,0.35);font-size:14px;">⏳ Lade neuste Folge…</div></div>';
 
   // Shared Data und RSS-Feed PARALLEL laden (keines blockiert das andere)
-  const sharedPromise = loadSharedData();
+  // .catch(()=>{}) verhindert dass ein Fehler in loadSharedData die gesamte initData-Funktion crasht
+  const sharedPromise = loadSharedData().catch(e => console.warn('loadSharedData fehlgeschlagen:', e));
 
   let rssEpisodes = [];
   try{
@@ -1085,16 +1086,21 @@ async function initData(){
     rssEpisodes = cached.length ? cached : [];
   }
 
-  // Auf Shared Data warten (hat internen 4s-Timeout, hängt nie länger)
+  // Auf Shared Data warten (kann nicht mehr werfen – .catch() oben fängt alles ab)
   await sharedPromise;
 
-  // RSS + manuelle Episoden zusammenführen
-  const manual = (sharedData.manualEpisodes && sharedData.manualEpisodes.length)
-    ? sharedData.manualEpisodes
-    : LS.get('gg_manual_episodes',[]);
-  const rssNums = new Set(rssEpisodes.map(e=>e.num));
-  const manualOnly = manual.filter(e=>!rssNums.has(e.num));
-  allEpisodes = [...rssEpisodes, ...manualOnly].sort((a,b)=>b.num-a.num);
+  try {
+    // RSS + manuelle Episoden zusammenführen
+    const manual = (sharedData.manualEpisodes && sharedData.manualEpisodes.length)
+      ? sharedData.manualEpisodes
+      : LS.get('gg_manual_episodes',[]);
+    const rssNums = new Set(rssEpisodes.map(e=>e.num));
+    const manualOnly = manual.filter(e=>!rssNums.has(e.num));
+    allEpisodes = [...rssEpisodes, ...manualOnly].sort((a,b)=>b.num-a.num);
+  } catch(e) {
+    console.warn('Episoden-Merge fehlgeschlagen:', e);
+    allEpisodes = rssEpisodes;
+  }
 
   if(!allEpisodes.length) allEpisodes = defaultEpisodes.slice();
 
