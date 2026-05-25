@@ -794,7 +794,10 @@ let sharedData = { guests: [], hostNils: '', hostLeo: '', latestOverride: {}, ma
 
 async function loadSharedData() {
   try {
-    const res = await fetch(SITE_DATA_URL, { cache: 'no-store' });
+    const res = await fetch(SITE_DATA_URL, {
+      cache: 'no-store',
+      signal: AbortSignal.timeout(4000), // max 4 Sekunden warten
+    });
     if (res.ok) {
       const data = await res.json();
       sharedData = { guests: [], hostNils: '', hostLeo: '', latestOverride: {}, manualEpisodes: [], ...data };
@@ -1061,36 +1064,39 @@ function renderGallery(){
 
 // ── initData: RSS auto-load on every page visit ──
 async function initData(){
-  // 1) Gemeinsame Daten vom Backend laden (Gäste, Host-Fotos, Overrides)
-  await loadSharedData();
-
-  // RSS_FEED_URL ist fest im Code – gilt für jeden Besucher automatisch
-  const manual = sharedData.manualEpisodes.length ? sharedData.manualEpisodes : LS.get('gg_manual_episodes',[]);
-
-  // Show loading state while fetching
+  // Ladeanimation sofort anzeigen
   document.getElementById('episodes-list').innerHTML =
     '<div class="ep-loading"><div class="ep-loading-spinner"></div>Episoden werden geladen…</div>';
   document.getElementById('latest-episode-card').innerHTML =
     '<div class="latest-card" style="min-height:110px;display:flex;align-items:center;justify-content:center;">' +
     '<div style="color:rgba(255,255,255,0.35);font-size:14px;">⏳ Lade neuste Folge…</div></div>';
 
+  // Shared Data und RSS-Feed PARALLEL laden (keines blockiert das andere)
+  const sharedPromise = loadSharedData();
+
+  let rssEpisodes = [];
   try{
     const {episodes} = await fetchRssFeed(RSS_FEED_URL);
-    const rssNums = new Set(episodes.map(e=>e.num));
-    const manualOnly = manual.filter(e=>!rssNums.has(e.num));
-    allEpisodes = [...episodes, ...manualOnly].sort((a,b)=>b.num-a.num);
-    LS.set('gg_rss_cache', allEpisodes);
+    rssEpisodes = episodes;
+    LS.set('gg_rss_cache', episodes);
     LS.set('gg_rss_last_fetch', Date.now());
-  }catch(err){
-    // Fallback: gecachte Daten aus letztem erfolgreichen Abruf
+  }catch{
     const cached = LS.get('gg_rss_cache',[]);
-    if(cached.length){
-      allEpisodes = cached;
-    } else {
-      // Letzter Fallback: manuelle Einträge oder Beispielepisoden
-      allEpisodes = (manual.length ? manual : defaultEpisodes).slice().sort((a,b)=>b.num-a.num);
-    }
+    rssEpisodes = cached.length ? cached : [];
   }
+
+  // Auf Shared Data warten (hat internen 4s-Timeout, hängt nie länger)
+  await sharedPromise;
+
+  // RSS + manuelle Episoden zusammenführen
+  const manual = (sharedData.manualEpisodes && sharedData.manualEpisodes.length)
+    ? sharedData.manualEpisodes
+    : LS.get('gg_manual_episodes',[]);
+  const rssNums = new Set(rssEpisodes.map(e=>e.num));
+  const manualOnly = manual.filter(e=>!rssNums.has(e.num));
+  allEpisodes = [...rssEpisodes, ...manualOnly].sort((a,b)=>b.num-a.num);
+
+  if(!allEpisodes.length) allEpisodes = defaultEpisodes.slice();
 
   renderLatest();
   renderEpisodes();
