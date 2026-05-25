@@ -786,6 +786,58 @@ const LS = {
 // ── RSS Feed URL (einmalig hier setzen – gilt für alle Besucher) ──
 const RSS_FEED_URL = 'https://anchor.fm/s/e984c364/podcast/rss';
 
+// ── Gemeinsamer Backend-Datenspeicher (Netlify Blobs) ──
+const SITE_DATA_URL = '/.netlify/functions/site-data';
+
+// In-Memory-Zustand (wird beim Laden vom Backend befüllt)
+let sharedData = { guests: [], hostNils: '', hostLeo: '', latestOverride: {}, manualEpisodes: [] };
+
+async function loadSharedData() {
+  try {
+    const res = await fetch(SITE_DATA_URL, { cache: 'no-store' });
+    if (res.ok) {
+      const data = await res.json();
+      sharedData = { guests: [], hostNils: '', hostLeo: '', latestOverride: {}, manualEpisodes: [], ...data };
+      LS.set('gg_shared_cache', sharedData); // lokaler Fallback-Cache
+    }
+  } catch {
+    const cached = LS.get('gg_shared_cache', null);
+    if (cached) sharedData = { guests: [], hostNils: '', hostLeo: '', latestOverride: {}, manualEpisodes: [], ...cached };
+  }
+  applySharedData();
+}
+
+function applySharedData() {
+  // Host-Fotos anwenden
+  if (sharedData.hostNils) {
+    const img = document.getElementById('nils-photo-img');
+    img.src = sharedData.hostNils; img.style.display = 'block';
+    document.getElementById('nils-photo-placeholder').style.display = 'none';
+  }
+  if (sharedData.hostLeo) {
+    const img = document.getElementById('leo-photo-img');
+    img.src = sharedData.hostLeo; img.style.display = 'block';
+    document.getElementById('leo-photo-placeholder').style.display = 'none';
+  }
+  renderGallery();
+}
+
+// Speichert einen Teil der Daten auf dem Backend (und lokal als Cache)
+async function saveSharedData(patch) {
+  sharedData = { ...sharedData, ...patch };
+  LS.set('gg_shared_cache', sharedData);
+  try {
+    const res = await fetch(SITE_DATA_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-admin-pin': ADMIN_PIN },
+      body: JSON.stringify(patch),
+    });
+    return res.ok;
+  } catch {
+    return false; // lokal gespeichert, Backend nicht erreichbar
+  }
+}
+
 // ── Admin PIN Protection ──
 // ⚠ PIN hier ändern (nur Ziffern, 4–6 Stellen empfohlen):
 const ADMIN_PIN = '4242';
@@ -866,7 +918,7 @@ function renderLatest(){
   let ep;
   if(allEpisodes.length > 0){
     const rssEp = allEpisodes[0]; // allEpisodes is sorted newest-first
-    const ov = LS.get('gg_latest', {}); // only youtube/apple overrides
+    const ov = sharedData.latestOverride || LS.get('gg_latest', {}); // youtube/apple overrides
     ep = {
       num: rssEp.num,
       title: rssEp.title,
@@ -994,7 +1046,7 @@ document.getElementById('showMoreBtn').addEventListener('click', ()=>{
 
 // ── Render Gallery ──
 function renderGallery(){
-  const guests = LS.get('gg_guests',defaultGuests);
+  const guests = sharedData.guests && sharedData.guests.length ? sharedData.guests : LS.get('gg_guests', defaultGuests);
   const grid = document.getElementById('gallery-grid');
   const items = guests.map(g=>`
     <div class="gallery-item" title="${g.name||''}">
@@ -1009,8 +1061,11 @@ function renderGallery(){
 
 // ── initData: RSS auto-load on every page visit ──
 async function initData(){
+  // 1) Gemeinsame Daten vom Backend laden (Gäste, Host-Fotos, Overrides)
+  await loadSharedData();
+
   // RSS_FEED_URL ist fest im Code – gilt für jeden Besucher automatisch
-  const manual = LS.get('gg_manual_episodes',[]);
+  const manual = sharedData.manualEpisodes.length ? sharedData.manualEpisodes : LS.get('gg_manual_episodes',[]);
 
   // Show loading state while fetching
   document.getElementById('episodes-list').innerHTML =
@@ -1043,8 +1098,8 @@ async function initData(){
 }
 
 // ── Init ──
-renderGallery();
-initData(); // async: fetches RSS, then calls renderLatest + renderEpisodes
+// (renderGallery und loadHostPhotos werden von initData → loadSharedData → applySharedData aufgerufen)
+initData();
 
 // ── Search ──
 const searchInput = document.getElementById('episodeSearch');
@@ -1106,12 +1161,11 @@ document.getElementById('submitEpisode').addEventListener('click',()=>{
     apple:document.getElementById('epApple').value.trim(),
     youtube:document.getElementById('epYoutube').value.trim()
   };
-  // Save to manual episodes (persists across devices via future export/import)
-  const manual=LS.get('gg_manual_episodes',[]);
-  const existIdx=manual.findIndex(e=>e.num===num);
+  // Save to shared backend + update in memory
+  const manual = [...(sharedData.manualEpisodes || [])];
+  const existIdx = manual.findIndex(e=>e.num===num);
   if(existIdx>=0) manual[existIdx]=newEp; else manual.push(newEp);
-  LS.set('gg_manual_episodes',manual);
-  // Also update allEpisodes in memory so it shows immediately
+  await saveSharedData({ manualEpisodes: manual });
   const existAllIdx=allEpisodes.findIndex(e=>e.num===num);
   if(existAllIdx>=0) allEpisodes[existAllIdx]=newEp; else allEpisodes.push(newEp);
   allEpisodes.sort((a,b)=>b.num-a.num);
@@ -1121,13 +1175,17 @@ document.getElementById('submitEpisode').addEventListener('click',()=>{
 });
 
 // ── Submit Latest (YouTube/Apple override only – title/num/spotify come from RSS) ──
-document.getElementById('submitLatest').addEventListener('click',()=>{
-  LS.set('gg_latest',{
-    apple:document.getElementById('latestApple').value.trim(),
-    youtube:document.getElementById('latestYoutube').value.trim()
-  });
+document.getElementById('submitLatest').addEventListener('click', async ()=>{
+  const btn = document.getElementById('submitLatest');
+  btn.textContent='⏳ Speichern…'; btn.disabled=true;
+  const override = {
+    apple: document.getElementById('latestApple').value.trim(),
+    youtube: document.getElementById('latestYoutube').value.trim()
+  };
+  await saveSharedData({ latestOverride: override });
   renderLatest();
   showSuccess('successLatest');
+  btn.textContent='Links speichern'; btn.disabled=false;
 });
 
 // ── Guest photo preview ──
@@ -1143,18 +1201,20 @@ document.getElementById('guestPhoto').addEventListener('change',function(){
 });
 
 // ── Submit Guest ──
-document.getElementById('submitGuest').addEventListener('click',()=>{
+document.getElementById('submitGuest').addEventListener('click', async ()=>{
   const name=document.getElementById('guestName').value.trim();
   const img=document.getElementById('guestPhotoImg').src;
   if(!img||img===window.location.href){alert('Bitte ein Foto auswählen.');return;}
-  const guests=LS.get('gg_guests',defaultGuests);
-  guests.push({name,photo:img});
-  LS.set('gg_guests',guests);
+  const btn = document.getElementById('submitGuest');
+  btn.textContent='⏳ Speichern…'; btn.disabled=true;
+  const newGuests = [...(sharedData.guests||[]), {name, photo:img}];
+  await saveSharedData({guests: newGuests});
   renderGallery();
   document.getElementById('guestName').value='';
   document.getElementById('guestPhoto').value='';
   document.getElementById('guestPhotoPreview').style.display='none';
   showSuccess('successGuest');
+  btn.textContent='Gast hinzufügen'; btn.disabled=false;
 });
 
 // ── Export ──
@@ -1219,9 +1279,11 @@ document.getElementById('importGuestsFile').addEventListener('change',function()
 });
 
 // ── Reset ──
-document.getElementById('resetData').addEventListener('click',()=>{
+document.getElementById('resetData').addEventListener('click', async ()=>{
   if(!confirm('Wirklich alle Daten zurücksetzen? Das kann nicht rückgängig gemacht werden.'))return;
-  ['gg_episodes','gg_manual_episodes','gg_guests','gg_latest','gg_rss_cache','gg_rss_last_fetch'].forEach(k=>localStorage.removeItem(k));
+  ['gg_episodes','gg_manual_episodes','gg_guests','gg_latest','gg_rss_cache','gg_rss_last_fetch','gg_shared_cache'].forEach(k=>localStorage.removeItem(k));
+  sharedData = { guests: [], hostNils: '', hostLeo: '', latestOverride: {}, manualEpisodes: [] };
+  await saveSharedData(sharedData); // Backend auch zurücksetzen
   allEpisodes = defaultEpisodes.slice();
   renderLatest();
   renderEpisodes(searchInput.value);
@@ -1455,7 +1517,7 @@ function loadHostPhotos(){
     document.getElementById('leo-photo-placeholder').style.display='none';
   }
 }
-loadHostPhotos();
+// loadHostPhotos() wird jetzt von applySharedData() in loadSharedData() aufgerufen
 
 function hostPhotoPreview(inputId, previewId, previewImgId){
   document.getElementById(inputId).addEventListener('change',function(){
@@ -1471,22 +1533,27 @@ function hostPhotoPreview(inputId, previewId, previewImgId){
 hostPhotoPreview('nilsPhoto','nilsPreview','nilsPreviewImg');
 hostPhotoPreview('leoPhoto','leoPreview','leoPreviewImg');
 
-document.getElementById('saveHostPhotos').addEventListener('click',()=>{
+document.getElementById('saveHostPhotos').addEventListener('click', async ()=>{
   const nilsNew = document.getElementById('nilsPreviewImg').src;
   const leoNew  = document.getElementById('leoPreviewImg').src;
+  const btn = document.getElementById('saveHostPhotos');
+  btn.textContent='⏳ Speichern…'; btn.disabled=true;
+  const patch = {};
   if(nilsNew && nilsNew !== window.location.href){
-    LS.set('gg_host_nils', nilsNew);
+    patch.hostNils = nilsNew;
     const img = document.getElementById('nils-photo-img');
     img.src = nilsNew; img.style.display='block';
     document.getElementById('nils-photo-placeholder').style.display='none';
   }
   if(leoNew && leoNew !== window.location.href){
-    LS.set('gg_host_leo', leoNew);
+    patch.hostLeo = leoNew;
     const img = document.getElementById('leo-photo-img');
     img.src = leoNew; img.style.display='block';
     document.getElementById('leo-photo-placeholder').style.display='none';
   }
+  if(Object.keys(patch).length) await saveSharedData(patch);
   showSuccess('successHosts');
+  btn.textContent='Fotos speichern'; btn.disabled=false;
 });
 
 // RSS-Status im Admin-Panel beim Laden aktualisieren
