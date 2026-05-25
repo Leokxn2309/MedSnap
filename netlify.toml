@@ -1,0 +1,13 @@
+# Netlify Konfiguration – Glans & Gloria
+# Diese Datei überschreibt alle Einstellungen aus dem Netlify Dashboard.
+
+[build]
+  # Kein Build-Schritt nötig – statische HTML-Seite
+  command = "echo 'Static site – no build needed'"
+  # Publish-Verzeichnis: Repo-Root (wo index.html liegt)
+  publish = "."
+  # Netlify Functions
+  functions = "netlify/functions"
+
+[build.environment]
+  NODE_VERSION = "20"
