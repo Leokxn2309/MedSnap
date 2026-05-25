@@ -1,19 +1,8 @@
 {
-  "name": "medsnap",
+  "name": "glans-gloria",
   "version": "1.0.0",
-  "scripts": {
-    "dev": "astro dev",
-    "build": "astro build",
-    "preview": "astro preview",
-    "tailwind": "tailwindcss-cli"
-  },
+  "private": true,
   "dependencies": {
-    "astro": "^4.0.0"
-  },
-  "devDependencies": {
-    "autoprefixer": "^10.4.21",
-    "postcss": "^8.5.6",
-    "tailwindcss": "^4.1.10",
-    "tailwindcss-cli": "^0.1.2"
+    "@netlify/blobs": "^8.0.0"
   }
 }
