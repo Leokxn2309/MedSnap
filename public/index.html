@@ -1146,7 +1146,7 @@ function showSuccess(id){
 }
 
 // ── Submit Episode ──
-document.getElementById('submitEpisode').addEventListener('click',()=>{
+document.getElementById('submitEpisode').addEventListener('click', async ()=>{
   const num=parseInt(document.getElementById('epNum').value);
   const title=document.getElementById('epTitle').value.trim();
   if(!num||!title){alert('Bitte Nummer und Titel ausfüllen.');return;}
