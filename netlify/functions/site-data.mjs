@@ -1,7 +1,6 @@
-// Netlify Serverless Function: Gemeinsamer Datenspeicher für Glans & Gloria
-// Nutzt Netlify Blobs – kein separates Backend nötig.
-// GET  /.netlify/functions/site-data        → gibt gespeicherte Daten zurück
-// POST /.netlify/functions/site-data        → speichert Daten (PIN-geschützt)
+// Netlify Function v2 (ESM) – Netlify Blobs funktioniert nur mit v2
+// GET  /.netlify/functions/site-data  → gespeicherte Daten zurückgeben
+// POST /.netlify/functions/site-data  → Daten speichern (PIN-geschützt)
 
 import { getStore } from "@netlify/blobs";
 
@@ -22,10 +21,11 @@ export default async (req) => {
   let store;
   try {
     store = getStore('gg-data');
-  } catch {
-    // Lokal ohne `netlify dev` aufgerufen – leere Daten zurückgeben
-    return new Response('{}', {
-      headers: { ...CORS, 'Content-Type': 'application/json' }
+  } catch (err) {
+    console.error('getStore fehlgeschlagen:', err.message);
+    return new Response(JSON.stringify({ error: 'Blobs nicht verfügbar: ' + err.message }), {
+      status: 500,
+      headers: { ...CORS, 'Content-Type': 'application/json' },
     });
   }
 
@@ -34,6 +34,7 @@ export default async (req) => {
     try {
       const raw = await store.get(BLOB_KEY);
       const data = raw ? JSON.parse(raw) : {};
+      console.log('GET erfolgreich, Daten:', JSON.stringify(data).slice(0, 200));
       return new Response(JSON.stringify(data), {
         headers: {
           ...CORS,
@@ -41,9 +42,10 @@ export default async (req) => {
           'Cache-Control': 'no-store',
         },
       });
-    } catch {
+    } catch (err) {
+      console.error('GET store.get fehlgeschlagen:', err.message);
       return new Response('{}', {
-        headers: { ...CORS, 'Content-Type': 'application/json' }
+        headers: { ...CORS, 'Content-Type': 'application/json' },
       });
     }
   }
@@ -51,7 +53,6 @@ export default async (req) => {
   // ── POST: Daten speichern (PIN-geschützt) ──
   if (req.method === 'POST') {
     const pin = req.headers.get('x-admin-pin');
-    // ADMIN_PIN kann als Netlify Env-Variable gesetzt werden; Fallback: '4242'
     const expected = process.env.ADMIN_PIN || '4242';
 
     if (!pin || pin !== expected) {
@@ -62,17 +63,17 @@ export default async (req) => {
     }
 
     try {
-      // Bestehende Daten laden und mit Patch zusammenführen
       const existingRaw = await store.get(BLOB_KEY).catch(() => null);
       const existing = existingRaw ? JSON.parse(existingRaw) : {};
       const patch = await req.json();
       const merged = { ...existing, ...patch };
       await store.set(BLOB_KEY, JSON.stringify(merged));
-
+      console.log('POST erfolgreich gespeichert, Keys:', Object.keys(merged));
       return new Response(JSON.stringify({ ok: true }), {
         headers: { ...CORS, 'Content-Type': 'application/json' },
       });
     } catch (err) {
+      console.error('POST store.set fehlgeschlagen:', err.message);
       return new Response(JSON.stringify({ error: err.message }), {
         status: 500,
         headers: { ...CORS, 'Content-Type': 'application/json' },
