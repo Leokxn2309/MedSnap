@@ -87,8 +87,8 @@ nav{position:sticky;top:0;z-index:200;background:rgba(255,255,255,0.96);backdrop
 .btn-black:hover{background:#333;}
 .btn-outline{border:2px solid var(--black);color:var(--black);padding:14px 28px;border-radius:8px;font-weight:700;font-size:14px;transition:all .2s;}
 .btn-outline:hover{background:rgba(0,0,0,0.08);}
-.hero-photo{display:flex;align-items:flex-end;justify-content:center;position:relative;}
-.hero-photo img{max-height:88vh;width:auto;object-fit:contain;object-position:bottom;}
+.hero-photo{display:flex;align-items:stretch;justify-content:flex-end;position:relative;overflow:hidden;}
+.hero-photo img{width:100%;height:100%;object-fit:cover;object-position:center top;}
 .hero-arrow{position:absolute;bottom:2.5rem;left:0;display:flex;flex-direction:column;align-items:center;gap:6px;color:rgba(0,0,0,0.5);font-size:12px;font-weight:600;letter-spacing:1px;text-transform:uppercase;}
 .hero-arrow svg{animation:bounce 1.5s infinite;}
 @keyframes bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(6px);}}
@@ -383,7 +383,7 @@ footer a:hover{color:var(--orange);}
       </div>
     </div>
     <div class="hero-photo">
-      <img src="CoverGlansneu.jpg" alt="Nils und Leo – Glans &amp; Gloria" style="max-height:86vh;">
+      <img src="hosts_hero.jpg" alt="Nils und Leo – Glans &amp; Gloria" style="max-height:86vh;">
     </div>
   </div>
 </section>
