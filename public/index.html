@@ -793,19 +793,31 @@ const SITE_DATA_URL = '/.netlify/functions/site-data';
 let sharedData = { guests: [], hostNils: '', hostLeo: '', latestOverride: {}, manualEpisodes: [] };
 
 async function loadSharedData() {
+  const EMPTY = { guests: [], hostNils: '', hostLeo: '', latestOverride: {}, manualEpisodes: [] };
   try {
     const res = await fetch(SITE_DATA_URL, {
       cache: 'no-store',
-      signal: AbortSignal.timeout(4000), // max 4 Sekunden warten
+      signal: AbortSignal.timeout(5000),
     });
     if (res.ok) {
       const data = await res.json();
-      sharedData = { guests: [], hostNils: '', hostLeo: '', latestOverride: {}, manualEpisodes: [], ...data };
-      LS.set('gg_shared_cache', sharedData); // lokaler Fallback-Cache
+      const hasContent = data && Object.keys(data).some(k => {
+        const v = data[k];
+        return Array.isArray(v) ? v.length > 0 : !!v;
+      });
+      if (hasContent) {
+        // Backend hat echte Daten → übernehmen und lokal cachen
+        sharedData = { ...EMPTY, ...data };
+        LS.set('gg_shared_cache', sharedData);
+      } else {
+        // Backend leer → lokalen Cache bevorzugen (Daten noch nicht persistiert)
+        const cached = LS.get('gg_shared_cache', null);
+        if (cached) sharedData = { ...EMPTY, ...cached };
+      }
     }
   } catch {
     const cached = LS.get('gg_shared_cache', null);
-    if (cached) sharedData = { guests: [], hostNils: '', hostLeo: '', latestOverride: {}, manualEpisodes: [], ...cached };
+    if (cached) sharedData = { ...EMPTY, ...cached };
   }
   try { applySharedData(); } catch(e) { console.warn('applySharedData fehlgeschlagen:', e); }
 }
