@@ -1077,10 +1077,11 @@ function renderGallery(){
     <div class="gallery-item" title="${g.name||''}">
       <img src="${g.photo}" alt="${g.name||'Gast'}">
     </div>`).join('');
-  const addBtn = `<div class="gallery-add" onclick="document.querySelector('[data-tab=gallery]').click();document.getElementById('adminToggle').click()">
+  const isAdmin = sessionStorage.getItem('gg_admin_unlocked') === '1';
+  const addBtn = isAdmin ? `<div class="gallery-add" onclick="document.querySelector('[data-tab=gallery]').click();document.getElementById('adminToggle').click()">
     <svg viewBox="0 0 24 24" width="28" height="28"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
     Gast hinzufügen
-  </div>`;
+  </div>` : '';
   grid.innerHTML = items + addBtn;
 }
 
