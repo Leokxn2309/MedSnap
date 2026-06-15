@@ -449,7 +449,7 @@ nav.scrolled{box-shadow:0 2px 20px rgba(0,0,0,0.10);}
 <section class="stats reveal">
   <div class="stats-inner">
     <div class="stat-item">
-      <div class="stat-num">500+</div>
+      <div class="stat-num">1000+</div>
       <div class="stat-label">monatliche Hörer:innen</div>
     </div>
     <div class="stat-item">
@@ -1037,7 +1037,7 @@ function epCardHtml(ep){
       ${ep.desc?`<div class="ep-desc">${ep.desc}</div>`:''}
       <div class="ep-platforms">
         ${platforms.join('')}
-        <button class="ep-share" onclick="shareEp(${JSON.stringify(ep.title)},${JSON.stringify(shareUrl)},${JSON.stringify(shareText)})">
+        <button class="ep-share" data-title="${escAttr(ep.title)}" data-url="${escAttr(shareUrl)}" data-text="${escAttr(shareText)}" onclick="shareEp(this.dataset.title,this.dataset.url,this.dataset.text)">
           <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
           Teilen
         </button>
@@ -1574,6 +1574,10 @@ function showToast(msg){
   t.classList.add('show');
   clearTimeout(toastTimer);
   toastTimer = setTimeout(()=>t.classList.remove('show'), 2500);
+}
+
+function escAttr(str){
+  return String(str).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/'/g,'&#39;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
 function shareEp(title, url, text){
