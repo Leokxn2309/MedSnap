@@ -358,6 +358,23 @@ footer a:hover{color:var(--orange);}
 /* Nav: Schatten beim Scrollen (JS setzt .scrolled) */
 nav{transition:box-shadow .3s ease;}
 nav.scrolled{box-shadow:0 2px 20px rgba(0,0,0,0.10);}
+
+/* ── Crop Modal ── */
+#cropModal{display:none;position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.72);align-items:center;justify-content:center;}
+#cropModal.open{display:flex;}
+.crop-box{background:#fff;border-radius:18px;padding:28px 24px 22px;width:340px;max-width:94vw;box-shadow:0 24px 64px rgba(0,0,0,.35);}
+.crop-box h3{margin:0 0 18px;font-size:1.05rem;font-weight:700;color:var(--black);}
+.crop-viewport-wrap{position:relative;width:280px;height:280px;margin:0 auto;border-radius:50%;overflow:hidden;border:3px solid var(--orange);cursor:grab;touch-action:none;user-select:none;}
+.crop-viewport-wrap:active{cursor:grabbing;}
+#cropCanvas{display:block;width:280px;height:280px;}
+.crop-zoom-row{display:flex;align-items:center;gap:10px;margin:14px 0 18px;}
+.crop-zoom-row label{font-size:12px;font-weight:600;color:var(--muted);white-space:nowrap;}
+.crop-zoom-row input[type=range]{flex:1;accent-color:var(--orange);}
+.crop-actions{display:flex;gap:8px;}
+.crop-actions button{flex:1;padding:10px;border-radius:8px;border:none;font-weight:700;font-size:.92rem;cursor:pointer;transition:opacity .15s;}
+#cropCancel{background:var(--gray);color:var(--black);}
+#cropConfirm{background:var(--orange);color:#fff;}
+.crop-actions button:hover{opacity:.85;}
 </style>
 </head>
 <body>
@@ -449,7 +466,7 @@ nav.scrolled{box-shadow:0 2px 20px rgba(0,0,0,0.10);}
 <section class="stats reveal">
   <div class="stats-inner">
     <div class="stat-item">
-      <div class="stat-num">1000+</div>
+      <div class="stat-num">500+</div>
       <div class="stat-label">monatliche Hörer:innen</div>
     </div>
     <div class="stat-item">
@@ -501,7 +518,7 @@ nav.scrolled{box-shadow:0 2px 20px rgba(0,0,0,0.10);}
   <div class="donate-inner">
     <h2>Unterstütze uns gerne mit einer Spende ❤️</h2>
     <p>Glans &amp; Gloria ist ein unabhängiger Medizinpodcast. Mit deiner Spende hilfst du uns, evidenzbasierte Inhalte zu produzieren, spannende Expert:innen einzuladen und den Podcast kontinuierlich weiterzuentwickeln.<br><br>Jeder Beitrag – egal wie klein – hilft uns, Medizin verständlich und ehrlich zu vermitteln.</p>
-    <a href="https://www.paypal.com/paypalme/GlansUndGloria" target="_blank" class="btn-donate">
+    <a href="https://paypal.com" target="_blank" class="btn-donate">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M20.9 6.6C21.6 9.2 20.5 11.6 18.8 13c-1.6 1.3-3.9 1.8-6.3 1.8H10.9L9.6 21H5.8l.4-2.5M7.3 3h7.5c2.7 0 4.7 1.3 5.1 3.6"/><path d="M3 3h7.8c2.4 0 4.2 1 4.8 3.1.8 2.9-.4 5.5-2.3 6.8-1.3.9-3 1.3-5 1.3H6.4L4.8 21H1"/></svg>
       Mit PayPal spenden
     </a>
@@ -1037,7 +1054,7 @@ function epCardHtml(ep){
       ${ep.desc?`<div class="ep-desc">${ep.desc}</div>`:''}
       <div class="ep-platforms">
         ${platforms.join('')}
-        <button class="ep-share" data-title="${escAttr(ep.title)}" data-url="${escAttr(shareUrl)}" data-text="${escAttr(shareText)}" onclick="shareEp(this.dataset.title,this.dataset.url,this.dataset.text)">
+        <button class="ep-share" onclick="shareEp(${JSON.stringify(ep.title)},${JSON.stringify(shareUrl)},${JSON.stringify(shareText)})">
           <svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
           Teilen
         </button>
@@ -1280,12 +1297,15 @@ function compressImage(file, maxPx, quality){
   });
 }
 
-// ── Guest photo preview ──
+// ── Guest photo preview – mit Crop-Dialog ──
 document.getElementById('guestPhoto').addEventListener('change',async function(){
   const file=this.files[0];
   if(!file)return;
-  const compressed=await compressImage(file,400,0.75);
-  document.getElementById('guestPhotoImg').src=compressed;
+  // Crop-Modal öffnen; gibt null zurück wenn abgebrochen
+  const cropped = await window.openCropModal(file);
+  this.value=''; // Input zurücksetzen
+  if(!cropped) return;
+  document.getElementById('guestPhotoImg').src=cropped;
   document.getElementById('guestPhotoPreview').style.display='block';
 });
 
@@ -1576,10 +1596,6 @@ function showToast(msg){
   toastTimer = setTimeout(()=>t.classList.remove('show'), 2500);
 }
 
-function escAttr(str){
-  return String(str).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/'/g,'&#39;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
-
 function shareEp(title, url, text){
   if(navigator.share){
     navigator.share({ title: `Glans & Gloria – ${title}`, text, url }).catch(()=>{});
@@ -1648,6 +1664,165 @@ document.getElementById('saveHostPhotos').addEventListener('click', async ()=>{
 
 // RSS-Status im Admin-Panel beim Laden aktualisieren
 updateRssAdminStatus();
+</script>
+<!-- ── Crop Modal ── -->
+<div id="cropModal" role="dialog" aria-modal="true">
+  <div class="crop-box">
+    <h3>Bild ausrichten</h3>
+    <div class="crop-viewport-wrap" id="cropViewport">
+      <canvas id="cropCanvas" width="280" height="280"></canvas>
+    </div>
+    <div class="crop-zoom-row">
+      <label>Zoom</label>
+      <input type="range" id="cropZoom" min="50" max="300" value="100">
+    </div>
+    <div class="crop-actions">
+      <button id="cropCancel">Abbrechen</button>
+      <button id="cropConfirm">Übernehmen</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Image Crop Modal ──
+(function(){
+  const VIEWPORT = 280;
+  let _resolve = null;
+  let _img = null;
+  let _zoom = 1, _minZoom = 1;
+  let _panX = 0, _panY = 0;
+  let _dragging = false, _lastX = 0, _lastY = 0;
+
+  const modal    = document.getElementById('cropModal');
+  const canvas   = document.getElementById('cropCanvas');
+  const ctx      = canvas.getContext('2d');
+  const viewport = document.getElementById('cropViewport');
+  const slider   = document.getElementById('cropZoom');
+
+  function clamp(v, lo, hi){ return Math.max(lo, Math.min(hi, v)); }
+
+  function clampPan(){
+    const w = _img.width  * _zoom;
+    const h = _img.height * _zoom;
+    _panX = clamp(_panX, VIEWPORT - w, 0);
+    _panY = clamp(_panY, VIEWPORT - h, 0);
+  }
+
+  function draw(){
+    ctx.clearRect(0, 0, VIEWPORT, VIEWPORT);
+    ctx.drawImage(_img, _panX, _panY, _img.width * _zoom, _img.height * _zoom);
+  }
+
+  function applyZoom(newZoom, cx, cy){
+    // Zoom around point (cx,cy) in canvas coords
+    const prevZoom = _zoom;
+    _zoom = clamp(newZoom, _minZoom, _minZoom * 4);
+    const scale = _zoom / prevZoom;
+    _panX = cx - scale * (cx - _panX);
+    _panY = cy - scale * (cy - _panY);
+    clampPan();
+    slider.value = Math.round((_zoom / _minZoom) * 100);
+    draw();
+  }
+
+  // Pointer drag
+  viewport.addEventListener('pointerdown', e=>{
+    _dragging = true; _lastX = e.clientX; _lastY = e.clientY;
+    viewport.setPointerCapture(e.pointerId);
+    e.preventDefault();
+  });
+  viewport.addEventListener('pointermove', e=>{
+    if(!_dragging) return;
+    _panX += e.clientX - _lastX;
+    _panY += e.clientY - _lastY;
+    _lastX = e.clientX; _lastY = e.clientY;
+    clampPan(); draw();
+  });
+  viewport.addEventListener('pointerup',   ()=>{ _dragging = false; });
+  viewport.addEventListener('pointercancel',()=>{ _dragging = false; });
+
+  // Scroll to zoom (desktop)
+  viewport.addEventListener('wheel', e=>{
+    e.preventDefault();
+    const rect = canvas.getBoundingClientRect();
+    const cx = e.clientX - rect.left;
+    const cy = e.clientY - rect.top;
+    applyZoom(_zoom * (e.deltaY < 0 ? 1.08 : 0.93), cx, cy);
+  }, { passive: false });
+
+  // Pinch-to-zoom (touch)
+  let _pinchDist = null;
+  viewport.addEventListener('touchstart', e=>{
+    if(e.touches.length===2){
+      _pinchDist = Math.hypot(
+        e.touches[0].clientX - e.touches[1].clientX,
+        e.touches[0].clientY - e.touches[1].clientY);
+    }
+  }, { passive: true });
+  viewport.addEventListener('touchmove', e=>{
+    if(e.touches.length===2 && _pinchDist){
+      const d = Math.hypot(
+        e.touches[0].clientX - e.touches[1].clientX,
+        e.touches[0].clientY - e.touches[1].clientY);
+      const cx = (e.touches[0].clientX + e.touches[1].clientX)/2 - viewport.getBoundingClientRect().left;
+      const cy = (e.touches[0].clientY + e.touches[1].clientY)/2 - viewport.getBoundingClientRect().top;
+      applyZoom(_zoom * d / _pinchDist, cx, cy);
+      _pinchDist = d;
+      e.preventDefault();
+    }
+  }, { passive: false });
+
+  // Slider
+  slider.addEventListener('input', ()=>{
+    applyZoom(_minZoom * (parseInt(slider.value)/100), VIEWPORT/2, VIEWPORT/2);
+  });
+
+  // Buttons
+  document.getElementById('cropCancel').addEventListener('click', ()=>{
+    modal.classList.remove('open');
+    if(_resolve){ _resolve(null); _resolve=null; }
+  });
+  document.getElementById('cropConfirm').addEventListener('click', ()=>{
+    modal.classList.remove('open');
+    if(!_resolve) return;
+    // Render 400×400 output
+    const OUT = 400;
+    const scale = OUT / VIEWPORT;
+    const out = document.createElement('canvas');
+    out.width = OUT; out.height = OUT;
+    out.getContext('2d').drawImage(_img,
+      _panX * scale, _panY * scale,
+      _img.width * _zoom * scale, _img.height * _zoom * scale);
+    _resolve(out.toDataURL('image/jpeg', 0.85));
+    _resolve = null;
+  });
+
+  // Public API
+  window.openCropModal = function(file){
+    return new Promise(resolve=>{
+      _resolve = resolve;
+      const reader = new FileReader();
+      reader.onload = e=>{
+        _img = new Image();
+        _img.onload = ()=>{
+          // Min zoom = just enough to fill the viewport
+          _minZoom = Math.max(VIEWPORT / _img.width, VIEWPORT / _img.height);
+          _zoom = _minZoom;
+          _panX = (VIEWPORT - _img.width  * _zoom) / 2;
+          _panY = (VIEWPORT - _img.height * _zoom) / 2;
+          clampPan();
+          slider.min   = 100;
+          slider.max   = 400;
+          slider.value = 100;
+          draw();
+          modal.classList.add('open');
+        };
+        _img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+})();
 </script>
 </body>
 </html>
