@@ -355,6 +355,14 @@ footer a:hover{color:var(--orange);}
 .ep-card:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,0,0,0.12);}
 .gallery-item img{transition:transform .4s cubic-bezier(.22,1,.36,1);}
 
+/* ── Fachgebiet-Filter-Chips ── */
+.filter-chips{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0 16px;}
+.filter-chip{padding:5px 14px;border-radius:99px;border:1.5px solid #ddd;background:#fff;font-size:12.5px;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap;color:var(--muted);line-height:1.5;}
+.filter-chip:hover{border-color:var(--orange);color:var(--orange);}
+.filter-chip.active{background:var(--orange);border-color:var(--orange);color:#fff;}
+.ep-tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px;}
+.ep-tag{font-size:10px;font-weight:700;padding:2px 8px;border-radius:99px;background:var(--orange-light);color:var(--orange);}
+
 /* Nav: Schatten beim Scrollen (JS setzt .scrolled) */
 nav{transition:box-shadow .3s ease;}
 nav.scrolled{box-shadow:0 2px 20px rgba(0,0,0,0.10);}
@@ -502,6 +510,7 @@ nav.scrolled{box-shadow:0 2px 20px rgba(0,0,0,0.10);}
       <button class="search-clear" id="searchClear" title="Suche löschen">✕</button>
     </div>
     <div class="search-count" id="searchCount"></div>
+    <div class="filter-chips" id="filterChips"></div>
 
     <div class="episodes-list" id="episodes-list"><!-- filled by JS --></div>
     <div class="show-more-wrap" id="show-more-wrap" style="display:none;">
@@ -733,6 +742,7 @@ nav.scrolled{box-shadow:0 2px 20px rgba(0,0,0,0.10);}
         <div><label class="admin-label">Spotify-Link</label><input type="url" id="epSpotify" class="admin-input" placeholder="https://open.spotify.com/episode/..."></div>
         <div><label class="admin-label">Apple Podcasts-Link (optional)</label><input type="url" id="epApple" class="admin-input" placeholder="https://podcasts.apple.com/..."></div>
         <div><label class="admin-label">YouTube-Link (optional)</label><input type="url" id="epYoutube" class="admin-input" placeholder="https://youtu.be/..."></div>
+        <div><label class="admin-label">Fachgebiet / Tags <span style="font-weight:400;color:var(--muted)">(kommagetrennt, optional)</span></label><input type="text" id="epTags" class="admin-input" placeholder="z.B. Orthopädie, Chirurgie"></div>
         <button class="admin-submit" id="submitEpisode">Folge veröffentlichen</button>
         <div class="admin-success" id="successEpisode">✓ Folge wurde hinzugefügt!</div>
       </div>
@@ -833,10 +843,10 @@ const RSS_FEED_URL = 'https://anchor.fm/s/e984c364/podcast/rss';
 const SITE_DATA_URL = '/.netlify/functions/site-data';
 
 // In-Memory-Zustand (wird beim Laden vom Backend befüllt)
-let sharedData = { guests: [], hostNils: '', hostLeo: '', latestOverride: {}, manualEpisodes: [] };
+let sharedData = { guests: [], hostNils: '', hostLeo: '', latestOverride: {}, manualEpisodes: [], episodeTags: {} };
 
 async function loadSharedData() {
-  const EMPTY = { guests: [], hostNils: '', hostLeo: '', latestOverride: {}, manualEpisodes: [] };
+  const EMPTY = { guests: [], hostNils: '', hostLeo: '', latestOverride: {}, manualEpisodes: [], episodeTags: {} };
   try {
     const res = await fetch(SITE_DATA_URL, {
       cache: 'no-store',
@@ -1033,10 +1043,56 @@ function renderLatest(){
     </div>`;
 }
 
+// ── Fachgebiet-Erkennung ──
+const SPECIALTY_MAP = {
+  'Allgemeinmedizin':    ['allgemeinmed','hausarzt','hausarztpraxis','landarzt'],
+  'Anästhesiologie':     ['anästhesiol','anästhes','narkose','intensiv','icu'],
+  'Chirurgie':           ['chirurg','chirurgie','operati','op-saal','skalpell'],
+  'Dermatologie':        ['dermatolog','dermatologie','haut','psoriasis','akne','ekzem'],
+  'Endokrinologie':      ['endokrinolog','endokrinologie','diabetes','schilddrüse','insulin','hormon'],
+  'Gastroenterologie':   ['gastro','darm','leber','magen','koloskop','ced','colitis','morbus crohn','hepat'],
+  'Gynäkologie':         ['gynäkolog','gynäkologie','frauenarzt','geburtshilfe','schwangerschaft','uterus'],
+  'HNO':                 ['hno','hals','nasen','ohren','tonsill','hörsturz'],
+  'Infektiologie':       ['infektiolog','infektio','sepsis','antibiotik','erreger','infektion'],
+  'Kardiologie':         ['kardio','kardiolog','kardiologie','herz','ekg','herzinfarkt','koronar','rhythmusstörung'],
+  'Neurochirurgie':      ['neurochirurg','neurochirurgie','gehirn','wirbelsäule','schädel'],
+  'Neurologie':          ['neurolog','neurologie','schlaganfall','epileps','demenz','parkinson','multiple sklerose','ms ','migräne'],
+  'Notfallmedizin':      ['notfall','notaufnahme','reanimation','erste hilfe','rettungs','trauma'],
+  'Onkologie':           ['onkolog','onkologie','krebs','tumor','chemotherap','bestrahlung','metastas'],
+  'Ophthalmologie':      ['ophthalmo','augenheilkunde','augenarzt','glaukom','katarakt','netzhaut'],
+  'Orthopädie':          ['orthopäd','orthopädie','gelenk','knie','hüfte','wirbel','bandscheibe','knochen','fraktur','arthroskop'],
+  'Pädiatrie':           ['pädiatr','pädiatrie','kinderheilkunde','kinder','neugeborene','impfung'],
+  'Pharmakologie':       ['pharmakolog','pharmakologie','medikament','wirkstoff','nebenwirkung','pharmazeutisch'],
+  'Psychiatrie':         ['psychiatr','psychiatrie','psychisch','depression','burnout','adhs','psychose','angststörung','zwang'],
+  'Radiologie':          ['radiolog','radiologie','mrt','ct','röntgen','ultraschall','bildgebung'],
+  'Rheumatologie':       ['rheumatolog','rheumatologie','rheuma','arthritis','lupus','autoimmun'],
+  'Schlafmedizin':       ['schlaf','schlafmed','schlaflabor','insomnie','schlafapnoe','narkolepsie'],
+  'Sportmedizin':        ['sportmed','sportarzt','leistungssport','marathon','verletzung','regeneration'],
+  'Urologie':            ['urolog','urologie','blase','niere','prostata','harnwege','urethra'],
+  'Ernährungsmedizin':   ['ernähr','diät','supplement','nutrition','mikronährstoff','übergewicht','adipositas'],
+  'Arbeitsmedizin':      ['arbeitsmed','arbeitsmedizin','berufskrankheit','burnout'],
+};
+
+function autoDetectTags(ep) {
+  const text = ((ep.title||'') + ' ' + (ep.desc||'') + ' ' + (ep.guest||'')).toLowerCase();
+  const found = [];
+  for (const [spec, kws] of Object.entries(SPECIALTY_MAP)) {
+    if (kws.some(kw => text.includes(kw))) found.push(spec);
+  }
+  return found;
+}
+
+function getEpisodeTags(ep) {
+  const manual = (sharedData.episodeTags || {})[String(ep.num)];
+  if (manual && manual.length) return manual;
+  return autoDetectTags(ep);
+}
+
 // ── Render Episodes (with search + pagination) ──
 let allEpisodes = [];
 const EP_PAGE_SIZE = 5;
 let epVisible = EP_PAGE_SIZE;
+let activeTagFilter = '';
 
 function epCardHtml(ep){
   const platforms = [];
@@ -1045,6 +1101,10 @@ function epCardHtml(ep){
   if(ep.youtube) platforms.push(`<a href="${ep.youtube}" target="_blank" class="ep-btn ep-btn-youtube"><svg viewBox="0 0 24 24"><path d="M21.593 7.203a2.506 2.506 0 00-1.762-1.766C18.265 5.007 12 5 12 5s-6.264-.007-7.831.404a2.56 2.56 0 00-1.766 1.778C2.036 8.746 2 10.266 2 12.001c0 1.734.036 3.255.406 4.797a2.5 2.5 0 001.765 1.765C5.739 19.003 12 19 12 19s6.265.003 7.831-.437a2.5 2.5 0 001.762-1.765C21.961 15.258 22 13.739 22 12.004c0-1.735-.036-3.255-.407-4.801zM9.996 15.005l.005-6 5.207 3.005-5.212 2.995z"/></svg>YouTube</a>`);
   const shareUrl  = ep.spotify && ep.spotify !== '#' ? ep.spotify : window.location.href;
   const shareText = `🎙️ Glans & Gloria – Folge ${ep.num}: „${ep.title}" ${shareUrl}`;
+  const tags = getEpisodeTags(ep);
+  const tagHtml = tags.length
+    ? `<div class="ep-tags">${tags.map(t=>`<span class="ep-tag">${t}</span>`).join('')}</div>`
+    : '';
   return `<div class="ep-card">
     <div class="ep-num">${String(ep.num).padStart(2,'0')}</div>
     <div class="ep-body">
@@ -1052,6 +1112,7 @@ function epCardHtml(ep){
       <div class="ep-title">${ep.title}</div>
       ${ep.guest?`<div class="ep-guest">${ep.guest}</div>`:''}
       ${ep.desc?`<div class="ep-desc">${ep.desc}</div>`:''}
+      ${tagHtml}
       <div class="ep-platforms">
         ${platforms.join('')}
         <button class="ep-share" onclick="shareEp(${JSON.stringify(ep.title)},${JSON.stringify(shareUrl)},${JSON.stringify(shareText)})">
@@ -1063,20 +1124,45 @@ function epCardHtml(ep){
   </div>`;
 }
 
+function renderFilterChips(){
+  const chips = document.getElementById('filterChips');
+  if(!chips) return;
+  const tagSet = new Set();
+  allEpisodes.forEach(ep => getEpisodeTags(ep).forEach(t => tagSet.add(t)));
+  const tags = [...tagSet].sort();
+  if(!tags.length){ chips.innerHTML=''; return; }
+  chips.innerHTML =
+    `<button class="filter-chip${!activeTagFilter?' active':''}" data-tag="">Alle</button>` +
+    tags.map(t=>`<button class="filter-chip${activeTagFilter===t?' active':''}" data-tag="${t}">${t}</button>`).join('');
+}
+
+document.getElementById('filterChips').addEventListener('click', e=>{
+  const chip = e.target.closest('.filter-chip');
+  if(!chip) return;
+  activeTagFilter = chip.dataset.tag;
+  renderFilterChips();
+  renderEpisodes(document.getElementById('episodeSearch').value);
+});
+
 function renderEpisodes(filter='', resetPagination=true){
   // allEpisodes is populated by initData() from RSS + manual episodes
   if(resetPagination) epVisible = EP_PAGE_SIZE;
 
   const q = filter.trim().toLowerCase();
-  const filtered = q
+  let filtered = q
     ? allEpisodes.filter(ep =>
         (ep.title||'').toLowerCase().includes(q) ||
         (ep.desc||'').toLowerCase().includes(q) ||
         (ep.guest||'').toLowerCase().includes(q))
-    : allEpisodes;
+    : allEpisodes.slice();
+
+  // Tag-Filter anwenden
+  if(activeTagFilter){
+    filtered = filtered.filter(ep => getEpisodeTags(ep).includes(activeTagFilter));
+  }
 
   const countEl = document.getElementById('searchCount');
-  if(q){
+  if(q || activeTagFilter){
     countEl.textContent = filtered.length===0
       ? 'Keine Folgen gefunden.'
       : `${filtered.length} von ${allEpisodes.length} Folgen`;
@@ -1172,6 +1258,7 @@ async function initData(){
 
   renderLatest();
   renderEpisodes();
+  renderFilterChips();
   updateRssAdminStatus();
 }
 
@@ -1250,16 +1337,24 @@ document.getElementById('submitEpisode').addEventListener('click', async ()=>{
     apple:document.getElementById('epApple').value.trim(),
     youtube:document.getElementById('epYoutube').value.trim()
   };
+  // Tags speichern (falls angegeben)
+  const tagsRaw = document.getElementById('epTags').value.trim();
+  const tagsParsed = tagsRaw ? tagsRaw.split(',').map(t=>t.trim()).filter(Boolean) : [];
+  const newEpisodeTags = { ...(sharedData.episodeTags||{}) };
+  if(tagsParsed.length) newEpisodeTags[String(num)] = tagsParsed;
+  else delete newEpisodeTags[String(num)]; // Auto-Detection greift wieder
+  sharedData.episodeTags = newEpisodeTags;
   // Save to shared backend + update in memory
   const manual = [...(sharedData.manualEpisodes || [])];
   const existIdx = manual.findIndex(e=>e.num===num);
   if(existIdx>=0) manual[existIdx]=newEp; else manual.push(newEp);
-  await saveSharedData({ manualEpisodes: manual });
+  await saveSharedData({ manualEpisodes: manual, episodeTags: newEpisodeTags });
   const existAllIdx=allEpisodes.findIndex(e=>e.num===num);
   if(existAllIdx>=0) allEpisodes[existAllIdx]=newEp; else allEpisodes.push(newEp);
   allEpisodes.sort((a,b)=>b.num-a.num);
   renderEpisodes(searchInput.value);
-  ['epNum','epTitle','epGuest','epDesc','epDate','epDur','epSpotify','epApple','epYoutube'].forEach(id=>document.getElementById(id).value='');
+  renderFilterChips();
+  ['epNum','epTitle','epGuest','epDesc','epDate','epDur','epSpotify','epApple','epYoutube','epTags'].forEach(id=>document.getElementById(id).value='');
   showSuccess('successEpisode');
 });
 
@@ -1391,11 +1486,13 @@ document.getElementById('importGuestsFile').addEventListener('change',function()
 document.getElementById('resetData').addEventListener('click', async ()=>{
   if(!confirm('Wirklich alle Daten zurücksetzen? Das kann nicht rückgängig gemacht werden.'))return;
   ['gg_episodes','gg_manual_episodes','gg_guests','gg_latest','gg_rss_cache','gg_rss_last_fetch','gg_shared_cache'].forEach(k=>localStorage.removeItem(k));
-  sharedData = { guests: [], hostNils: '', hostLeo: '', latestOverride: {}, manualEpisodes: [] };
+  sharedData = { guests: [], hostNils: '', hostLeo: '', latestOverride: {}, manualEpisodes: [], episodeTags: {} };
   await saveSharedData(sharedData); // Backend auch zurücksetzen
   allEpisodes = defaultEpisodes.slice();
+  activeTagFilter = '';
   renderLatest();
   renderEpisodes(searchInput.value);
+  renderFilterChips();
   renderGallery();
   updateRssAdminStatus();
   showSuccess('successData');
@@ -1574,6 +1671,7 @@ document.getElementById('rssRefresh').addEventListener('click', async ()=>{
     LS.set('gg_rss_last_fetch', Date.now());
     renderLatest();
     renderEpisodes(searchInput.value);
+    renderFilterChips();
     updateRssAdminStatus();
     const s = document.getElementById('successRss');
     s.textContent=`✓ ${episodes.length} Folgen geladen!`;
