@@ -211,7 +211,7 @@ footer{background:var(--black);color:#bbb;text-align:center;padding:28px 16px;fo
     ${spotifyUrl ? `<a class="btn btn-sp" href="${esc(spotifyUrl)}" target="_blank" rel="noopener">${SP_ICON}Folge auf Spotify anhören</a>` : ''}
     ${youtubeUrl ? `<a class="btn btn-yt" href="${esc(youtubeUrl)}" target="_blank" rel="noopener">${YT_ICON}Folge auf YouTube anschauen</a>` : ''}
   </div>
-  <p class="lead">${esc(ep.desc)}</p>
+  ${hasBlog ? '' : `<p class="lead">${esc(ep.desc)}</p>`}
   <article>
     ${hasBlog ? blog.html : ''}
   </article>
