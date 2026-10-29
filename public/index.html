@@ -360,6 +360,8 @@ footer a:hover{color:var(--orange);}
 .filter-chip{padding:5px 14px;border-radius:99px;border:1.5px solid #ddd;background:#fff;font-size:12.5px;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap;color:var(--muted);line-height:1.5;}
 .filter-chip:hover{border-color:var(--orange);color:var(--orange);}
 .filter-chip.active{background:var(--orange);border-color:var(--orange);color:#fff;}
+.ep-btn-info{background:var(--black);color:#fff;border-color:var(--black);}
+.ep-btn-info:hover{background:var(--orange);border-color:var(--orange);}
 .ep-tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px;}
 .ep-tag{font-size:10px;font-weight:700;padding:2px 8px;border-radius:99px;background:var(--orange-light);color:var(--orange);}
 
@@ -713,6 +715,7 @@ nav.scrolled{box-shadow:0 2px 20px rgba(0,0,0,0.10);}
       <button class="admin-tab" data-tab="hosts">Host-Fotos</button>
       <button class="admin-tab" data-tab="gallery">Gast-Foto</button>
       <button class="admin-tab" data-tab="latest">Neuste Folge</button>
+      <button class="admin-tab" data-tab="blog">Blogtext</button>
       <button class="admin-tab" data-tab="data">Daten</button>
     </div>
 
@@ -745,6 +748,18 @@ nav.scrolled{box-shadow:0 2px 20px rgba(0,0,0,0.10);}
         <div><label class="admin-label">Fachgebiet / Tags <span style="font-weight:400;color:var(--muted)">(kommagetrennt, optional)</span></label><input type="text" id="epTags" class="admin-input" placeholder="z.B. Orthopädie, Chirurgie"></div>
         <button class="admin-submit" id="submitEpisode">Folge veröffentlichen</button>
         <div class="admin-success" id="successEpisode">✓ Folge wurde hinzugefügt!</div>
+      </div>
+    </div>
+
+    <!-- TAB: Blogtext -->
+    <div class="admin-section" id="tab-blog">
+      <div class="admin-form">
+        <p class="admin-hint" style="margin-bottom:10px;">Die Seite <code>/folge/…</code> entsteht für jede Folge automatisch aus dem RSS-Feed. Hier fügst du den ausführlichen Blogtext ein (z. B. aus dem Claude-Workflow). Format: <code>## Überschrift</code>, <code>### Frage</code> (unter einer Überschrift mit „Fragen/FAQ"), <code>- Liste</code>, <code>**fett**</code>. Optionale erste Zeile: <code>Schlagworte: Urologie, Prostata, …</code></p>
+        <div><label class="admin-label">Folgennummer</label><input type="number" id="blogNum" class="admin-input" placeholder="z.B. 64"></div>
+        <div><label class="admin-label">Blogtext</label><textarea id="blogText" class="admin-input admin-textarea" style="min-height:260px;" placeholder="Schlagworte: …&#10;&#10;## Worum geht es?&#10;…"></textarea></div>
+        <button class="admin-submit" id="saveBlog">Blogtext speichern</button>
+        <div class="admin-success" id="successBlog">✓ Blogtext gespeichert!</div>
+        <p class="admin-hint" id="blogLink" style="margin-top:8px;"></p>
       </div>
     </div>
 
@@ -843,10 +858,10 @@ const RSS_FEED_URL = 'https://anchor.fm/s/e984c364/podcast/rss';
 const SITE_DATA_URL = '/.netlify/functions/site-data';
 
 // In-Memory-Zustand (wird beim Laden vom Backend befüllt)
-let sharedData = { guests: [], hostNils: '', hostLeo: '', latestOverride: {}, manualEpisodes: [], episodeTags: {} };
+let sharedData = { guests: [], hostNils: '', hostLeo: '', latestOverride: {}, manualEpisodes: [], episodeTags: {}, blogPosts: {} };
 
 async function loadSharedData() {
-  const EMPTY = { guests: [], hostNils: '', hostLeo: '', latestOverride: {}, manualEpisodes: [], episodeTags: {} };
+  const EMPTY = { guests: [], hostNils: '', hostLeo: '', latestOverride: {}, manualEpisodes: [], episodeTags: {}, blogPosts: {} };
   try {
     const res = await fetch(SITE_DATA_URL, {
       cache: 'no-store',
@@ -1034,6 +1049,7 @@ function renderLatest(){
             ${ep.spotify&&ep.spotify!='#'?`<a href="${ep.spotify}" target="_blank" class="btn-orange"><svg width="14" height="14" viewBox="0 0 24 24" fill="white"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.586 14.424a.622.622 0 01-.857.207c-2.348-1.435-5.304-1.76-8.785-.964a.622.622 0 11-.277-1.215c3.809-.87 7.076-.496 9.712 1.115a.623.623 0 01.207.857zm1.223-2.72a.778.778 0 01-1.072.257c-2.687-1.652-6.785-2.131-9.965-1.166a.778.778 0 01-.97-.518.779.779 0 01.519-.971c3.632-1.102 8.147-.568 11.234 1.326a.777.777 0 01.254 1.072zm.105-2.835C14.692 8.95 9.375 8.775 6.297 9.71a.935.935 0 11-.543-1.79c3.533-1.072 9.404-.865 13.115 1.338a.936.936 0 01-.954 1.611z"/></svg>Auf Spotify</a>`:''}
             ${ep.apple?`<a href="${ep.apple}" target="_blank" class="btn-white-outline">🎙 Apple</a>`:''}
             ${ep.youtube?`<a href="${ep.youtube}" target="_blank" class="btn-white-outline"><svg width="14" height="14" viewBox="0 0 24 24" fill="white"><path d="M21.593 7.203a2.506 2.506 0 00-1.762-1.766C18.265 5.007 12 5 12 5s-6.264-.007-7.831.404a2.56 2.56 0 00-1.766 1.778C2.036 8.746 2 10.266 2 12.001c0 1.734.036 3.255.406 4.797a2.5 2.5 0 001.765 1.765C5.739 19.003 12 19 12 19s6.265.003 7.831-.437a2.5 2.5 0 001.762-1.765C21.961 15.258 22 13.739 22 12.004c0-1.735-.036-3.255-.407-4.801zM9.996 15.005l.005-6 5.207 3.005-5.212 2.995z"/></svg>YouTube</a>`:''}
+            ${allEpisodes.length?`<a href="${epBlogPath(ep)}" class="btn-white-outline">Weitere Infos</a>`:''}
             <a href="#folgen" class="btn-white-outline">Alle Folgen</a>
           </div>
         </div>
@@ -1042,6 +1058,13 @@ function renderLatest(){
       ${embedHtml}
     </div>`;
 }
+
+// ── Blog-Seite pro Folge (serverseitig gerendert, siehe netlify/functions/folge.mjs) ──
+function epSlug(t){
+  return String(t).toLowerCase().replace(/ä/g,'ae').replace(/ö/g,'oe').replace(/ü/g,'ue').replace(/ß/g,'ss')
+    .replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,70).replace(/-+$/,'');
+}
+function epBlogPath(ep){ return `/folge/${ep.num}-${epSlug(ep.title)}`; }
 
 // ── Fachgebiet-Erkennung ──
 const SPECIALTY_MAP = {
@@ -1101,6 +1124,7 @@ function epCardHtml(ep){
   if(ep.youtube) platforms.push(`<a href="${ep.youtube}" target="_blank" class="ep-btn ep-btn-youtube"><svg viewBox="0 0 24 24"><path d="M21.593 7.203a2.506 2.506 0 00-1.762-1.766C18.265 5.007 12 5 12 5s-6.264-.007-7.831.404a2.56 2.56 0 00-1.766 1.778C2.036 8.746 2 10.266 2 12.001c0 1.734.036 3.255.406 4.797a2.5 2.5 0 001.765 1.765C5.739 19.003 12 19 12 19s6.265.003 7.831-.437a2.5 2.5 0 001.762-1.765C21.961 15.258 22 13.739 22 12.004c0-1.735-.036-3.255-.407-4.801zM9.996 15.005l.005-6 5.207 3.005-5.212 2.995z"/></svg>YouTube</a>`);
   const shareUrl  = ep.spotify && ep.spotify !== '#' ? ep.spotify : window.location.href;
   const shareText = `🎙️ Glans & Gloria – Folge ${ep.num}: „${ep.title}" ${shareUrl}`;
+  platforms.unshift(`<a href="${epBlogPath(ep)}" class="ep-btn ep-btn-info">Weitere Infos</a>`);
   const tags = getEpisodeTags(ep);
   const tagHtml = tags.length
     ? `<div class="ep-tags">${tags.map(t=>`<span class="ep-tag">${t}</span>`).join('')}</div>`
@@ -1321,6 +1345,24 @@ function showSuccess(id){
   setTimeout(()=>el.style.display='none',3000);
 }
 
+// ── Blogtext (Admin) ──
+document.getElementById('blogNum').addEventListener('input', function(){
+  const t=(sharedData.blogPosts||{})[String(this.value)]||'';
+  document.getElementById('blogText').value=t;
+  const ep=allEpisodes.find(e=>String(e.num)===String(this.value));
+  document.getElementById('blogLink').innerHTML=ep?`Seite: <a href="${epBlogPath(ep)}" target="_blank">${epBlogPath(ep)}</a>`:'';
+});
+document.getElementById('saveBlog').addEventListener('click', async ()=>{
+  const num=String(document.getElementById('blogNum').value).trim();
+  if(!num){alert('Bitte Folgennummer eingeben.');return;}
+  const posts={...(sharedData.blogPosts||{})};
+  const text=document.getElementById('blogText').value.trim();
+  if(text) posts[num]=text; else delete posts[num];
+  sharedData.blogPosts=posts;
+  await saveSharedData({blogPosts:posts});
+  showSuccess('successBlog');
+});
+
 // ── Submit Episode ──
 document.getElementById('submitEpisode').addEventListener('click', async ()=>{
   const num=parseInt(document.getElementById('epNum').value);
@@ -1486,7 +1528,7 @@ document.getElementById('importGuestsFile').addEventListener('change',function()
 document.getElementById('resetData').addEventListener('click', async ()=>{
   if(!confirm('Wirklich alle Daten zurücksetzen? Das kann nicht rückgängig gemacht werden.'))return;
   ['gg_episodes','gg_manual_episodes','gg_guests','gg_latest','gg_rss_cache','gg_rss_last_fetch','gg_shared_cache'].forEach(k=>localStorage.removeItem(k));
-  sharedData = { guests: [], hostNils: '', hostLeo: '', latestOverride: {}, manualEpisodes: [], episodeTags: {} };
+  sharedData = { guests: [], hostNils: '', hostLeo: '', latestOverride: {}, manualEpisodes: [], episodeTags: {}, blogPosts: {} };
   await saveSharedData(sharedData); // Backend auch zurücksetzen
   allEpisodes = defaultEpisodes.slice();
   activeTagFilter = '';
