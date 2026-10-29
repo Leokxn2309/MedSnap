@@ -1,6 +1,6 @@
 // Netlify Function v2: serverseitig gerenderte Blog-Seite pro Folge
 // URL: /folge/<nummer>-<titel-slug>
-import { SITE, esc, slugify, episodePath, loadEpisodes, loadShared, durationSeconds, findYoutube, findSpotify } from "../lib/gg.mjs";
+import { SITE, esc, slugify, episodePath, loadEpisodes, loadShared, durationSeconds, findYoutube, findSpotify, dbg } from "../lib/gg.mjs";
 
 export const config = { path: "/folge/*" };
 
@@ -217,7 +217,8 @@ footer{background:var(--black);color:#bbb;text-align:center;padding:28px 16px;fo
 </body>
 </html>`;
 
-  return new Response(page, {
+  const out = url.searchParams.get('debug') === '1' ? page + `\n<!-- DEBUG\n${dbg.join('\n').replace(/--/g, '- -')}\nyoutubeUrl=${youtubeUrl}\nspotifyUrl=${spotifyUrl}\nspotifyId=${spotifyId}\n-->` : page;
+  return new Response(out, {
     headers: {
       'Content-Type': 'text/html; charset=utf-8',
       'Cache-Control': 'public, max-age=0, must-revalidate',

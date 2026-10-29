@@ -77,11 +77,12 @@ function similarity(a, b) {
   let inter = 0; A.forEach(w => { if (B.has(w)) inter++; });
   return inter / Math.min(A.size, B.size);
 }
+export const dbg = [];
 const cache = {};
 async function cached(key, ttlMs, fn) {
   const c = cache[key];
   if (c && Date.now() - c.t < ttlMs) return c.v;
-  try { const v = await fn(); cache[key] = { t: Date.now(), v }; return v; } catch { return c ? c.v : null; }
+  try { const v = await fn(); cache[key] = { t: Date.now(), v }; return v; } catch (e) { dbg.push(key + ' Fehler: ' + e.message); return c ? c.v : null; }
 }
 
 // YouTube: öffentlicher Kanal-Feed (neueste ~15 Videos), Zuordnung per Titel-Ähnlichkeit
@@ -96,6 +97,7 @@ export async function findYoutube(ep) {
     })).filter(v => v.id);
   });
   if (!videos) return '';
+  dbg.push('youtube: ' + videos.length + ' Videos im Feed: ' + videos.map(v => v.title).slice(0, 15).join(' || '));
   let best = null, score = 0;
   for (const v of videos) { const s = similarity(ep.title, v.title); if (s > score) { score = s; best = v; } }
   return best && score >= 0.6 ? `https://www.youtube.com/watch?v=${best.id}` : '';
@@ -104,19 +106,22 @@ export async function findYoutube(ep) {
 // Spotify: nur mit Umgebungsvariablen SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, SPOTIFY_SHOW_ID
 export async function findSpotify(ep) {
   const id = process.env.SPOTIFY_CLIENT_ID, secret = process.env.SPOTIFY_CLIENT_SECRET, show = process.env.SPOTIFY_SHOW_ID;
-  if (!id || !secret || !show) return '';
+  if (!id || !secret || !show) { dbg.push('spotify: Variablen fehlen id=' + !!id + ' secret=' + !!secret + ' show=' + !!show); return ''; }
   const list = await cached('sp', 600000, async () => {
     const tr = await fetch('https://accounts.spotify.com/api/token', {
       method: 'POST',
       headers: { Authorization: 'Basic ' + Buffer.from(id + ':' + secret).toString('base64'), 'Content-Type': 'application/x-www-form-urlencoded' },
       body: 'grant_type=client_credentials',
     });
-    const { access_token } = await tr.json();
+    const tj = await tr.json();
+    if (!tj.access_token) throw new Error('Token: ' + JSON.stringify(tj).slice(0, 150));
+    const access_token = tj.access_token;
     const out = [];
     let url = `https://api.spotify.com/v1/shows/${show}/episodes?market=DE&limit=50`;
     for (let i = 0; i < 6 && url; i++) {
       const r = await fetch(url, { headers: { Authorization: 'Bearer ' + access_token } });
       const j = await r.json();
+      if (!r.ok) throw new Error('Episodes ' + r.status + ' ' + JSON.stringify(j).slice(0, 200));
       out.push(...(j.items || []).filter(Boolean).map(e => ({ name: e.name, date: e.release_date, url: e.external_urls?.spotify })));
       url = j.next;
     }
