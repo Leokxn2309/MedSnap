@@ -1,6 +1,7 @@
 // Gemeinsame Helfer für Blog-Seiten und Sitemap
 import { getStore } from "@netlify/blobs";
 
+export const dbg = [];
 export const SITE = 'https://glansundgloria.de';
 export const RSS_URL = 'https://anchor.fm/s/e984c364/podcast/rss';
 
@@ -62,10 +63,12 @@ export function getDataStore() {
 export async function loadShared() {
   try {
     const store = getDataStore();
-    if (!store) return {};
+    if (!store) { dbg.push('shared: Store nicht verfügbar (Variablen fehlen)'); return {}; }
     const raw = await store.get('shared');
-    return raw ? JSON.parse(raw) : {};
-  } catch { return {}; }
+    const data = raw ? JSON.parse(raw) : {};
+    dbg.push('shared: ' + (raw ? raw.length : 0) + ' Zeichen, Keys: ' + Object.keys(data).join(',') + ', blogPosts: ' + Object.keys(data.blogPosts || {}).join(','));
+    return data;
+  } catch (e) { dbg.push('shared Fehler: ' + e.message); return {}; }
 }
 
 // ── Automatische Plattform-Links ──
@@ -77,7 +80,6 @@ function similarity(a, b) {
   let inter = 0; A.forEach(w => { if (B.has(w)) inter++; });
   return inter / Math.min(A.size, B.size);
 }
-export const dbg = [];
 const cache = {};
 async function cached(key, ttlMs, fn) {
   const c = cache[key];
