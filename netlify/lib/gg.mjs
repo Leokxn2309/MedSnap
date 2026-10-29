@@ -99,7 +99,16 @@ export async function findYoutube(ep) {
   if (!videos) return '';
   dbg.push('youtube: ' + videos.length + ' Videos im Feed: ' + videos.map(v => v.title).slice(0, 15).join(' || '));
   let best = null, score = 0;
-  for (const v of videos) { const s = similarity(ep.title, v.title); if (s > score) { score = s; best = v; } }
+  // Gastname = Teil nach dem letzten "|" (z. B. "| Dr. Carolina Kuepper-Tetzel")
+  const guestOf = t => (String(t).includes('|') ? String(t).split('|').pop() : '');
+  const epGuest = tokens(guestOf(ep.title));
+  for (const v of videos) {
+    let s = similarity(ep.title, v.title);
+    const vg = tokens(guestOf(v.title));
+    let shared = 0; epGuest.forEach(w => { if (vg.has(w)) shared++; });
+    if (shared >= 2) s = Math.max(s, 1);
+    if (s > score) { score = s; best = v; }
+  }
   return best && score >= 0.6 ? `https://www.youtube.com/watch?v=${best.id}` : '';
 }
 
