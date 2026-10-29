@@ -63,7 +63,14 @@ export function getDataStore() {
 export async function loadShared() {
   try {
     const store = getDataStore();
-    if (!store) { dbg.push('shared: Store nicht verfügbar (Variablen fehlen)'); return {}; }
+    if (!store) {
+      dbg.push('shared: Store nicht verfügbar, lade über site-data');
+      const r = await fetch(SITE + '/.netlify/functions/site-data?keys=blogPosts', { headers: { 'Cache-Control': 'no-cache' } });
+      if (!r.ok) throw new Error('site-data HTTP ' + r.status);
+      const d = await r.json();
+      dbg.push('shared via site-data, blogPosts: ' + Object.keys(d.blogPosts || {}).join(','));
+      return d;
+    }
     const raw = await store.get('shared');
     const data = raw ? JSON.parse(raw) : {};
     dbg.push('shared: ' + (raw ? raw.length : 0) + ' Zeichen, Keys: ' + Object.keys(data).join(',') + ', blogPosts: ' + Object.keys(data.blogPosts || {}).join(','));

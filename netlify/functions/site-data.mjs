@@ -18,9 +18,20 @@ export default async (req) => {
     return new Response('', { status: 204, headers: CORS });
   }
 
+  const siteID = process.env.NETLIFY_SITE_ID;
+  const token  = process.env.NETLIFY_TOKEN;
+
+  if (!siteID || !token) {
+    console.error('NETLIFY_SITE_ID oder NETLIFY_TOKEN nicht gesetzt!');
+    return new Response(JSON.stringify({ error: 'Fehlende Umgebungsvariablen: NETLIFY_SITE_ID und NETLIFY_TOKEN müssen gesetzt sein.' }), {
+      status: 500,
+      headers: { ...CORS, 'Content-Type': 'application/json' },
+    });
+  }
+
   let store;
   try {
-    store = getStore('gg-data');
+    store = getStore({ name: 'gg-data', siteID, token });
   } catch (err) {
     console.error('getStore fehlgeschlagen:', err.message);
     return new Response(JSON.stringify({ error: 'Blobs nicht verfügbar: ' + err.message }), {
@@ -33,7 +44,9 @@ export default async (req) => {
   if (req.method === 'GET') {
     try {
       const raw = await store.get(BLOB_KEY);
-      const data = raw ? JSON.parse(raw) : {};
+      let data = raw ? JSON.parse(raw) : {};
+      const only = new URL(req.url).searchParams.get('keys');
+      if (only) { const ks = only.split(','); data = Object.fromEntries(Object.entries(data).filter(([k]) => ks.includes(k))); }
       console.log('GET erfolgreich, Daten:', JSON.stringify(data).slice(0, 200));
       return new Response(JSON.stringify(data), {
         headers: {
