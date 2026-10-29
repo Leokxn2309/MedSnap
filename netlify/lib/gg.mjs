@@ -68,6 +68,67 @@ export async function loadShared() {
   } catch { return {}; }
 }
 
+// ── Automatische Plattform-Links ──
+const norm = s => String(s).toLowerCase().replace(/ä/g,'ae').replace(/ö/g,'oe').replace(/ü/g,'ue').replace(/ß/g,'ss').replace(/[^a-z0-9 ]+/g,' ');
+const tokens = s => new Set(norm(s).split(/\s+/).filter(w => w.length > 3));
+function similarity(a, b) {
+  const A = tokens(a), B = tokens(b);
+  if (!A.size || !B.size) return 0;
+  let inter = 0; A.forEach(w => { if (B.has(w)) inter++; });
+  return inter / Math.min(A.size, B.size);
+}
+const cache = {};
+async function cached(key, ttlMs, fn) {
+  const c = cache[key];
+  if (c && Date.now() - c.t < ttlMs) return c.v;
+  try { const v = await fn(); cache[key] = { t: Date.now(), v }; return v; } catch { return c ? c.v : null; }
+}
+
+// YouTube: öffentlicher Kanal-Feed (neueste ~15 Videos), Zuordnung per Titel-Ähnlichkeit
+export async function findYoutube(ep) {
+  const videos = await cached('yt', 600000, async () => {
+    const r = await fetch('https://www.youtube.com/feeds/videos.xml?channel_id=UCm_rbcNBpYtgcrunUVJXIuQ');
+    if (!r.ok) throw new Error('yt ' + r.status);
+    const xml = await r.text();
+    return (xml.match(/<entry>[\s\S]*?<\/entry>/g) || []).map(e => ({
+      id: (e.match(/<yt:videoId>([^<]+)/) || [])[1],
+      title: decodeEntities((e.match(/<title>([^<]*)/) || [])[1] || ''),
+    })).filter(v => v.id);
+  });
+  if (!videos) return '';
+  let best = null, score = 0;
+  for (const v of videos) { const s = similarity(ep.title, v.title); if (s > score) { score = s; best = v; } }
+  return best && score >= 0.6 ? `https://www.youtube.com/watch?v=${best.id}` : '';
+}
+
+// Spotify: nur mit Umgebungsvariablen SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, SPOTIFY_SHOW_ID
+export async function findSpotify(ep) {
+  const id = process.env.SPOTIFY_CLIENT_ID, secret = process.env.SPOTIFY_CLIENT_SECRET, show = process.env.SPOTIFY_SHOW_ID;
+  if (!id || !secret || !show) return '';
+  const list = await cached('sp', 600000, async () => {
+    const tr = await fetch('https://accounts.spotify.com/api/token', {
+      method: 'POST',
+      headers: { Authorization: 'Basic ' + Buffer.from(id + ':' + secret).toString('base64'), 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: 'grant_type=client_credentials',
+    });
+    const { access_token } = await tr.json();
+    const out = [];
+    let url = `https://api.spotify.com/v1/shows/${show}/episodes?market=DE&limit=50`;
+    for (let i = 0; i < 6 && url; i++) {
+      const r = await fetch(url, { headers: { Authorization: 'Bearer ' + access_token } });
+      const j = await r.json();
+      out.push(...(j.items || []).filter(Boolean).map(e => ({ name: e.name, date: e.release_date, url: e.external_urls?.spotify })));
+      url = j.next;
+    }
+    return out;
+  });
+  if (!list) return '';
+  const day = (ep.date || '').slice(0, 10);
+  let best = null, score = 0;
+  for (const e of list) { const s = similarity(ep.title, e.name) + (e.date === day ? 0.3 : 0); if (s > score) { score = s; best = e; } }
+  return best && score >= 0.6 ? best.url : '';
+}
+
 // iTunes-Dauer ("3120" | "52:00" | "1:02:00") → Sekunden
 export function durationSeconds(raw) {
   if (!raw) return 0;

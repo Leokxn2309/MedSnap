@@ -1,6 +1,6 @@
 // Netlify Function v2: serverseitig gerenderte Blog-Seite pro Folge
 // URL: /folge/<nummer>-<titel-slug>
-import { SITE, esc, slugify, episodePath, loadEpisodes, loadShared, durationSeconds } from "../lib/gg.mjs";
+import { SITE, esc, slugify, episodePath, loadEpisodes, loadShared, durationSeconds, findYoutube, findSpotify } from "../lib/gg.mjs";
 
 export const config = { path: "/folge/*" };
 
@@ -9,9 +9,17 @@ const inline = s => esc(s).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
 
 function renderBlog(text) {
   const lines = String(text || '').replace(/\r/g, '').split('\n');
-  let keywords = [];
-  if (/^schlagworte\s*:/i.test(lines[0] || '')) {
-    keywords = lines.shift().replace(/^schlagworte\s*:/i, '').split(',').map(s => s.trim()).filter(Boolean);
+  let keywords = [], youtube = '', spotify = '';
+  // Optionale Kopfzeilen: Schlagworte: … / YouTube: <url> / Spotify: <url>
+  while (lines.length) {
+    const l = (lines[0] || '').trim();
+    let m;
+    if ((m = l.match(/^schlagworte\s*:\s*(.*)/i))) keywords = m[1].split(',').map(s => s.trim()).filter(Boolean);
+    else if ((m = l.match(/^youtube\s*:\s*(https?:\/\/\S+)/i))) youtube = m[1];
+    else if ((m = l.match(/^spotify\s*:\s*(https?:\/\/\S+)/i))) spotify = m[1];
+    else if (l === '' && (keywords.length || youtube || spotify)) { /* Leerzeile nach Kopf */ }
+    else break;
+    lines.shift();
   }
   const html = [];
   const faq = [];
@@ -36,7 +44,7 @@ function renderBlog(text) {
     } else { flushList(); para.push(l); }
   }
   flushPara(); flushList(); flushFaq();
-  return { html: html.join('\n'), faq: faq.filter(f => f.q && f.a), keywords };
+  return { html: html.join('\n'), faq: faq.filter(f => f.q && f.a), keywords, youtube, spotify };
 }
 
 const fmtDate = iso => { try { return new Date(iso).toLocaleDateString('de-DE', { day: 'numeric', month: 'long', year: 'numeric' }); } catch { return ''; } };
@@ -103,6 +111,17 @@ export default async (req) => {
   });
   const ld = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
 
+  const [autoYt, autoSp] = await Promise.all([
+    blog.youtube ? '' : findYoutube(ep).catch(() => ''),
+    blog.spotify ? '' : findSpotify(ep).catch(() => ''),
+  ]);
+  const youtubeUrl = blog.youtube || autoYt;
+  const spotifyUrl = blog.spotify || autoSp || ep.link || '';
+  const spotifyId = (spotifyUrl.match(/open\.spotify\.com\/(?:intl-[a-z]+\/)?episode\/([A-Za-z0-9]+)/) || [])[1] || '';
+  const SP_ICON = '<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.586 14.424a.622.622 0 01-.857.207c-2.348-1.435-5.304-1.76-8.785-.964a.622.622 0 11-.277-1.215c3.809-.87 7.076-.496 9.712 1.115a.623.623 0 01.207.857zm1.223-2.72a.778.778 0 01-1.072.257c-2.687-1.652-6.785-2.131-9.965-1.166a.778.778 0 01-.97-.518.779.779 0 01.519-.971c3.632-1.102 8.147-.568 11.234 1.326a.777.777 0 01.254 1.072zm.105-2.835C14.692 8.95 9.375 8.775 6.297 9.71a.935.935 0 11-.543-1.79c3.533-1.072 9.404-.865 13.115 1.338a.936.936 0 01-.954 1.611z"/></svg>';
+  const YT_ICON = '<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M21.593 7.203a2.506 2.506 0 00-1.762-1.766C18.265 5.007 12 5 12 5s-6.264-.007-7.831.404a2.56 2.56 0 00-1.766 1.778C2.036 8.746 2 10.266 2 12.001c0 1.734.036 3.255.406 4.797a2.5 2.5 0 001.765 1.765C5.739 19.003 12 19 12 19s6.265.003 7.831-.437a2.5 2.5 0 001.762-1.765C21.961 15.258 22 13.739 22 12.004c0-1.735-.036-3.255-.407-4.801zM9.996 15.005l.005-6 5.207 3.005-5.212 2.995z"/></svg>';
+  const IN_ICON = '<svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>';
+
   const card = e => `<a class="rel" href="${esc(episodePath(e))}"><span class="n">${String(e.num).padStart(2, '0')}</span><span>${esc(e.title)}</span></a>`;
 
   const page = `<!doctype html>
@@ -128,11 +147,21 @@ ${ep.img ? `<meta property="og:image" content="${esc(ep.img)}">` : ''}
 :root{--orange:#ffa547;--black:#141414;--gray:#F5F4F0;--muted:#6b6b6b;}
 *{box-sizing:border-box}body{margin:0;font-family:'DM Sans',system-ui,sans-serif;color:var(--black);background:#fff;line-height:1.7}
 a{color:inherit}
-header{background:var(--orange);padding:14px 24px;display:flex;justify-content:space-between;align-items:center}
-.logo{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:1px;text-decoration:none}
-header a.back{font-weight:700;font-size:14px;text-decoration:none}
-main{max-width:760px;margin:0 auto;padding:40px 22px 60px}
+nav{position:sticky;top:0;z-index:200;background:rgba(255,255,255,.96);backdrop-filter:blur(10px);border-bottom:1px solid #eee}
+.nav-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:64px;padding:0 1.5rem}
+.nav-logo{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;text-decoration:none}.nav-logo span{color:var(--orange)}
+.nav-links{display:flex;gap:2rem;font-size:14px;font-weight:500;color:var(--muted)}.nav-links a{text-decoration:none}.nav-links a:hover{color:var(--orange)}
+.nav-right{display:flex;align-items:center;gap:16px}.nav-icons{display:flex;gap:12px}.nav-icons a{color:var(--muted);display:flex}.nav-icons a:hover{color:var(--orange)}
+.nav-cta{background:var(--orange);color:#fff;padding:8px 18px;border-radius:8px;font-size:13px;font-weight:700;text-decoration:none}
+@media(max-width:820px){.nav-links,.nav-icons{display:none}}
+main{max-width:760px;margin:0 auto;padding:28px 22px 60px}
+.backlink{display:inline-block;font-weight:700;font-size:14px;color:var(--orange);text-decoration:none;margin-bottom:18px}.backlink:hover{text-decoration:underline}
 .crumb{font-size:13px;color:var(--muted);margin-bottom:10px}.crumb a{text-decoration:none;color:var(--orange);font-weight:700}
+.btns{display:flex;flex-wrap:wrap;gap:10px;margin:6px 0 4px}
+.btn svg{vertical-align:-3px;margin-right:6px}
+.btn-sp{background:#1DB954}.btn-sp:hover{background:#17a34a}
+.btn-yt{background:#FF0000}.btn-yt:hover{background:#cc0000}
+.embed{margin:6px 0 18px}.embed iframe{border:0;border-radius:12px;width:100%}
 .num{font-family:'Bebas Neue',sans-serif;color:var(--orange);font-size:22px;letter-spacing:1px}
 h1{font-size:clamp(1.7rem,4.5vw,2.4rem);line-height:1.2;margin:4px 0 10px}
 .meta{color:var(--muted);font-size:14px;margin-bottom:22px}
@@ -152,14 +181,31 @@ footer{background:var(--black);color:#bbb;text-align:center;padding:28px 16px;fo
 </style>
 </head>
 <body>
-<header><a class="logo" href="/">GLANS &amp; GLORIA</a><a class="back" href="/#folgen">← Alle Folgen</a></header>
+<nav><div class="nav-inner">
+  <a class="nav-logo" href="/">GLANS <span>&amp;</span> GLORIA</a>
+  <div class="nav-links"><a href="/#folgen">Alle Folgen</a><a href="/#gaeste">Gäste</a><a href="/#ueber-uns">Über uns</a><a href="/#kontakt">Kontakt</a></div>
+  <div class="nav-right">
+    <div class="nav-icons">
+      <a href="https://open.spotify.com" target="_blank" rel="noopener" title="Spotify">${SP_ICON.replace(/18/g, '20')}</a>
+      <a href="https://youtube.com/@glansundgloria" target="_blank" rel="noopener" title="YouTube">${YT_ICON.replace(/18/g, '20')}</a>
+      <a href="https://linkedin.com/company/glansundgloria" target="_blank" rel="noopener" title="LinkedIn">${IN_ICON}</a>
+    </div>
+    <a class="nav-cta" href="https://open.spotify.com" target="_blank" rel="noopener">Jetzt hören!</a>
+  </div>
+</div></nav>
 <main>
+  <a class="backlink" href="/#folgen">← Alle Folgen</a>
   <div class="crumb"><a href="/">Glans &amp; Gloria</a> › <a href="/#folgen">Folgen</a> › Folge ${ep.num}</div>
   <div class="num">Folge ${String(ep.num).padStart(2, '0')}</div>
   <h1>${esc(ep.title)}</h1>
   <div class="meta">${esc(fmtDate(ep.date))}${ep.duration ? ' · ' + esc(isoDuration(ep.duration) ? Math.round(durationSeconds(ep.duration) / 60) + ' Min' : ep.duration) : ''} · mit Nils Labitzke &amp; Leonard Kühn</div>
-  ${ep.audio ? `<audio controls preload="none" src="${esc(ep.audio)}"></audio>` : ''}
-  ${ep.link ? `<a class="btn" href="${esc(ep.link)}" target="_blank" rel="noopener">Folge auf Spotify anhören</a>` : ''}
+  ${spotifyId
+    ? `<div class="embed"><iframe src="https://open.spotify.com/embed/episode/${esc(spotifyId)}?utm_source=generator&theme=0" height="352" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy" title="Spotify-Player: ${esc(ep.title)}"></iframe></div>`
+    : (ep.audio ? `<audio controls preload="none" src="${esc(ep.audio)}"></audio>` : '')}
+  <div class="btns">
+    ${spotifyUrl ? `<a class="btn btn-sp" href="${esc(spotifyUrl)}" target="_blank" rel="noopener">${SP_ICON}Folge auf Spotify anhören</a>` : ''}
+    ${youtubeUrl ? `<a class="btn btn-yt" href="${esc(youtubeUrl)}" target="_blank" rel="noopener">${YT_ICON}Folge auf YouTube anschauen</a>` : ''}
+  </div>
   <p class="lead">${esc(ep.desc)}</p>
   <article>
     ${hasBlog ? blog.html : ''}
