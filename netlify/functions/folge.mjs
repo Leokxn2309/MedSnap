@@ -5,7 +5,12 @@ import { SITE, esc, slugify, episodePath, loadEpisodes, loadShared, durationSeco
 export const config = { path: "/folge/*" };
 
 // ── Markdown-light → HTML (## / ### / - Listen / **fett** / Absätze) ──
-const inline = s => esc(s).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+const inline = s => esc(s)
+  .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+  .replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, (_, t, u) => {
+    const internal = u.startsWith('https://glansundgloria.de');
+    return `<a href="${u}"${internal ? '' : ' target="_blank" rel="noopener"'}>${t}</a>`;
+  });
 
 function renderBlog(text) {
   const lines = String(text || '').replace(/\r/g, '').split('\n');
