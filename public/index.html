@@ -597,13 +597,15 @@ nav.scrolled{box-shadow:0 2px 20px rgba(0,0,0,0.10);}
         </div>
       </div>
       <form class="contact-form" id="contactForm">
-        <!-- SETUP: Ersetze DEINE_FORMSPREE_ID mit deiner ID von formspree.io (kostenlos, 50 Mails/Monat) -->
+        <!-- Honeypot gegen Spam-Bots: für Menschen unsichtbar -->
+        <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;">
         <div><label class="admin-label" style="color:rgba(255,255,255,0.5)">Name</label><input type="text" name="name" placeholder="Dein Name" class="admin-input" style="background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.15);color:#fff;" required></div>
         <div><label class="admin-label" style="color:rgba(255,255,255,0.5)">E-Mail</label><input type="email" name="email" placeholder="deine@email.de" class="admin-input" style="background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.15);color:#fff;" required></div>
         <div><label class="admin-label" style="color:rgba(255,255,255,0.5)">Nachricht</label><textarea name="message" placeholder="Deine Nachricht…" class="admin-input admin-textarea" style="background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.15);color:#fff;" required></textarea></div>
+        <div id="turnstileBox" style="min-height:0;"></div>
         <button type="submit" id="contactSubmitBtn">Nachricht senden</button>
         <div id="contactSuccess" style="display:none;background:rgba(255,255,255,0.1);color:#7fffb2;border-radius:8px;padding:10px;font-size:13px;font-weight:600;text-align:center;">✓ Nachricht gesendet! Wir melden uns bald.</div>
-        <div id="contactError" style="display:none;background:rgba(255,0,0,0.1);color:#ff7f7f;border-radius:8px;padding:10px;font-size:13px;text-align:center;">Fehler beim Senden. Bitte schreib uns direkt an kontakt@glansundgloria.de</div>
+        <div id="contactError" style="display:none;background:rgba(255,0,0,0.1);color:#ff7f7f;border-radius:8px;padding:10px;font-size:13px;text-align:center;">Fehler beim Senden. Bitte schreib uns direkt an info@glansundgloria.de</div>
       </form>
     </div>
   </div>
@@ -654,14 +656,14 @@ nav.scrolled{box-shadow:0 2px 20px rgba(0,0,0,0.10);}
 
     <h3>2. Welche Daten wir verarbeiten</h3>
     <p>Diese Website erhebt von sich aus keine personenbezogenen Daten und setzt keine Tracking-Cookies oder Analyse-Tools ein.</p>
-    <p><strong>Kontaktformular:</strong> Wenn du das Kontaktformular nutzt, werden dein Name, deine E-Mail-Adresse und deine Nachricht über den Dienst <a href="https://formspree.io" target="_blank">Formspree</a> (Formspree Inc., USA) an uns weitergeleitet. Formspree verarbeitet diese Daten auf Grundlage von Art. 6 Abs. 1 lit. b DSGVO (Vertragserfüllung / vorvertragliche Maßnahmen). Weitere Informationen findest du in der <a href="https://formspree.io/legal/privacy-policy" target="_blank">Datenschutzerklärung von Formspree</a>.</p>
+    <p><strong>Kontaktformular:</strong> Wenn du das Kontaktformular nutzt, werden dein Name, deine E-Mail-Adresse und deine Nachricht über unseren Hosting-Anbieter Netlify (Netlify Inc., USA) verarbeitet und per E-Mail an unser Postfach bei STRATO AG (Deutschland) zugestellt. Zum Schutz vor Spam setzen wir den Dienst Cloudflare Turnstile (Cloudflare, Inc., USA) ein. Dabei werden technische Daten wie deine IP-Adresse und Browserinformationen an Cloudflare übertragen, um zu prüfen, ob eine echte Person das Formular absendet (<a href="https://www.cloudflare.com/privacypolicy/" target="_blank">Datenschutzerklärung von Cloudflare</a>). Wir speichern die Nachricht nicht auf der Website selbst. Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO (Bearbeitung deiner Anfrage) bzw. lit. f DSGVO (berechtigtes Interesse an der Beantwortung von Anfragen). Wir löschen die Daten, sobald deine Anfrage erledigt ist und keine gesetzlichen Aufbewahrungspflichten entgegenstehen.</p>
     <p><strong>Lokaler Speicher (localStorage):</strong> Diese Website speichert Podcast-Daten lokal in deinem Browser (localStorage), um die Seite auch ohne Backend-Server zu betreiben. Diese Daten verlassen deinen Browser nicht und werden nicht an uns übermittelt.</p>
 
     <h3>3. Externe Plattformen</h3>
     <p>Diese Seite enthält Links zu externen Plattformen (Spotify, Apple Podcasts, YouTube, Instagram, TikTok, LinkedIn). Wenn du diese Links aufrufst, gelten die jeweiligen Datenschutzerklärungen der Anbieter. Wir haben keinen Einfluss auf die Datenerhebung durch diese Dienste.</p>
 
     <h3>4. Deine Rechte</h3>
-    <p>Du hast gemäß DSGVO das Recht auf Auskunft, Berichtigung, Löschung, Einschränkung der Verarbeitung und Datenübertragbarkeit. Wende dich dazu an: <a href="mailto:kontakt@glansundgloria.de">kontakt@glansundgloria.de</a></p>
+    <p>Du hast gemäß DSGVO das Recht auf Auskunft, Berichtigung, Löschung, Einschränkung der Verarbeitung und Datenübertragbarkeit. Wende dich dazu an: <a href="mailto:info@glansundgloria.de">info@glansundgloria.de</a></p>
     <p>Außerdem steht dir ein Beschwerderecht bei der zuständigen Aufsichtsbehörde zu.</p>
 
     <h3>5. Hosting</h3>
@@ -676,7 +678,7 @@ nav.scrolled{box-shadow:0 2px 20px rgba(0,0,0,0.10);}
 <footer>
   <div class="footer-logo">GLANS <span>&</span> GLORIA</div>
   <p>Dein Medizinpodcast · Überall wo es Podcasts gibt<br>
-  <a href="#" onclick="event.preventDefault();document.getElementById('impressumOverlay').classList.add('open')">Impressum</a> · <a href="#" onclick="event.preventDefault();document.getElementById('datenschutzOverlay').classList.add('open')">Datenschutz</a> · <a href="mailto:info@glansundgloria.de">info@glansundgloria.de</a></p>
+  <a href="#" onclick="event.preventDefault();document.getElementById('impressumOverlay').classList.add('open')">Impressum</a> · <a href="#" onclick="event.preventDefault();document.getElementById('datenschutzOverlay').classList.add('open')">Datenschutz</a></p>
 </footer>
 
 <!-- SHARE TOAST -->
@@ -1540,11 +1542,7 @@ document.getElementById('resetData').addEventListener('click', async ()=>{
   showSuccess('successData');
 });
 
-// ── Kontaktformular (Formspree) ──
-// SETUP: Gehe auf formspree.io, erstelle ein kostenloses Konto, lege ein neues Formular an
-// und ersetze 'DEINE_FORMSPREE_ID' mit der ID aus dem Dashboard (z.B. xpwqabcd).
-const FORMSPREE_ID = 'DEINE_FORMSPREE_ID';
-
+// ── Kontaktformular → Netlify Function → E-Mail (Strato-SMTP) ──
 document.getElementById('contactForm').addEventListener('submit', async (e)=>{
   e.preventDefault();
   const btn = document.getElementById('contactSubmitBtn');
@@ -1552,26 +1550,29 @@ document.getElementById('contactForm').addEventListener('submit', async (e)=>{
   const errorEl = document.getElementById('contactError');
   successEl.style.display='none';
   errorEl.style.display='none';
-
-  if(FORMSPREE_ID==='DEINE_FORMSPREE_ID'){
-    // Fallback wenn noch nicht eingerichtet
-    errorEl.textContent='Formular noch nicht eingerichtet. Bitte schreib uns direkt an kontakt@glansundgloria.de';
-    errorEl.style.display='block';
-    return;
-  }
+  errorEl.textContent='Fehler beim Senden. Bitte schreib uns direkt an info@glansundgloria.de';
 
   btn.textContent='Wird gesendet…';
   btn.disabled=true;
 
   try{
-    const formData = new FormData(e.target);
-    const res = await fetch(`https://formspree.io/f/${FORMSPREE_ID}`,{
-      method:'POST', body:formData, headers:{Accept:'application/json'}
+    const fd = new FormData(e.target);
+    const res = await fetch('/.netlify/functions/contact',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        name:fd.get('name'), email:fd.get('email'), message:fd.get('message'),
+        website:fd.get('website'), // Honeypot (bleibt leer)
+        captcha:fd.get('cf-turnstile-response') || ''
+      }),
+      signal:AbortSignal.timeout(20000)
     });
     if(res.ok){
       successEl.style.display='block';
       e.target.reset();
     }else{
+      const j = await res.json().catch(()=>({}));
+      if(j.error && res.status===400) errorEl.textContent=j.error;
       throw new Error();
     }
   }catch{
@@ -1579,8 +1580,24 @@ document.getElementById('contactForm').addEventListener('submit', async (e)=>{
   }finally{
     btn.textContent='Nachricht senden';
     btn.disabled=false;
+    if(window.turnstile && window.__tsWidget!==undefined){ try{ turnstile.reset(window.__tsWidget); }catch{} }
   }
 });
+
+// Captcha (Cloudflare Turnstile): Site-Key kommt von der Funktion (Netlify-Variable TURNSTILE_SITE_KEY)
+(async function initCaptcha(){
+  try{
+    const r = await fetch('/.netlify/functions/contact',{signal:AbortSignal.timeout(6000)});
+    const {siteKey} = await r.json();
+    if(!siteKey) return;
+    await new Promise((ok,fail)=>{
+      const sc=document.createElement('script');
+      sc.src='https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+      sc.async=true; sc.onload=ok; sc.onerror=fail; document.head.appendChild(sc);
+    });
+    window.__tsWidget = turnstile.render('#turnstileBox',{sitekey:siteKey,theme:'dark',language:'de'});
+  }catch(e){ console.warn('Captcha nicht geladen:', e); }
+})();
 
 // ── RSS: Hilfsfunktionen ──
 
