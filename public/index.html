@@ -381,6 +381,19 @@ body.edit-mode [data-edit]:focus{outline-style:solid;background:rgba(255,165,71,
 #editCancel{background:#333;color:#fff;}
 body.edit-mode nav{top:46px;}
 
+/* ── Gäste verwalten ── */
+.gm-row{display:grid;grid-template-columns:22px 48px 1fr auto;gap:8px;align-items:center;padding:6px;border:1px solid #eee;border-radius:10px;margin-bottom:6px;background:#fff;}
+.gm-row.dragging{opacity:.4;}
+.gm-row.over{border-color:var(--orange);background:var(--orange-light);}
+.gm-handle{cursor:grab;color:#aaa;font-size:18px;text-align:center;user-select:none;}
+.gm-row img{width:48px;height:48px;object-fit:cover;border-radius:8px;display:block;}
+.gm-name{border:1px solid transparent;border-radius:6px;padding:6px 8px;font-size:13px;font-family:'DM Sans',sans-serif;width:100%;background:transparent;}
+.gm-name:hover,.gm-name:focus{border-color:#ddd;background:#fff;outline:none;}
+.gm-actions{display:flex;gap:2px;}
+.gm-actions button{border:none;background:var(--gray);border-radius:6px;width:28px;height:28px;cursor:pointer;font-size:13px;line-height:1;}
+.gm-actions button:hover{background:var(--orange-light);}
+.gm-actions button:disabled{opacity:.3;cursor:default;}
+
 /* ── Crop Modal ── */
 #cropModal{display:none;position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.72);align-items:center;justify-content:center;}
 #cropModal.open{display:flex;}
@@ -824,6 +837,11 @@ body.edit-mode nav{top:46px;}
         </div>
         <button class="admin-submit" id="submitGuest">Gast hinzufügen</button>
         <div class="admin-success" id="successGuest">✓ Gast wurde zur Galerie hinzugefügt!</div>
+        <hr class="admin-divider">
+        <label class="admin-label" style="font-size:13px;color:var(--text);">Bestehende Gäste verwalten</label>
+        <p class="admin-hint" style="margin-bottom:8px;">Reihenfolge per Ziehen am Griff ⠿ oder mit den Pfeilen ändern. ◎ richtet das vorhandene Foto neu aus (Zoom und Position), 📷 ersetzt es durch ein neues Foto, 🗑 entfernt den Gast. Änderungen werden sofort für alle gespeichert.</p>
+        <div id="guestManage"></div>
+        <input type="file" id="replacePhotoInput" accept="image/*" style="display:none">
       </div>
     </div>
 
@@ -1523,6 +1541,82 @@ document.getElementById('guestPhoto').addEventListener('change',async function()
   document.getElementById('guestPhotoPreview').style.display='block';
 });
 
+// ── Gäste verwalten (Reihenfolge, neu ausrichten, ersetzen, umbenennen, löschen) ──
+function currentGuests(){
+  return (sharedData.guests && sharedData.guests.length) ? sharedData.guests.slice() : LS.get('gg_guests', defaultGuests).slice();
+}
+async function saveGuests(list){
+  const ok = await saveSharedData({guests:list});
+  renderGallery();
+  renderGuestManage();
+  return ok;
+}
+function renderGuestManage(){
+  const box = document.getElementById('guestManage');
+  if(!box) return;
+  const list = currentGuests();
+  box.innerHTML = '';
+  if(!list.length){ box.innerHTML = '<p class="admin-hint">Noch keine Gäste.</p>'; return; }
+  let dragFrom = null;
+  list.forEach((g,i)=>{
+    const row = document.createElement('div');
+    row.className = 'gm-row';
+    row.draggable = true;
+    row.innerHTML = `<div class="gm-handle" title="Ziehen zum Verschieben">⠿</div><img alt=""><input class="gm-name" type="text" placeholder="Name"><div class="gm-actions"></div>`;
+    row.querySelector('img').src = g.photo;
+    const nameIn = row.querySelector('.gm-name');
+    nameIn.value = g.name || '';
+    nameIn.addEventListener('change', async ()=>{
+      const l = currentGuests(); l[i] = {...l[i], name:nameIn.value.trim()}; await saveGuests(l);
+    });
+    const actions = row.querySelector('.gm-actions');
+    const mk = (label,title,fn,disabled)=>{
+      const b = document.createElement('button'); b.type='button'; b.textContent=label; b.title=title; b.disabled=!!disabled;
+      b.addEventListener('click',fn); actions.appendChild(b);
+    };
+    mk('↑','Nach vorne', async ()=>{ const l=currentGuests(); [l[i-1],l[i]]=[l[i],l[i-1]]; await saveGuests(l); }, i===0);
+    mk('↓','Nach hinten', async ()=>{ const l=currentGuests(); [l[i+1],l[i]]=[l[i],l[i+1]]; await saveGuests(l); }, i===list.length-1);
+    mk('◎','Foto neu ausrichten', async ()=>{
+      const cropped = await window.openCropModal(g.photo);
+      if(!cropped) return;
+      const l=currentGuests(); l[i]={...l[i], photo:cropped}; await saveGuests(l);
+    });
+    mk('📷','Foto ersetzen', ()=>{
+      const inp = document.getElementById('replacePhotoInput');
+      inp.dataset.index = i; inp.click();
+    });
+    mk('🗑','Gast entfernen', async ()=>{
+      if(!confirm('„'+(g.name||'Gast')+'" wirklich entfernen?')) return;
+      const l=currentGuests(); l.splice(i,1); await saveGuests(l);
+    });
+    // Drag & Drop
+    row.addEventListener('dragstart', e=>{ dragFrom=i; row.classList.add('dragging'); e.dataTransfer.effectAllowed='move'; e.dataTransfer.setData('text/plain',String(i)); });
+    row.addEventListener('dragend', ()=>row.classList.remove('dragging'));
+    row.addEventListener('dragover', e=>{ e.preventDefault(); row.classList.add('over'); });
+    row.addEventListener('dragleave', ()=>row.classList.remove('over'));
+    row.addEventListener('drop', async e=>{
+      e.preventDefault(); row.classList.remove('over');
+      if(dragFrom===null || dragFrom===i) return;
+      const l=currentGuests(); const [moved]=l.splice(dragFrom,1); l.splice(i,0,moved);
+      dragFrom=null; await saveGuests(l);
+    });
+    box.appendChild(row);
+  });
+}
+document.getElementById('replacePhotoInput').addEventListener('change', async function(){
+  const file=this.files[0]; const i=parseInt(this.dataset.index,10);
+  this.value='';
+  if(!file||isNaN(i)) return;
+  const cropped = await window.openCropModal(file);
+  if(!cropped) return;
+  const l=currentGuests(); if(!l[i]) return;
+  l[i]={...l[i], photo:cropped}; await saveGuests(l);
+});
+// Liste neu aufbauen, wenn der Gast-Tab geöffnet wird und nach dem Laden der Daten
+document.querySelector('[data-tab="gallery"]').addEventListener('click', renderGuestManage);
+const _origRenderGallery = renderGallery;
+renderGallery = function(){ _origRenderGallery(); try{ renderGuestManage(); }catch{} };
+
 // ── Submit Guest ──
 document.getElementById('submitGuest').addEventListener('click', async ()=>{
   const name=document.getElementById('guestName').value.trim();
@@ -2034,6 +2128,7 @@ updateRssAdminStatus();
     return new Promise(resolve=>{
       _resolve = resolve;
       const reader = new FileReader();
+      const fromUrl = typeof file === 'string';
       reader.onload = e=>{
         _img = new Image();
         _img.onload = ()=>{
@@ -2051,7 +2146,8 @@ updateRssAdminStatus();
         };
         _img.src = e.target.result;
       };
-      reader.readAsDataURL(file);
+      if(fromUrl) reader.onload({target:{result:file}});
+      else reader.readAsDataURL(file);
     });
   };
 })();
