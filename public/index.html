@@ -369,6 +369,18 @@ footer a:hover{color:var(--orange);}
 nav{transition:box-shadow .3s ease;}
 nav.scrolled{box-shadow:0 2px 20px rgba(0,0,0,0.10);}
 
+/* ── Bearbeitungsmodus (Texte direkt auf der Seite) ── */
+.edit-toggle{bottom:84px;background:var(--orange);}
+.edit-toggle:hover{background:var(--orange-dark);}
+body.edit-mode [data-edit]{outline:2px dashed var(--orange);outline-offset:4px;cursor:text;min-width:2ch;border-radius:2px;}
+body.edit-mode [data-edit]:focus{outline-style:solid;background:rgba(255,165,71,.12);}
+.edit-bar{position:fixed;top:0;left:0;right:0;z-index:10001;background:var(--black);color:#fff;display:none;align-items:center;justify-content:center;gap:12px;padding:10px 16px;font-size:13px;font-weight:600;box-shadow:0 4px 20px rgba(0,0,0,.3);flex-wrap:wrap;}
+.edit-bar.open{display:flex;}
+.edit-bar button{border:none;border-radius:8px;padding:8px 18px;font-weight:700;font-size:13px;cursor:pointer;font-family:'DM Sans',sans-serif;}
+#editSave{background:var(--orange);color:#fff;}
+#editCancel{background:#333;color:#fff;}
+body.edit-mode nav{top:46px;}
+
 /* ── Crop Modal ── */
 #cropModal{display:none;position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.72);align-items:center;justify-content:center;}
 #cropModal.open{display:flex;}
@@ -476,16 +488,16 @@ nav.scrolled{box-shadow:0 2px 20px rgba(0,0,0,0.10);}
 <section class="stats reveal">
   <div class="stats-inner">
     <div class="stat-item">
-      <div class="stat-num">500+</div>
-      <div class="stat-label">monatliche Hörer:innen</div>
+      <div class="stat-num" data-edit="statListeners">500+</div>
+      <div class="stat-label" data-edit="statListenersLabel">monatliche Hörer:innen</div>
     </div>
     <div class="stat-item">
-      <div class="stat-num">60+</div>
-      <div class="stat-label">Podcast-Episoden</div>
+      <div class="stat-num" data-edit="statEpisodes">60+</div>
+      <div class="stat-label" data-edit="statEpisodesLabel">Podcast-Episoden</div>
     </div>
     <div class="stat-item">
-      <div class="stat-num">50+</div>
-      <div class="stat-label">Expert:innen aus Klinik &amp; Forschung</div>
+      <div class="stat-num" data-edit="statExperts">50+</div>
+      <div class="stat-label" data-edit="statExpertsLabel">Expert:innen aus Klinik &amp; Forschung</div>
     </div>
   </div>
 </section>
@@ -558,9 +570,9 @@ nav.scrolled{box-shadow:0 2px 20px rgba(0,0,0,0.10);}
           <div id="nils-photo-placeholder" class="host-photo-placeholder" style="display:none;">N</div>
         </div>
         <div class="host-info">
-          <div class="host-name">Nils Labitzke</div>
-          <div class="host-role">Host &amp; Co-Gründer</div>
-          <div class="host-bio">Ich studiere derzeit im 11. Semester Humanmedizin in Halle. Wenn ich gerade nicht am Podcasten bin, schreibe ich an meiner Doktorarbeit in der Anästhesiologie oder stehe auf dem Tennisplatz!</div>
+          <div class="host-name" data-edit="nilsName">Nils Labitzke</div>
+          <div class="host-role" data-edit="nilsRole">Host &amp; Co-Gründer</div>
+          <div class="host-bio" data-edit="nilsBio">Ich studiere derzeit im 11. Semester Humanmedizin in Halle. Wenn ich gerade nicht am Podcasten bin, schreibe ich an meiner Doktorarbeit in der Anästhesiologie oder stehe auf dem Tennisplatz!</div>
         </div>
       </div>
       <div class="host-card">
@@ -569,9 +581,9 @@ nav.scrolled{box-shadow:0 2px 20px rgba(0,0,0,0.10);}
           <div id="leo-photo-placeholder" class="host-photo-placeholder">L</div>
         </div>
         <div class="host-info">
-          <div class="host-name">Leonard Kühn</div>
-          <div class="host-role">Host &amp; Co-Gründer</div>
-          <div class="host-bio">Ich studiere derzeit im 11. Semester Humanmedizin in Rostock und befinde mich mitten im PJ. Nebenbei sitze ich an meiner Doktorarbeit in der Urologie und natürlich hinter dem Podcastmikrofon!</div>
+          <div class="host-name" data-edit="leoName">Leonard Kühn</div>
+          <div class="host-role" data-edit="leoRole">Host &amp; Co-Gründer</div>
+          <div class="host-bio" data-edit="leoBio">Ich studiere derzeit im 11. Semester Humanmedizin in Rostock und befinde mich mitten im PJ. Nebenbei sitze ich an meiner Doktorarbeit in der Urologie und natürlich hinter dem Podcastmikrofon!</div>
         </div>
       </div>
     </div>
@@ -694,6 +706,14 @@ nav.scrolled{box-shadow:0 2px 20px rgba(0,0,0,0.10);}
     <div class="pin-error" id="pinError">Falscher PIN. Bitte nochmal versuchen.</div>
   </div>
 </div>
+
+<!-- BEARBEITUNGSMODUS -->
+<div class="edit-bar" id="editBar">
+  <span>✏️ Bearbeitungsmodus: Klicke auf einen umrandeten Text und tippe los.</span>
+  <button id="editSave">Speichern</button>
+  <button id="editCancel">Abbrechen</button>
+</div>
+<button class="admin-toggle edit-toggle" id="editToggle">✏️ Texte auf der Seite bearbeiten</button>
 
 <!-- ADMIN BUTTON -->
 <button class="admin-toggle" id="adminToggle">
@@ -860,10 +880,10 @@ const RSS_FEED_URL = 'https://anchor.fm/s/e984c364/podcast/rss';
 const SITE_DATA_URL = '/.netlify/functions/site-data';
 
 // In-Memory-Zustand (wird beim Laden vom Backend befüllt)
-let sharedData = { guests: [], hostNils: '', hostLeo: '', latestOverride: {}, manualEpisodes: [], episodeTags: {}, blogPosts: {} };
+let sharedData = { guests: [], hostNils: '', hostLeo: '', latestOverride: {}, manualEpisodes: [], episodeTags: {}, blogPosts: {}, texts: {} };
 
 async function loadSharedData() {
-  const EMPTY = { guests: [], hostNils: '', hostLeo: '', latestOverride: {}, manualEpisodes: [], episodeTags: {}, blogPosts: {} };
+  const EMPTY = { guests: [], hostNils: '', hostLeo: '', latestOverride: {}, manualEpisodes: [], episodeTags: {}, blogPosts: {}, texts: {} };
   try {
     const res = await fetch(SITE_DATA_URL, {
       cache: 'no-store',
@@ -904,6 +924,7 @@ function applySharedData() {
     img.src = sharedData.hostLeo; img.style.display = 'block';
     document.getElementById('leo-photo-placeholder').style.display = 'none';
   }
+  applyTexts();
   renderGallery();
 }
 
@@ -933,6 +954,58 @@ async function saveSharedData(patch) {
   }
 }
 
+// ── Bearbeitbare Texte (data-edit) ──
+const TEXT_DEFAULTS = {};
+document.querySelectorAll('[data-edit]').forEach(el=>{ TEXT_DEFAULTS[el.dataset.edit] = el.textContent.trim(); });
+
+function applyTexts(){
+  const t = sharedData.texts || {};
+  document.querySelectorAll('[data-edit]').forEach(el=>{
+    const k = el.dataset.edit;
+    el.textContent = (typeof t[k] === 'string' && t[k].trim()) ? t[k] : TEXT_DEFAULTS[k];
+  });
+}
+
+function setEditMode(on){
+  document.body.classList.toggle('edit-mode', on);
+  document.getElementById('editBar').classList.toggle('open', on);
+  document.getElementById('editToggle').style.visibility = on ? 'hidden' : '';
+  document.querySelectorAll('[data-edit]').forEach(el=>{
+    if(on){ el.setAttribute('contenteditable','true'); el.spellcheck = true; }
+    else el.removeAttribute('contenteditable');
+  });
+  if(on){
+    document.querySelectorAll('.reveal').forEach(e=>e.classList.add('visible'));
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+}
+// Zeilenumbrüche verhindern (Enter beendet die Eingabe), Einfügen nur als reiner Text
+document.addEventListener('keydown', e=>{
+  if(e.key==='Enter' && e.target.closest && e.target.closest('[data-edit]')){ e.preventDefault(); e.target.blur(); }
+});
+document.addEventListener('paste', e=>{
+  const el = e.target.closest && e.target.closest('[data-edit]');
+  if(!el) return;
+  e.preventDefault();
+  const txt = (e.clipboardData||window.clipboardData).getData('text').replace(/\s*\n\s*/g,' ');
+  document.execCommand('insertText', false, txt);
+});
+document.getElementById('editToggle').addEventListener('click', ()=>setEditMode(true));
+document.getElementById('editCancel').addEventListener('click', ()=>{ applyTexts(); setEditMode(false); });
+document.getElementById('editSave').addEventListener('click', async ()=>{
+  const btn = document.getElementById('editSave');
+  btn.textContent='⏳ Speichern…'; btn.disabled=true;
+  const texts = {};
+  document.querySelectorAll('[data-edit]').forEach(el=>{
+    const v = el.textContent.replace(/\s+/g,' ').trim();
+    // nur speichern, was vom Standard abweicht (leer = Standard)
+    if(v && v !== TEXT_DEFAULTS[el.dataset.edit]) texts[el.dataset.edit] = v;
+  });
+  const ok = await saveSharedData({ texts });
+  btn.textContent='Speichern'; btn.disabled=false;
+  if(ok){ applyTexts(); setEditMode(false); }
+});
+
 // ── Admin PIN Protection ──
 // ⚠ PIN hier ändern (nur Ziffern, 4–6 Stellen empfohlen):
 const ADMIN_PIN = '4242';
@@ -940,6 +1013,7 @@ const ADMIN_PIN = '4242';
 function unlockAdmin(){
   sessionStorage.setItem('gg_admin_unlocked','1');
   document.getElementById('adminToggle').style.display='flex';
+  document.getElementById('editToggle').style.display='flex';
   document.getElementById('pinOverlay').classList.remove('open');
   // Clean URL hash without page scroll
   history.replaceState(null,'',window.location.pathname + window.location.search);
@@ -963,6 +1037,7 @@ window.addEventListener('hashchange', checkAdminHash);
 // If already authenticated this session, restore button
 if(sessionStorage.getItem('gg_admin_unlocked')==='1'){
   document.getElementById('adminToggle').style.display='flex';
+  document.getElementById('editToggle').style.display='flex';
 }
 
 function attemptPin(){
@@ -1530,7 +1605,7 @@ document.getElementById('importGuestsFile').addEventListener('change',function()
 document.getElementById('resetData').addEventListener('click', async ()=>{
   if(!confirm('Wirklich alle Daten zurücksetzen? Das kann nicht rückgängig gemacht werden.'))return;
   ['gg_episodes','gg_manual_episodes','gg_guests','gg_latest','gg_rss_cache','gg_rss_last_fetch','gg_shared_cache'].forEach(k=>localStorage.removeItem(k));
-  sharedData = { guests: [], hostNils: '', hostLeo: '', latestOverride: {}, manualEpisodes: [], episodeTags: {}, blogPosts: {} };
+  sharedData = { guests: [], hostNils: '', hostLeo: '', latestOverride: {}, manualEpisodes: [], episodeTags: {}, blogPosts: {}, texts: {} };
   await saveSharedData(sharedData); // Backend auch zurücksetzen
   allEpisodes = defaultEpisodes.slice();
   activeTagFilter = '';
