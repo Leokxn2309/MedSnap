@@ -103,7 +103,8 @@ nav{position:sticky;top:0;z-index:200;background:rgba(255,255,255,0.96);backdrop
 
 /* ── STATS ── */
 .stats{background:var(--white);padding:4rem 2rem;border-bottom:1px solid #eee;}
-.stats-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr);gap:2rem;}
+.stats-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:2rem;}
+.stats-note{max-width:1100px;margin:2rem auto 0;text-align:center;font-size:12px;color:var(--muted);}
 .stat-item{text-align:center;}
 .stat-num{font-family:'Bebas Neue',sans-serif;font-size:clamp(52px,7vw,80px);color:var(--black);line-height:1;}
 .stat-label{font-size:14px;color:var(--muted);font-style:italic;margin-top:4px;}
@@ -501,18 +502,23 @@ body.edit-mode nav{top:46px;}
 <section class="stats reveal">
   <div class="stats-inner">
     <div class="stat-item">
-      <div class="stat-num" data-edit="statListeners">500+</div>
-      <div class="stat-label" data-edit="statListenersLabel">monatliche Hörer:innen</div>
+      <div class="stat-num" data-edit="statListeners2611">1.900+</div>
+      <div class="stat-label" data-edit="statListenersLabel2611">Monatliche Podcast-Hörer</div>
     </div>
     <div class="stat-item">
-      <div class="stat-num" data-edit="statEpisodes">60+</div>
-      <div class="stat-label" data-edit="statEpisodesLabel">Podcast-Episoden</div>
+      <div class="stat-num" data-edit="statYoutube2611">500.000+</div>
+      <div class="stat-label" data-edit="statYoutubeLabel2611">YouTube-Aufrufe</div>
     </div>
     <div class="stat-item">
-      <div class="stat-num" data-edit="statExperts">50+</div>
-      <div class="stat-label" data-edit="statExpertsLabel">Expert:innen aus Klinik &amp; Forschung</div>
+      <div class="stat-num" data-edit="statPlays2611">26.000+</div>
+      <div class="stat-label" data-edit="statPlaysLabel2611">Podcast-Wiedergaben &amp; Downloads 2026</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num" data-edit="statExperts2611">40+</div>
+      <div class="stat-label" data-edit="statExpertsLabel2611">Expert:innen zu Gast</div>
     </div>
   </div>
+  <p class="stats-note">Monatliche Hörer:innen: letzte 30 Tage · YouTube-Aufrufe: letzte 12 Monate · Podcast-Wiedergaben: 2026 · Stand: November 2026</p>
 </section>
 
 <!-- LATEST EPISODE -->
