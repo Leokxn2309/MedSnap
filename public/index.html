@@ -125,6 +125,8 @@ nav{position:sticky;top:0;z-index:200;background:rgba(255,255,255,0.96);backdrop
 .btn-white-outline:hover{border-color:#fff;}
 .latest-thumb{border-radius:12px;overflow:hidden;width:260px;aspect-ratio:16/9;background:#222;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
 .latest-thumb img{width:100%;height:100%;object-fit:cover;}
+.latest-cover{border-radius:14px;overflow:hidden;width:220px;height:220px;background:#222;flex-shrink:0;box-shadow:0 10px 30px rgba(0,0,0,.35);}
+.latest-cover img{width:100%;height:100%;object-fit:cover;display:block;}
 .latest-thumb-placeholder{color:rgba(255,255,255,0.2);font-size:40px;}
 
 /* ── EPISODES ── */
@@ -329,6 +331,7 @@ footer a:hover{color:var(--orange);}
   .stats-inner{grid-template-columns:1fr 1fr;}
   .latest-card{grid-template-columns:1fr;}
   .latest-thumb{width:100%;aspect-ratio:16/9;}
+  .latest-cover{width:min(260px,100%);height:auto;aspect-ratio:1;}
   .hosts-grid{grid-template-columns:1fr;}
   .contact-wrap{grid-template-columns:1fr;padding:2rem;}
   .admin-panel{width:100%;border-radius:20px 20px 0 0;}
@@ -518,7 +521,7 @@ body.edit-mode nav{top:46px;}
       <div class="stat-label" data-edit="statExpertsLabel2611">Expert:innen zu Gast</div>
     </div>
   </div>
-  <p class="stats-note">Monatliche Hörer:innen: letzte 30 Tage · YouTube-Aufrufe: letzte 12 Monate · Podcast-Wiedergaben: 2026 · Stand: November 2026</p>
+  <p class="stats-note" data-edit="statsNote2611">Monatliche Hörer:innen: letzte 30 Tage · YouTube-Aufrufe: letzte 12 Monate · Podcast-Wiedergaben: 2026 · Stand: November 2026</p>
 </section>
 
 <!-- LATEST EPISODE -->
@@ -1119,7 +1122,8 @@ function renderLatest(){
       guest: rssEp.guest || '',
       spotify: rssEp.spotify || '#',
       apple: ov.apple || rssEp.apple || '',
-      youtube: ov.youtube || rssEp.youtube || ''
+      youtube: ov.youtube || rssEp.youtube || '',
+      img: rssEp.img || ''
     };
   } else {
     ep = LS.get('gg_latest', defaultLatest);
@@ -1136,7 +1140,9 @@ function renderLatest(){
 
   const thumb = ytThumb(ep.youtube);
   const thumbHtml = !epId
-    ? `<div class="latest-thumb">${thumb ? `<img src="${thumb}" alt="Thumbnail">` : `<div class="latest-thumb-placeholder">🎙️</div>`}</div>`
+    ? (ep.img
+        ? `<div class="latest-cover"><img src="${ep.img}" alt="Cover: ${String(ep.title).replace(/"/g,'&quot;')}" loading="lazy"></div>`
+        : `<div class="latest-thumb">${thumb ? `<img src="${thumb}" alt="Thumbnail">` : `<div class="latest-thumb-placeholder">🎙️</div>`}</div>`)
     : '';
 
   document.getElementById('latest-episode-card').innerHTML = `
@@ -1808,6 +1814,7 @@ function parseRssXml(xmlStr, rssUrl){
   if(doc.querySelector('parsererror')) throw new Error('XML konnte nicht geparst werden.');
   const items = [...doc.querySelectorAll('item')];
   const feedTitle = doc.querySelector('channel > title')?.textContent || '';
+  const channelImg = doc.querySelector('channel > itunes\\:image')?.getAttribute('href') || '';
 
   const episodes = items.map((item, i) => {
     const get = tag => item.querySelector(tag)?.textContent?.trim() || '';
@@ -1825,7 +1832,8 @@ function parseRssXml(xmlStr, rssUrl){
     const desc = stripHtml(get('description') || get('itunes\\:summary') || '').slice(0, 400);
     const dur = fmtDuration(get('itunes\\:duration') || '');
 
-    return { num, title: get('title'), guest:'', desc, date: dateStr, duration: dur, spotify: link, apple:'', youtube:'' };
+    const img = getAttr('itunes\\:image','href') || channelImg;
+    return { num, title: get('title'), guest:'', desc, date: dateStr, duration: dur, spotify: link, apple:'', youtube:'', img };
   });
 
   return { feedTitle, episodes };
@@ -1848,7 +1856,7 @@ async function fetchRssFeed(rssUrl){
         let num = item.itunes_episode ? parseInt(item.itunes_episode) : (data.items.length - i);
         const desc = stripHtml(item.description || item.content || '').slice(0, 400);
         const dateStr = item.pubDate ? item.pubDate.split(' ')[0] : '';
-        return { num, title: item.title||'', guest:'', desc, date: dateStr, duration: fmtDuration(item.itunes_duration||''), spotify: item.link||rssUrl, apple:'', youtube:'' };
+        return { num, title: item.title||'', guest:'', desc, date: dateStr, duration: fmtDuration(item.itunes_duration||''), spotify: item.link||rssUrl, apple:'', youtube:'', img: item.itunes_image || item.thumbnail || '' };
       });
       return { feedTitle: data.feed?.title || '', episodes };
     }
